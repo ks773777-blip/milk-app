@@ -1,11 +1,10 @@
-/* Milk Manager service worker — offline-first app shell */
-const CACHE = 'milk-app-v2';
+/* Milk Manager service worker — offline-first, but always fresh when online */
+const CACHE = 'milk-app-v3';
 const ASSETS = ['./', './index.html', './milk-app.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil((async () => {
     const c = await caches.open(CACHE);
-    // cache each asset individually so one failure never blocks install
     await Promise.all(ASSETS.map(u => c.add(u).catch(() => {})));
     await self.skipWaiting();
   })());
@@ -25,10 +24,26 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(req.url);
   // Only handle our own static files; never touch Google APIs / GIS / Drive.
   if (url.origin !== self.location.origin) return;
+
+  const isDoc = req.mode === 'navigate' || req.destination === 'document'
+    || url.pathname === '/' || url.pathname.endsWith('/') || url.pathname.endsWith('.html');
+
+  if (isDoc) {
+    // Network-first so app updates arrive immediately; fall back to cache offline.
+    e.respondWith(
+      fetch(req).then(res => {
+        if (res && res.ok) { const c = res.clone(); caches.open(CACHE).then(cc => cc.put(req, c)).catch(() => {}); }
+        return res;
+      }).catch(() => caches.match(req).then(r => r || caches.match('./milk-app.html')))
+    );
+    return;
+  }
+
+  // Cache-first for icons / manifest / scripts.
   e.respondWith(
     caches.match(req).then(cached => cached || fetch(req).then(res => {
-      if (res && res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)).catch(() => {}); }
+      if (res && res.ok) { const c = res.clone(); caches.open(CACHE).then(cc => cc.put(req, c)).catch(() => {}); }
       return res;
-    }).catch(() => caches.match('./milk-app.html')))
+    }))
   );
 });
