@@ -64,6 +64,11 @@
   .calc-k{padding:14px 0;border-radius:12px;background:var(--soft);font-size:18px;font-weight:700}
   .calc-k.op{background:var(--green-l);color:var(--green-d)}
   .calc-k.clr{background:var(--red-l);color:var(--red)}
+  .clock{font-size:11.5px;opacity:.92;text-align:right;font-variant-numeric:tabular-nums;letter-spacing:.5px}
+  .navrow{display:flex;align-items:center;gap:10px;margin-top:10px}
+  .navbtn{width:40px;height:34px;border-radius:10px;background:rgba(255,255,255,.2);color:#fff;font-size:20px;font-weight:800;line-height:1;display:grid;place-items:center;border:1px solid rgba(255,255,255,.3)}
+  .navbtn:disabled{opacity:.35}
+  .navlbl{flex:1;font-size:12.5px;font-weight:600;opacity:.95;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   main{padding:14px 14px 20px;max-width:760px;margin:0 auto}
   .view{display:none;animation:fade .18s ease}
   .view.active{display:block}
@@ -210,8 +215,13 @@
     </div>
     <div class="top-right">
       <button class="acct" id="acctBtn" onclick="openModule('account')" aria-label="Account"><span id="acctIco">👤</span><img id="acctImg" alt="" style="display:none"/></button>
-      <div class="top-date" id="topDate"></div>
+      <div><div class="top-date" id="topDate"></div><div class="clock" id="topClock">--:--:--</div></div>
     </div>
+  </div>
+  <div class="navrow">
+    <button class="navbtn" id="navBack" onclick="navBack()">‹</button>
+    <span class="navlbl" id="navLbl"></span>
+    <button class="navbtn" id="navFwd" onclick="navForward()">›</button>
   </div>
 </header>
 
@@ -263,6 +273,11 @@
     <div class="card">
       <h3 id="l-pickDate"></h3>
       <div class="field" style="margin:0"><input type="date" id="entryDate" onchange="renderEntries()" /></div>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn grey sm" onclick="shiftDay(-1)">◀ <span id="b-prevDay"></span></button>
+        <button class="btn ghost sm" onclick="jumpToday()" id="b-today"></button>
+        <button class="btn grey sm" onclick="shiftDay(1)"><span id="b-nextDay"></span> ▶</button>
+      </div>
       <div class="field" style="margin:10px 0 0"><input type="text" id="entrySearch" placeholder="" oninput="renderEntries()" /></div>
       <div class="seg" style="margin:10px 0 0"><button id="shf-all" class="on" onclick="setShift('')"></button><button id="shf-m" onclick="setShift('morning')"></button><button id="shf-e" onclick="setShift('evening')"></button></div>
     </div>
@@ -2668,7 +2683,7 @@ const defaultState=()=>({
   settings:{ lang:'hi', defaultRate:50, currency:'₹', defaultShift:'morning', roundOff:false,
     waCode:'91', theme:'green', dark:false, pin:'', target:0, upi:'', upiName:'',
     retention:12, autoBackup:true, autoBackupDays:7, lastBackup:0, customCats:[], driveLink:'',
-    driveAuto:false, driveFileId:'', lastDriveBackup:0,
+    driveAuto:false, driveFileId:'', lastDriveBackup:0, autoShift:true,
     business:{ name:'दूध हिसाब', owner:'', phone:'', address:'' } },
   account:null
 });
@@ -2746,9 +2761,10 @@ const T={
   entry_saved:'एंट्री सेव', entry_updated:'एंट्री अपडेट', entry_deleted:'एंट्री हटी', party_added:'जुड़ गया', party_updated:'अपडेट', party_deleted:'हटा दिया', payment_saved:'भुगतान सेव', deleted:'हटा दिया', add_party_first:'पहले ग्राहक जोड़ें', enter_qty:'मात्रा डालें', enter_amount:'रकम डालें', enter_name:'नाम डालें', no_data_toast:'कोई डेटा नहीं', summary_today:'आज का सारांश', auto_default_none:'किसी की डिफ़ॉल्ट मात्रा सेट नहीं', auto_default_confirm:'{n} ग्राहकों की आज की एंट्री बनाई जाए?', auto_default_done:'एंट्री बन गईं',
   c_del:'हटाना है?', c_del_party_entries:'इस पार्टी की एंट्री/भुगतान भी मौजूद हैं। फिर भी हटाना है?', c_load_backup:'मौजूदा डेटा बदलेगा। आगे बढ़ें?', c_restore:'ऑटो-बैकअप से डेटा बदलेगा। आगे बढ़ें?', c_clear1:'सारा डेटा हमेशा के लिए मिट जाएगा। पक्का?', c_clear2:'यह वापस नहीं आएगा। पुष्टि करें।', c_holiday:'छुट्टी हटानी है?', c_whole:'पूरे दिन (सुबह+शाम) की एंट्री बनाई जाए?',
   lock_title:'PIN डालें', lock_wrong:'गलत PIN', unlock:'खोलें', pin_set:'PIN सेट करें', pin_again:'PIN दोबारा', pin_mismatch:'PIN मेल नहीं', pin_on:'PIN लॉक चालू', pin_off:'PIN लॉक बंद', pin_need4:'4 अंकों का PIN',
-  g_account:'Google खाता', g_intro:'अपने Google खाते से साइन इन करें — आपका नाम और फ़ोटो ऐप में दिखेगा। डेटा आपके फ़ोन में ही रहता है।', g_signin:'Google से साइन इन करें', g_signout:'साइन आउट', g_signedin:'साइन इन हो गया', g_signedout:'साइन आउट हो गया', g_loading:'साइन-इन बटन लोड हो रहा है…', g_error:'साइन इन नहीं हो सका', g_note:'यह पहचान सिर्फ़ इस डिवाइस पर सेव होती है। बैकअप/डेटा आपके फ़ोन में ही रहता है।', g_origin_hint:'ध्यान दें: साइन-इन तभी चलेगा जब इस पेज का पता (origin) Google Cloud Console में "Authorized JavaScript origins" में जोड़ा गया हो।', g_owner_fill:'Google नाम से मालिक का नाम भरें',
+  g_account:'Google खाता', g_intro:'अपने Google खाते से साइन इन करें — आपका नाम और फ़ोटो ऐप में दिखेगा। डेटा आपके फ़ोन में ही रहता है।', g_signin:'Google से साइन इन करें', g_signout:'साइन आउट', g_signedin:'साइन इन हो गया', g_signedout:'साइन आउट हो गया', g_loading:'साइन-इन बटन लोड हो रहा है…', g_error:'साइन इन नहीं हो सका', g_note:'यह पहचान सिर्फ़ इस डिवाइस पर सेव होती है। बैकअप/डेटा आपके फ़ोन में ही रहता है।', g_origin_hint:'ध्यान दें: साइन-इन तभी चलेगा जब इस पेज का पता (origin) Google Cloud Console में "Authorized JavaScript origins" में जोड़ा गया हो।', g_owner_fill:'Google नाम से मालिक का नाम भरें', g_test_hint:'अगर Google "Access blocked / verification" error दे, तो Google Cloud Console → OAuth consent screen → Audience में अपना Gmail "Test users" में जोड़ें, या "Publish app" दबाएँ।',
   dr_title:'☁️ Google Drive बैकअप', dr_intro:'Google Drive में अपना डेटा सुरक्षित रखें। ऑटो-बैकअप चालू रहने पर हर बदलाव अपने आप Drive में सेव हो जाएगा।', dr_status:'स्थिति', dr_connect:'Drive से जोड़ें', dr_connected:'Drive जुड़ा हुआ है', dr_notconn:'Drive जुड़ा नहीं है', dr_reconnect:'Drive फिर से जोड़ें', dr_auto:'ऑटोमैटिक बैकअप', dr_auto_on:'ऑटो-बैकअप चालू', dr_auto_off:'ऑटो-बैकअप बंद', dr_auto_hint:'डेटा बदलते ही और नेट आने पर अपने आप Drive में सेव होगा।', dr_backup_now:'अभी बैकअप करें', dr_restore:'Drive से रिस्टोर करें', dr_last:'पिछला बैकअप', dr_never:'कभी नहीं', dr_saved:'Drive में बैकअप हो गया', dr_fail:'Drive बैकअप नहीं हो सका', dr_none:'Drive में कोई बैकअप नहीं मिला', dr_authfail:'Drive की अनुमति नहीं मिली', dr_needlogin:'Drive के लिए अनुमति नहीं मिली — दोबारा कोशिश करें', dr_login_first:'पहले ऊपर Google से साइन इन करें', dr_open_file:'Drive में फ़ाइल खोलें', dr_syncing:'सिंक हो रहा है…', dr_scope_hint:'ध्यान दें: Google Cloud Console में "Google Drive API" चालू करें और OAuth consent screen में Drive scope जोड़ें।', dr_go:'☁️ Drive बैकअप', off_msg:'आप ऑफ़लाइन हैं — डेटा फ़ोन में सेव हो रहा है, नेट आने पर Drive में सिंक होगा', on_msg:'ऑनलाइन — Drive से सिंक',
-  cal:'कैलेंडर', topcust:'टॉप ग्राहक', routes:'रूट सारांश', wastage:'वेस्टेज / नुकसान', animals:'पशु रजिस्टर', calc:'कैलकुलेटर', notes:'नोट्स', search_all:'खोज', cal_hint:'किसी दिन पर टैप करें — उस दिन की एंट्री खुल जाएगी।', route_hint:'ग्राहक के "रूट" के हिसाब से इस महीने का सारांश।', no_route:'रूट नहीं', w_add:'वेस्टेज जोड़ें', w_month_qty:'इस महीने की मात्रा', w_month_value:'इस महीने का मूल्य', reason:'कारण', reason_ph:'जैसे: गिर गया, खराब', rate:'रेट', a_count:'कुल पशु', a_daily:'रोज़ का दूध', a_month:'महीने का अनुमान', a_tag:'नाम / टैग', a_type:'प्रकार', a_yield:'रोज़ का दूध (L)', cow:'गाय', buffalo:'भैंस', day:'दिन', add:'जोड़ें', nt_ph:'नया नोट लिखें…', search_min:'कम से कम 2 अक्षर लिखें', calc_hint:'+ − × ÷ से तुरंत हिसाब। "=" दबाएँ।',
+  cal:'कैलेंडर', topcust:'टॉप ग्राहक', routes:'रूट सारांश', wastage:'वेस्टेज / नुकसान', animals:'पशु रजिस्टर', calc:'कैलकुलेटर', notes:'नोट्स', search_all:'खोज', cal_hint:'किसी दिन पर टैप करें — उस दिन की एंट्री खुल जाएगी।', route_hint:'ग्राहक के "रूट" के हिसाब से इस महीने का सारांश।', no_route:'रूट नहीं', w_add:'वेस्टेज जोड़ें', w_month_qty:'इस महीने की मात्रा', w_month_value:'इस महीने का मूल्य', reason:'कारण', reason_ph:'जैसे: गिर गया, खराब', rate:'रेट', a_count:'कुल पशु', a_daily:'रोज़ का दूध', a_month:'महीने का अनुमान', a_tag:'नाम / टैग', a_type:'प्रकार', a_yield:'रोज़ का दूध (L)', cow:'गाय', buffalo:'भैंस', day:'दिन', add:'जोड़ें', nt_ph:'नया नोट लिखें…', search_min:'कम से कम 2 अक्षर लिखें',
+  prev:'पिछला', next:'अगला', today:'आज', now_lbl:'अभी', auto_shift:'ऑटो शिफ्ट (समय के हिसाब से)', auto_shift_hint:'चालू रहने पर एंट्री खोलते ही सुबह/शाम अपने आप चुनी जाएगी।', entry_auto:'समय के हिसाब से अपने आप चुना', back:'पीछे', forward:'आगे', calc_hint:'+ − × ÷ से तुरंत हिसाब। "=" दबाएँ।',
   thank:'धन्यवाद 🙏', bill_title:'बिल', milk_word:'दूध', litres:'लीटर', statement_word:'स्टेटमेंट',
   help_body:'1) ग्राहक जोड़ें — नाम, नंबर, रेट, डिफ़ॉल्ट मात्रा और (चाहें तो) कई आइटम जैसे गाय/भैंस का दूध।\n2) रोज़ की एंट्री — ➕ से एक-एक, 🧺 से बल्क, या ⚡ से सबकी डिफ़ॉल्ट एंट्री एक साथ।\n3) बिल — दैनिक/10-दिन/15-दिन/मासिक चुनें; PDF, प्रिंट, WhatsApp/SMS, UPI QR।\n4) खाता (Ledger) व स्टेटमेंट — ग्राहक का पूरा हिसाब।\n5) मॉड्यूल टैब में बाकी सब कुछ — रिपोर्ट, खर्च, स्टॉक, रिमाइंडर, बैकअप, सेटिंग।\n6) नए मॉड्यूल — कैलेंडर, टॉप ग्राहक, रूट सारांश, वेस्टेज, पशु रजिस्टर, कैलकुलेटर, नोट्स, खोज।'
  },
@@ -2823,9 +2839,10 @@ const T={
   entry_saved:'Entry saved', entry_updated:'Entry updated', entry_deleted:'Entry deleted', party_added:'Added', party_updated:'Updated', party_deleted:'Deleted', payment_saved:'Payment saved', deleted:'Deleted', add_party_first:'Add a party first', enter_qty:'Enter quantity', enter_amount:'Enter amount', enter_name:'Enter name', no_data_toast:'No data', summary_today:'Today\u2019s summary', auto_default_none:'No default quantity set', auto_default_confirm:'Create today\u2019s entries for {n} customers?', auto_default_done:'Entries created',
   c_del:'Delete?', c_del_party_entries:'This party has entries/payments too. Delete anyway?', c_load_backup:'Current data will be replaced. Continue?', c_restore:'This will replace data with the auto-backup. Continue?', c_clear1:'All data will be erased permanently. Sure?', c_clear2:'This cannot be undone. Please confirm.', c_holiday:'Remove this holiday?', c_whole:'Create the whole day (morning+evening) entries?',
   lock_title:'Enter PIN', lock_wrong:'Wrong PIN', unlock:'Unlock', pin_set:'Set PIN', pin_again:'Repeat PIN', pin_mismatch:'PINs do not match', pin_on:'PIN lock on', pin_off:'PIN lock off', pin_need4:'Enter a 4-digit PIN',
-  g_account:'Google account', g_intro:'Sign in with your Google account — your name and photo will show in the app. Your data stays on this device.', g_signin:'Sign in with Google', g_signout:'Sign out', g_signedin:'Signed in', g_signedout:'Signed out', g_loading:'Loading sign-in button…', g_error:'Sign-in failed', g_note:'This identity is stored on this device only. Your backup/data stays on your phone.', g_origin_hint:'Note: sign-in works only after this page\u2019s origin is added under "Authorized JavaScript origins" in Google Cloud Console.', g_owner_fill:'Fill owner name from Google',
+  g_account:'Google account', g_intro:'Sign in with your Google account — your name and photo will show in the app. Your data stays on this device.', g_signin:'Sign in with Google', g_signout:'Sign out', g_signedin:'Signed in', g_signedout:'Signed out', g_loading:'Loading sign-in button…', g_error:'Sign-in failed', g_note:'This identity is stored on this device only. Your backup/data stays on your phone.', g_origin_hint:'Note: sign-in works only after this page\u2019s origin is added under "Authorized JavaScript origins" in Google Cloud Console.', g_owner_fill:'Fill owner name from Google', g_test_hint:'If Google shows an "Access blocked / verification" error, open Google Cloud Console → OAuth consent screen → Audience, add your Gmail under "Test users", or press "Publish app".',
   dr_title:'☁️ Google Drive backup', dr_intro:'Keep your data safe in Google Drive. With auto-backup on, every change is saved to Drive automatically.', dr_status:'Status', dr_connect:'Connect Drive', dr_connected:'Drive connected', dr_notconn:'Drive not connected', dr_reconnect:'Reconnect Drive', dr_auto:'Automatic backup', dr_auto_on:'Auto-backup on', dr_auto_off:'Auto-backup off', dr_auto_hint:'Saves to Drive automatically when data changes or the network returns.', dr_backup_now:'Back up now', dr_restore:'Restore from Drive', dr_last:'Last backup', dr_never:'Never', dr_saved:'Backed up to Drive', dr_fail:'Drive backup failed', dr_none:'No backup found in Drive', dr_authfail:'Drive permission not granted', dr_needlogin:'Drive permission not granted — try again', dr_login_first:'Sign in with Google above first', dr_open_file:'Open file in Drive', dr_syncing:'Syncing…', dr_scope_hint:'Note: enable "Google Drive API" in Google Cloud Console and add the Drive scope to the OAuth consent screen.', dr_go:'☁️ Drive backup', off_msg:'You are offline — data is being saved on your phone and will sync to Drive when the network returns', on_msg:'Online — syncing with Drive',
-  cal:'Calendar', topcust:'Top customers', routes:'Route summary', wastage:'Wastage / loss', animals:'Cattle register', calc:'Calculator', notes:'Notes', search_all:'Search', cal_hint:'Tap a day to open that day\u2019s entries.', route_hint:'This month\u2019s summary grouped by the customer\u2019s route.', no_route:'No route', w_add:'Add wastage', w_month_qty:'This month qty', w_month_value:'This month value', reason:'Reason', reason_ph:'e.g. spilled, spoiled', rate:'Rate', a_count:'Total animals', a_daily:'Daily milk', a_month:'Monthly estimate', a_tag:'Name / tag', a_type:'Type', a_yield:'Daily milk (L)', cow:'Cow', buffalo:'Buffalo', day:'day', add:'Add', nt_ph:'Write a new note…', search_min:'Type at least 2 letters', calc_hint:'Use + − × ÷ for quick maths. Press "=".',
+  cal:'Calendar', topcust:'Top customers', routes:'Route summary', wastage:'Wastage / loss', animals:'Cattle register', calc:'Calculator', notes:'Notes', search_all:'Search', cal_hint:'Tap a day to open that day\u2019s entries.', route_hint:'This month\u2019s summary grouped by the customer\u2019s route.', no_route:'No route', w_add:'Add wastage', w_month_qty:'This month qty', w_month_value:'This month value', reason:'Reason', reason_ph:'e.g. spilled, spoiled', rate:'Rate', a_count:'Total animals', a_daily:'Daily milk', a_month:'Monthly estimate', a_tag:'Name / tag', a_type:'Type', a_yield:'Daily milk (L)', cow:'Cow', buffalo:'Buffalo', day:'day', add:'Add', nt_ph:'Write a new note…', search_min:'Type at least 2 letters',
+  prev:'Previous', next:'Next', today:'Today', now_lbl:'Now', auto_shift:'Auto shift (by time of day)', auto_shift_hint:'When on, morning/evening is chosen automatically when you open an entry.', entry_auto:'Chosen automatically from the time', back:'Back', forward:'Forward', calc_hint:'Use + − × ÷ for quick maths. Press "=".',
   thank:'Thank you 🙏', bill_title:'Bill', milk_word:'Milk', litres:'litres',
   help_body:'1) Add customers — name, number, rate, default quantity and (optionally) multiple items like cow/buffalo milk.\n2) Daily entry — ➕ one by one, 🧺 bulk, or ⚡ all default entries at once.\n3) Bill — pick daily/10-day/15-day/monthly; PDF, print, WhatsApp/SMS, UPI QR.\n4) Ledger & statement — a customer\u2019s full account.\n5) The Modules tab holds everything else — reports, expenses, stock, reminders, backup, settings.\n6) New modules — Calendar, Top customers, Route summary, Wastage, Cattle register, Calculator, Notes, Search.'
  }
@@ -2971,6 +2988,7 @@ function setLang(l){ LANG=l; state.settings.lang=l; save(); applyStatic(); refre
 function setTheme(th){ state.settings.theme=th; save(); applyTheme(); renderSettingsBits(); }
 function toggleDark(){ state.settings.dark=!state.settings.dark; save(); applyTheme(); renderSettingsBits(); }
 function toggleRound(){ state.settings.roundOff=!state.settings.roundOff; save(); renderSettingsBits(); }
+function toggleAutoShift(){ state.settings.autoShift=!(state.settings.autoShift!==false); save(); renderSettingsBits(); toast(t('saved')); }
 function toggleAutoBackup(){ state.settings.autoBackup=!state.settings.autoBackup; save(); applyStatic(); renderBackupReminder(); toast(t('saved')); }
 function togglePin(){
   if(state.settings.pin){ if(confirm(t('pin')+' — '+t('pin_off')+'?')){ state.settings.pin=''; save(); renderSettingsBits(); toast(t('pin_off')); } }
@@ -3008,6 +3026,7 @@ function buildLockPad(){
 
 /* ---------------- nav + modules ---------------- */
 let uiPartyType='customer', uiRoute='', billPeriod='month', repType='month', curModule='';
+let uiTab='home', navStack=[], navPos=-1, navSilent=false;
 const MODULES=[
   {id:'bulk',       ic:'🧺', hi:'बल्क एंट्री',        en:'Bulk entry',        render:modBulk},
   {id:'bulkMonthly',ic:'🗓️', hi:'बल्क मासिक एंट्री',  en:'Bulk monthly entry',render:modBulkMonthly},
@@ -3052,6 +3071,7 @@ function switchTab(tab){
   if(tab==='bills') renderBilling();
   if(tab==='more') renderHub();
   if(tab==='module'){ document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab==='more')); $('fab').style.display='none'; }
+  uiTab=tab; try{ navPush(); }catch(e){}
 }
 function renderHub(){
   $('moduleTiles').innerHTML=MODULES.map(m=>`<div class="tile" onclick="openModule('${m.id}')"><span class="ti">${m.ic}</span><span class="tt">${esc(LANG==='hi'?m.hi:m.en)}</span><span class="ts">${t('mod_'+m.id)===('mod_'+m.id)?'':''}</span></div>`).join('');
@@ -3064,6 +3084,30 @@ function openModule(id){
   switchTab('module');
 }
 function closeModule(){ curModule=''; switchTab('more'); }
+/* ---- clock + auto shift + back/forward navigation ---- */
+function autoShift(){ return (new Date().getHours()<12)?'morning':'evening'; }
+function tickClock(){
+  const el=$('topClock'); if(!el) return;
+  const d=new Date(); const p=n=>String(n).padStart(2,'0');
+  el.textContent=p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());
+  const w=$('entryWhen');
+  if(w){ const sh=autoShift(); w.textContent='🕐 '+t('now_lbl')+' '+p(d.getHours())+':'+p(d.getMinutes())+' · '+(sh==='evening'?t('evening'):t('morning'))+' — '+t('entry_auto'); }
+}
+function navLoc(){ return curModule?('m:'+curModule):('t:'+uiTab); }
+function navLabel(k){
+  if(!k) return '';
+  if(k.indexOf('m:')===0){ const m=MODULES.find(x=>x.id===k.slice(2)); return m?(m.ic+' '+(LANG==='hi'?m.hi:m.en)):''; }
+  const tab=k.slice(2); const map={home:'tab_home',entries:'tab_entries',parties:'tab_parties',bills:'tab_bills',more:'tab_more',module:'tab_more'};
+  return t(map[tab]||'tab_home');
+}
+function navPush(){ if(navSilent) return; const k=navLoc(); if(navStack[navPos]===k) return; navStack=navStack.slice(0,navPos+1); navStack.push(k); navPos=navStack.length-1; renderNavBtns(); }
+function renderNavBtns(){ const b=$('navBack'), f=$('navFwd'); if(!b||!f) return; b.disabled=navPos<=0; f.disabled=navPos>=navStack.length-1; const l=$('navLbl'); if(l) l.textContent=navLabel(navStack[navPos]); }
+function navApply(k){ navSilent=true; if(k.indexOf('m:')===0){ openModule(k.slice(2)); } else { curModule=''; switchTab(k.slice(2)); } navSilent=false; renderNavBtns(); }
+function navBack(){ if(navPos>0){ navPos--; navApply(navStack[navPos]); } }
+function navForward(){ if(navPos<navStack.length-1){ navPos++; navApply(navStack[navPos]); } }
+function entryNav(dir){ const sel=$('f_party'); if(!sel) return; const list=state.parties.filter(p=>p.active!==false); if(!list.length) return; let i=list.findIndex(p=>p.id===sel.value); if(i<0) i=0; i=(i+dir+list.length)%list.length; sel.value=list[i].id; window._qtyAuto=false; onEntryParty(''); }
+function shiftDay(dir){ const el=$('entryDate'); if(!el) return; const d=new Date((el.value||todayStr())+'T00:00:00'); d.setDate(d.getDate()+dir); el.value=ymd(d); renderEntries(); }
+function jumpToday(){ const el=$('entryDate'); if(el){ el.value=todayStr(); renderEntries(); } }
 function rerenderModule(){ if(curModule) { const m=MODULES.find(x=>x.id===curModule); if(m) $('moduleBody').innerHTML=m.render(); } }
 function openModal(html){ $('sheet').innerHTML='<div class="handle"></div>'+html; $('modalBg').classList.add('on'); }
 function closeModal(){ $('modalBg').classList.remove('on'); }
@@ -3172,19 +3216,25 @@ function openEntry(id){
   const edit=id?state.entries.find(e=>e.id===id):null;
   if(!state.parties.length){ toast(t('add_party_first')); switchTab('parties'); openParty(); return; }
   const d=edit?edit.date:($('entryDate').value||todayStr());
+  const defShift=edit?edit.shift:((state.settings.autoShift!==false)?autoShift():state.settings.defaultShift);
   window._qtyAuto=false;
   const first=edit?edit.partyId:state.parties[0].id;
   const opts=state.parties.filter(p=>p.active!==false).map(p=>`<option value="${p.id}" ${first===p.id?'selected':''}>${esc(p.name)} — ${isSup(p)?t('purchase'):t('sale')}</option>`).join('');
   openModal(`
     <div class="sheet-head"><h2>${edit?t('edit_entry'):t('new_entry')}</h2><button class="x" onclick="closeModal()">✕</button></div>
     <div class="field"><label>${t('party_lbl')}</label><select id="f_party" onchange="onEntryParty()">${opts}</select></div>
+    <div class="btn-row" style="margin:-4px 0 8px">
+      <button class="btn grey sm" onclick="entryNav(-1)">◀ ${t('prev')}</button>
+      <button class="btn grey sm" onclick="entryNav(1)">${t('next')} ▶</button>
+    </div>
     <div class="field" id="f_itemWrap" style="display:none"><label>${t('item_lbl')}</label><select id="f_item" onchange="previewAmt()"></select></div>
     <div class="row2">
       <div class="field"><label>${t('date')}</label><input type="date" id="f_date" value="${d}" /></div>
       <div class="field"><label>${t('shift')}</label><select id="f_shift">
-        <option value="morning" ${(!edit&&state.settings.defaultShift!=='evening')||(edit&&edit.shift==='morning')?'selected':''}>${t('morning')}</option>
-        <option value="evening" ${(!edit&&state.settings.defaultShift==='evening')||(edit&&edit.shift==='evening')?'selected':''}>${t('evening')}</option></select></div>
+        <option value="morning" ${defShift!=='evening'?'selected':''}>${t('morning')}</option>
+        <option value="evening" ${defShift==='evening'?'selected':''}>${t('evening')}</option></select></div>
     </div>
+    ${edit?'':`<div class="hint" id="entryWhen" style="margin:-2px 0 8px"></div>`}
     <div class="field" style="margin-bottom:8px"><label>${t('quick_qty')}</label><div class="chips">${[0.5,1,1.5,2,2.5,3,4,5].map(v=>`<span class="chip" onclick="setQty(${v})">${v}</span>`).join('')}</div></div>
     <div class="row2">
       <div class="field"><label>${t('qty')}</label><input type="number" step="0.01" inputmode="decimal" id="f_qty" value="${edit?edit.qty:''}" placeholder="${t('qty_ph')}" oninput="previewAmt()" /></div>
@@ -3197,6 +3247,7 @@ function openEntry(id){
       <button class="btn" onclick="saveEntry(${edit?"'"+edit.id+"'":'null'})">${t('save')}</button>
     </div>`);
   onEntryParty(edit?edit.itemId:'');
+  try{ tickClock(); }catch(e){}
 }
 function onEntryParty(itemSel){
   const p=partyById($('f_party').value), q=$('f_qty');
@@ -4337,7 +4388,8 @@ function modAccount(){
   return `<div class="card"><h3>${t('g_account')}</h3>
     <div class="hint" style="margin-bottom:14px">${t('g_intro')}</div>
     <div id="gSignInBtn"><div class="hint">${t('g_loading')}</div></div>
-    <div class="hint" style="margin-top:12px">${t('g_origin_hint')}</div></div>`;
+    <div class="hint" style="margin-top:12px">${t('g_origin_hint')}</div>
+    <div class="hint" style="margin-top:8px;color:var(--amber)">${t('g_test_hint')}</div></div>`;
 }
 function modSettings(){
   return `<div class="card"><h3>${t('settings')}</h3>
@@ -4354,6 +4406,8 @@ function modSettings(){
       <div class="field"><label>${t('upi_name')}</label><input type="text" id="setUpiName" /></div></div>
     <div class="field"><label>${t('theme')}</label><div class="themes" id="themeBox"></div></div>
     <div class="sw"><span class="lb">${t('dark')}</span><div class="tr" id="sw-dark" onclick="toggleDark()"></div></div>
+    <div class="sw"><span class="lb">${t('auto_shift')}</span><div class="tr" id="sw-autoshift" onclick="toggleAutoShift()"></div></div>
+    <div class="hint" style="margin-top:-4px">${t('auto_shift_hint')}</div>
     <div class="sw"><span class="lb">${t('round')}</span><div class="tr" id="sw-round" onclick="toggleRound()"></div></div>
     <div class="sw"><span class="lb">${t('pin')}</span><div class="tr" id="sw-pin" onclick="togglePin()"></div></div>
     <div class="sw"><span class="lb">${t('auto_backup')}</span><div class="tr" id="sw-ab" onclick="toggleAutoBackup()"></div></div>
@@ -4366,6 +4420,7 @@ function modSettings(){
 }
 function renderSettingsBits(){
   if($('sw-dark')) $('sw-dark').classList.toggle('on',!!state.settings.dark);
+  if($('sw-autoshift')) $('sw-autoshift').classList.toggle('on',state.settings.autoShift!==false);
   if($('sw-round')) $('sw-round').classList.toggle('on',!!state.settings.roundOff);
   if($('sw-pin')) $('sw-pin').classList.toggle('on',!!state.settings.pin);
   if($('sw-ab')) $('sw-ab').classList.toggle('on',!!state.settings.autoBackup);
@@ -4915,7 +4970,8 @@ function applyStatic(){
     'b-addEntryHome':'add_entry','b-addEntry':'add_entry','b-bulk':'bulk_entry','b-bulkHome':'bulk_entry','b-autoHome':'whole_day','b-autoEntry':'whole_day',
     'b-remind':'reminders','b-bulkRemind':'bulk_remind','b-addParty':'add_customer','b-bkNow':'backup_now','b-allPdf':'all_pdf','b-allPrint':'print','b-summary':'send','b-shareChart':'send',
     'b-morHome':'morning_entry','b-eveHome':'evening_entry',
-    'per-day':'rep_day','per-d10':'rep_tenday','per-d15':'rep_d15','per-month':'rep_month','seg-cust':'customers','seg-sup':'farmers'};
+    'per-day':'rep_day','per-d10':'rep_tenday','per-d15':'rep_d15','per-month':'rep_month','seg-cust':'customers','seg-sup':'farmers',
+    'b-prevDay':'prev','b-today':'today','b-nextDay':'next'};
   for(const k in map) if($(k)) $(k).textContent=t(map[k]);
   $('b-addParty').textContent=uiPartyType==='supplier'?t('add_farmer'):t('add_customer');
   if($('partySearch')) $('partySearch').placeholder=t('search_ph');
@@ -4933,6 +4989,7 @@ function init(){
   loadHandle();
   if(state.settings.pin) showLock();
   renderHeaderAvatar(); waitGis(); initOnline(); registerSW();
+  tickClock(); setInterval(tickClock,1000); renderNavBtns();
 }
 init();
 </script>
