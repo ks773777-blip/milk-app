@@ -52,6 +52,18 @@
   #gSignInBtn{min-height:44px}
   .netbar{position:fixed;left:0;right:0;top:0;z-index:80;background:var(--amber);color:#fff;text-align:center;font-size:13px;font-weight:600;padding:8px 12px;display:none}
   .dr-chip{font-size:12px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--green-l);color:var(--green-d)}
+  .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+  .cal-h{font-size:11px;color:var(--muted);text-align:center;font-weight:700;padding-bottom:4px}
+  .cal-c{min-height:52px;border-radius:10px;background:var(--dash);border:1px solid var(--line);padding:5px 3px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;cursor:pointer;overflow:hidden}
+  .cal-c.today{border-color:var(--green);box-shadow:0 0 0 2px var(--green-l)}
+  .cal-c.empty{background:transparent;border:none;cursor:default}
+  .cal-c .d{font-size:12.5px;font-weight:700;line-height:1.1}
+  .cal-c .q{font-size:9.5px;color:var(--green-d);font-weight:700}
+  .cal-c .a{font-size:9px;color:var(--muted)}
+  .calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .calc-k{padding:14px 0;border-radius:12px;background:var(--soft);font-size:18px;font-weight:700}
+  .calc-k.op{background:var(--green-l);color:var(--green-d)}
+  .calc-k.clr{background:var(--red-l);color:var(--red)}
   main{padding:14px 14px 20px;max-width:760px;margin:0 auto}
   .view{display:none;animation:fade .18s ease}
   .view.active{display:block}
@@ -2652,6 +2664,7 @@ const OLD_KEYS=['milk_manager_data_v4','milk_manager_data_v3','milk_manager_data
 
 const defaultState=()=>({
   parties:[], entries:[], payments:[], expenses:[], items:[], moves:[], holidays:[],
+  notes:[], wastage:[], animals:[],
   settings:{ lang:'hi', defaultRate:50, currency:'₹', defaultShift:'morning', roundOff:false,
     waCode:'91', theme:'green', dark:false, pin:'', target:0, upi:'', upiName:'',
     retention:12, autoBackup:true, autoBackupDays:7, lastBackup:0, customCats:[], driveLink:'',
@@ -2735,8 +2748,9 @@ const T={
   lock_title:'PIN डालें', lock_wrong:'गलत PIN', unlock:'खोलें', pin_set:'PIN सेट करें', pin_again:'PIN दोबारा', pin_mismatch:'PIN मेल नहीं', pin_on:'PIN लॉक चालू', pin_off:'PIN लॉक बंद', pin_need4:'4 अंकों का PIN',
   g_account:'Google खाता', g_intro:'अपने Google खाते से साइन इन करें — आपका नाम और फ़ोटो ऐप में दिखेगा। डेटा आपके फ़ोन में ही रहता है।', g_signin:'Google से साइन इन करें', g_signout:'साइन आउट', g_signedin:'साइन इन हो गया', g_signedout:'साइन आउट हो गया', g_loading:'साइन-इन बटन लोड हो रहा है…', g_error:'साइन इन नहीं हो सका', g_note:'यह पहचान सिर्फ़ इस डिवाइस पर सेव होती है। बैकअप/डेटा आपके फ़ोन में ही रहता है।', g_origin_hint:'ध्यान दें: साइन-इन तभी चलेगा जब इस पेज का पता (origin) Google Cloud Console में "Authorized JavaScript origins" में जोड़ा गया हो।', g_owner_fill:'Google नाम से मालिक का नाम भरें',
   dr_title:'☁️ Google Drive बैकअप', dr_intro:'Google Drive में अपना डेटा सुरक्षित रखें। ऑटो-बैकअप चालू रहने पर हर बदलाव अपने आप Drive में सेव हो जाएगा।', dr_status:'स्थिति', dr_connect:'Drive से जोड़ें', dr_connected:'Drive जुड़ा हुआ है', dr_notconn:'Drive जुड़ा नहीं है', dr_reconnect:'Drive फिर से जोड़ें', dr_auto:'ऑटोमैटिक बैकअप', dr_auto_on:'ऑटो-बैकअप चालू', dr_auto_off:'ऑटो-बैकअप बंद', dr_auto_hint:'डेटा बदलते ही और नेट आने पर अपने आप Drive में सेव होगा।', dr_backup_now:'अभी बैकअप करें', dr_restore:'Drive से रिस्टोर करें', dr_last:'पिछला बैकअप', dr_never:'कभी नहीं', dr_saved:'Drive में बैकअप हो गया', dr_fail:'Drive बैकअप नहीं हो सका', dr_none:'Drive में कोई बैकअप नहीं मिला', dr_authfail:'Drive की अनुमति नहीं मिली', dr_needlogin:'Drive के लिए अनुमति नहीं मिली — दोबारा कोशिश करें', dr_login_first:'पहले ऊपर Google से साइन इन करें', dr_open_file:'Drive में फ़ाइल खोलें', dr_syncing:'सिंक हो रहा है…', dr_scope_hint:'ध्यान दें: Google Cloud Console में "Google Drive API" चालू करें और OAuth consent screen में Drive scope जोड़ें।', dr_go:'☁️ Drive बैकअप', off_msg:'आप ऑफ़लाइन हैं — डेटा फ़ोन में सेव हो रहा है, नेट आने पर Drive में सिंक होगा', on_msg:'ऑनलाइन — Drive से सिंक',
+  cal:'कैलेंडर', topcust:'टॉप ग्राहक', routes:'रूट सारांश', wastage:'वेस्टेज / नुकसान', animals:'पशु रजिस्टर', calc:'कैलकुलेटर', notes:'नोट्स', search_all:'खोज', cal_hint:'किसी दिन पर टैप करें — उस दिन की एंट्री खुल जाएगी।', route_hint:'ग्राहक के "रूट" के हिसाब से इस महीने का सारांश।', no_route:'रूट नहीं', w_add:'वेस्टेज जोड़ें', w_month_qty:'इस महीने की मात्रा', w_month_value:'इस महीने का मूल्य', reason:'कारण', reason_ph:'जैसे: गिर गया, खराब', rate:'रेट', a_count:'कुल पशु', a_daily:'रोज़ का दूध', a_month:'महीने का अनुमान', a_tag:'नाम / टैग', a_type:'प्रकार', a_yield:'रोज़ का दूध (L)', cow:'गाय', buffalo:'भैंस', day:'दिन', add:'जोड़ें', nt_ph:'नया नोट लिखें…', search_min:'कम से कम 2 अक्षर लिखें', calc_hint:'+ − × ÷ से तुरंत हिसाब। "=" दबाएँ।',
   thank:'धन्यवाद 🙏', bill_title:'बिल', milk_word:'दूध', litres:'लीटर', statement_word:'स्टेटमेंट',
-  help_body:'1) ग्राहक जोड़ें — नाम, नंबर, रेट, डिफ़ॉल्ट मात्रा और (चाहें तो) कई आइटम जैसे गाय/भैंस का दूध।\n2) रोज़ की एंट्री — ➕ से एक-एक, 🧺 से बल्क, या ⚡ से सबकी डिफ़ॉल्ट एंट्री एक साथ।\n3) बिल — दैनिक/10-दिन/15-दिन/मासिक चुनें; PDF, प्रिंट, WhatsApp/SMS, UPI QR।\n4) खाता (Ledger) व स्टेटमेंट — ग्राहक का पूरा हिसाब।\n5) मॉड्यूल टैब में बाकी सब कुछ — रिपोर्ट, खर्च, स्टॉक, रिमाइंडर, बैकअप, सेटिंग।'
+  help_body:'1) ग्राहक जोड़ें — नाम, नंबर, रेट, डिफ़ॉल्ट मात्रा और (चाहें तो) कई आइटम जैसे गाय/भैंस का दूध।\n2) रोज़ की एंट्री — ➕ से एक-एक, 🧺 से बल्क, या ⚡ से सबकी डिफ़ॉल्ट एंट्री एक साथ।\n3) बिल — दैनिक/10-दिन/15-दिन/मासिक चुनें; PDF, प्रिंट, WhatsApp/SMS, UPI QR।\n4) खाता (Ledger) व स्टेटमेंट — ग्राहक का पूरा हिसाब।\n5) मॉड्यूल टैब में बाकी सब कुछ — रिपोर्ट, खर्च, स्टॉक, रिमाइंडर, बैकअप, सेटिंग।\n6) नए मॉड्यूल — कैलेंडर, टॉप ग्राहक, रूट सारांश, वेस्टेज, पशु रजिस्टर, कैलकुलेटर, नोट्स, खोज।'
  },
  en:{
   tagline:'Milk Manager',
@@ -2811,8 +2825,9 @@ const T={
   lock_title:'Enter PIN', lock_wrong:'Wrong PIN', unlock:'Unlock', pin_set:'Set PIN', pin_again:'Repeat PIN', pin_mismatch:'PINs do not match', pin_on:'PIN lock on', pin_off:'PIN lock off', pin_need4:'Enter a 4-digit PIN',
   g_account:'Google account', g_intro:'Sign in with your Google account — your name and photo will show in the app. Your data stays on this device.', g_signin:'Sign in with Google', g_signout:'Sign out', g_signedin:'Signed in', g_signedout:'Signed out', g_loading:'Loading sign-in button…', g_error:'Sign-in failed', g_note:'This identity is stored on this device only. Your backup/data stays on your phone.', g_origin_hint:'Note: sign-in works only after this page\u2019s origin is added under "Authorized JavaScript origins" in Google Cloud Console.', g_owner_fill:'Fill owner name from Google',
   dr_title:'☁️ Google Drive backup', dr_intro:'Keep your data safe in Google Drive. With auto-backup on, every change is saved to Drive automatically.', dr_status:'Status', dr_connect:'Connect Drive', dr_connected:'Drive connected', dr_notconn:'Drive not connected', dr_reconnect:'Reconnect Drive', dr_auto:'Automatic backup', dr_auto_on:'Auto-backup on', dr_auto_off:'Auto-backup off', dr_auto_hint:'Saves to Drive automatically when data changes or the network returns.', dr_backup_now:'Back up now', dr_restore:'Restore from Drive', dr_last:'Last backup', dr_never:'Never', dr_saved:'Backed up to Drive', dr_fail:'Drive backup failed', dr_none:'No backup found in Drive', dr_authfail:'Drive permission not granted', dr_needlogin:'Drive permission not granted — try again', dr_login_first:'Sign in with Google above first', dr_open_file:'Open file in Drive', dr_syncing:'Syncing…', dr_scope_hint:'Note: enable "Google Drive API" in Google Cloud Console and add the Drive scope to the OAuth consent screen.', dr_go:'☁️ Drive backup', off_msg:'You are offline — data is being saved on your phone and will sync to Drive when the network returns', on_msg:'Online — syncing with Drive',
+  cal:'Calendar', topcust:'Top customers', routes:'Route summary', wastage:'Wastage / loss', animals:'Cattle register', calc:'Calculator', notes:'Notes', search_all:'Search', cal_hint:'Tap a day to open that day\u2019s entries.', route_hint:'This month\u2019s summary grouped by the customer\u2019s route.', no_route:'No route', w_add:'Add wastage', w_month_qty:'This month qty', w_month_value:'This month value', reason:'Reason', reason_ph:'e.g. spilled, spoiled', rate:'Rate', a_count:'Total animals', a_daily:'Daily milk', a_month:'Monthly estimate', a_tag:'Name / tag', a_type:'Type', a_yield:'Daily milk (L)', cow:'Cow', buffalo:'Buffalo', day:'day', add:'Add', nt_ph:'Write a new note…', search_min:'Type at least 2 letters', calc_hint:'Use + − × ÷ for quick maths. Press "=".',
   thank:'Thank you 🙏', bill_title:'Bill', milk_word:'Milk', litres:'litres',
-  help_body:'1) Add customers — name, number, rate, default quantity and (optionally) multiple items like cow/buffalo milk.\n2) Daily entry — ➕ one by one, 🧺 bulk, or ⚡ all default entries at once.\n3) Bill — pick daily/10-day/15-day/monthly; PDF, print, WhatsApp/SMS, UPI QR.\n4) Ledger & statement — a customer\u2019s full account.\n5) The Modules tab holds everything else — reports, expenses, stock, reminders, backup, settings.'
+  help_body:'1) Add customers — name, number, rate, default quantity and (optionally) multiple items like cow/buffalo milk.\n2) Daily entry — ➕ one by one, 🧺 bulk, or ⚡ all default entries at once.\n3) Bill — pick daily/10-day/15-day/monthly; PDF, print, WhatsApp/SMS, UPI QR.\n4) Ledger & statement — a customer\u2019s full account.\n5) The Modules tab holds everything else — reports, expenses, stock, reminders, backup, settings.\n6) New modules — Calendar, Top customers, Route summary, Wastage, Cattle register, Calculator, Notes, Search.'
  }
 };
 let LANG='hi';
@@ -2837,6 +2852,7 @@ function deepDefaults(d){
   s.settings.business=Object.assign(defaultState().settings.business,(d.settings&&d.settings.business)||{});
   if(d.settings&&d.settings.appName&&!s.settings.business.name) s.settings.business.name=d.settings.appName;
   s.account=d.account||null;
+  s.notes=d.notes||[]; s.wastage=d.wastage||[]; s.animals=d.animals||[];
   s.parties.forEach(p=>{ if(!p.items) p.items=[]; });
   return s;
 }
@@ -2851,6 +2867,7 @@ function migrate(o){
   s.payments=(o.payments||[]).map(p=>({ id:p.id,date:p.date,partyId:p.partyId||p.customerId,amount:p.amount,mode:p.mode||'',note:p.note||'' }));
   s.expenses=o.expenses||[]; s.items=o.items||[]; s.moves=o.moves||[]; s.holidays=o.holidays||[];
   s.account=o.account||null;
+  s.notes=o.notes||[]; s.wastage=o.wastage||[]; s.animals=o.animals||[];
   return s;
 }
 function save(){ rebuildIndex(); try{ localStorage.setItem(STORE_KEY,JSON.stringify(state)); }catch(e){ toast('⚠️ Storage full'); } try{ scheduleAutoDriveBackup(); }catch(e){} }
@@ -3013,6 +3030,14 @@ const MODULES=[
   {id:'register',   ic:'🗓️', hi:'डेली रजिस्टर',       en:'Daily register',    render:modRegister, after:renderRegister},
   {id:'drive',      ic:'☁️', hi:'Drive बैकअप',        en:'Drive backup',      render:modDrive,    after:renderDriveBits},
   {id:'datacheck',  ic:'✅', hi:'डेटा जाँच',           en:'Data check',        render:modDataCheck, after:renderDataCheck},
+  {id:'calendar',   ic:'📅', hi:'कैलेंडर',            en:'Calendar',          render:modCalendar, after:renderCalendar},
+  {id:'topcust',    ic:'🏆', hi:'टॉप ग्राहक',          en:'Top customers',     render:modTopCust,  after:function(){renderTopCust('month');}},
+  {id:'routes',     ic:'🚚', hi:'रूट सारांश',          en:'Route summary',     render:modRoutes,   after:renderRoutes},
+  {id:'wastage',    ic:'📉', hi:'वेस्टेज / नुकसान',    en:'Wastage / loss',    render:modWastage},
+  {id:'animals',    ic:'🐄', hi:'पशु रजिस्टर',         en:'Cattle register',   render:modAnimals},
+  {id:'calc',       ic:'🧮', hi:'कैलकुलेटर',           en:'Calculator',        render:modCalc},
+  {id:'notes',      ic:'📝', hi:'नोट्स',               en:'Notes',             render:modNotes},
+  {id:'search',     ic:'🔍', hi:'खोज',                en:'Search',            render:modSearch},
   {id:'help',       ic:'❓', hi:'मदद',                en:'Help',              render:modHelp}
 ];
 function switchTab(tab){
@@ -3054,7 +3079,8 @@ function renderHome(){
   const mS=mE.filter(e=>e.kind==='sale').reduce((s,e)=>s+e.amount,0);
   const mP=mE.filter(e=>e.kind==='purchase').reduce((s,e)=>s+e.amount,0);
   const mX=state.expenses.filter(x=>x.date.startsWith(m)).reduce((s,x)=>s+x.amount,0);
-  $('s-monthProfit').textContent=money(mS-mP-mX);
+  const mW=state.wastage.filter(x=>x.date.startsWith(m)).reduce((s,x)=>s+(x.value||0),0);
+  $('s-monthProfit').textContent=money(mS-mP-mX-mW);
   $('s-receivable').textContent=money(state.parties.filter(p=>!isSup(p)).reduce((s,p)=>s+Math.max(0,partyBalance(p.id)),0));
   $('homeDateLbl').textContent=fmtDate(today);
   renderChart(); renderLowStock(); renderTarget();
@@ -4055,7 +4081,8 @@ function pnlData(period,anchor){
   const purchase=e.filter(x=>x.kind==='purchase').reduce((s,x)=>s+x.amount,0);
   const byCat={}; state.expenses.filter(x=>x.date.startsWith(pre)).forEach(x=>{ byCat[x.cat]=(byCat[x.cat]||0)+x.amount; });
   const expTotal=Object.values(byCat).reduce((s,v)=>s+v,0);
-  return {pre,label:period==='year'?(''+y):fmtMonth(pre),income,purchase,gross:income-purchase,byCat,expTotal,net:income-purchase-expTotal};
+  const wastage=state.wastage.filter(x=>x.date.startsWith(pre)).reduce((s,x)=>s+(x.value||0),0);
+  return {pre,label:period==='year'?(''+y):fmtMonth(pre),income,purchase,gross:income-purchase,byCat,expTotal,wastage,net:income-purchase-expTotal-wastage};
 }
 function modPnl(){
   return `<div class="card">
@@ -4074,6 +4101,7 @@ function renderPnL(period){
     <div class="bill-line big"><span class="k">${t('gross_profit')}</span><span class="v">${money2(d.gross)}</span></div>`;
   CATS.forEach(c=>{ if(d.byCat[c]) html+=`<div class="bill-line"><span class="k">${catLabel(c)}</span><span class="v">- ${money2(d.byCat[c])}</span></div>`; });
   (state.settings.customCats||[]).forEach(c=>{ if(d.byCat[c.id]) html+=`<div class="bill-line"><span class="k">${esc(c.name)}</span><span class="v">- ${money2(d.byCat[c.id])}</span></div>`; });
+  if(d.wastage) html+=`<div class="bill-line"><span class="k">${t('wastage')}</span><span class="v">- ${money2(d.wastage)}</span></div>`;
   html+=`<div class="bill-line tot"><span class="k">${t('net_profit')}</span><span class="v" style="color:${d.net>=0?'var(--green)':'var(--red)'}">${money2(d.net)}</span></div>
     <div class="hint" style="margin-top:8px">${d.label}</div>`;
   $('pnlBox').innerHTML=html;
@@ -4087,6 +4115,7 @@ function printPnL(){
     <div class="r"><span>${t('total_purchase_cost')}</span><span>- ${money(d.purchase)}</span></div>
     <div class="r b"><span>${t('gross_profit')}</span><span>${money(d.gross)}</span></div>
     ${CATS.filter(c=>d.byCat[c]).map(c=>`<div class="r"><span>${catLabel(c)}</span><span>- ${money(d.byCat[c])}</span></div>`).join('')}
+    ${d.wastage?`<div class="r"><span>${t('wastage')}</span><span>- ${money(d.wastage)}</span></div>`:''}
     <div class="r t"><span>${t('net_profit')}</span><span>${money(d.net)}</span></div>
     <script>setTimeout(function(){window.print();},350);<\/script></body></html>`); w.document.close();
 }
@@ -4658,6 +4687,199 @@ function initOnline(){
   updateOnlineStatus();
 }
 function registerSW(){ try{ if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function(){}); }catch(e){} }
+
+/* ================= NEW MODULES ================= */
+/* ---- 📅 Calendar ---- */
+let calMonth='';
+function modCalendar(){
+  if(!calMonth) calMonth=monthStr();
+  return `<div class="card">
+    <div class="btn-row" style="margin-bottom:10px">
+      <button class="btn grey sm" onclick="calMove(-1)">◀</button>
+      <button class="btn ghost sm" onclick="calToday()">${fmtMonth(calMonth)}</button>
+      <button class="btn grey sm" onclick="calMove(1)">▶</button>
+    </div>
+    <div id="calBox"></div>
+    <div class="hint" style="margin-top:10px">${t('cal_hint')}</div></div>`;
+}
+function calMove(d){ const [y,m]=calMonth.split('-').map(Number); const dt=new Date(y,m-1+d,1); calMonth=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0'); rerenderModule(); }
+function calToday(){ calMonth=monthStr(); rerenderModule(); }
+function calOpen(date){ const el=$('entryDate'); if(el) el.value=date; switchTab('entries'); renderEntries(); }
+function renderCalendar(){
+  const box=$('calBox'); if(!box) return;
+  const [y,m]=calMonth.split('-').map(Number);
+  const startDow=(new Date(y,m-1,1).getDay()+6)%7;
+  const days=lastDay(y,m); const D=IDX.date; const today=todayStr();
+  const dow=DOW[LANG].slice(1).concat(DOW[LANG][0]);
+  let html='<div class="cal">'+dow.map(d=>`<div class="cal-h">${d}</div>`).join('');
+  for(let i=0;i<startDow;i++) html+='<div class="cal-c empty"></div>';
+  for(let d=1;d<=days;d++){
+    const ds=y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const rec=D[ds]; const q=rec?rec.qty:0; const a=rec?rec.sale:0;
+    html+=`<div class="cal-c ${ds===today?'today':''}" onclick="calOpen('${ds}')"><span class="d">${d}</span>${q?`<span class="q">${num(q)}L</span>`:''}${a?`<span class="a">${money(a)}</span>`:''}</div>`;
+  }
+  html+='</div>';
+  box.innerHTML=html;
+}
+/* ---- 🏆 Top customers ---- */
+function modTopCust(){
+  return `<div class="card">
+    <div class="seg"><button id="tc-m" class="on" onclick="renderTopCust('month')">${t('rep_month')}</button><button id="tc-y" onclick="renderTopCust('year')">${t('rep_yearwise')}</button></div>
+    <div id="tcBox" style="margin-top:12px"></div></div>`;
+}
+function renderTopCust(period){
+  window._tc=period; if($('tc-m')) $('tc-m').classList.toggle('on',period==='month'); if($('tc-y')) $('tc-y').classList.toggle('on',period==='year');
+  const pre=period==='year'?(''+new Date().getFullYear()):monthStr();
+  const byP={}; state.entries.filter(e=>e.date.startsWith(pre)&&e.kind==='sale').forEach(e=>{ const o=byP[e.partyId]||(byP[e.partyId]={q:0,a:0}); o.q+=e.qty; o.a+=e.amount; });
+  const rows=Object.keys(byP).map(id=>({p:partyById(id),q:byP[id].q,a:byP[id].a})).filter(x=>x.p).sort((a,b)=>b.a-a.a);
+  const box=$('tcBox'); if(!box) return;
+  box.innerHTML=rows.length?rows.map((r,i)=>`<div class="list-item" onclick="openBillDetail('${r.p.id}',rangeFor('${period}','${todayStr()}'))">${avatarHtml(r.p)}
+    <div class="li-main"><div class="t">${i+1}. ${esc(r.p.name)}</div><div class="s">${num(r.q)} L • ${money(r.a)}</div></div>
+    <div class="li-amt"><div class="b">${money(r.a)}</div></div></div>`).join(''):'<div class="empty"><span class="big">📊</span>'+t('no_data_toast')+'</div>';
+}
+/* ---- 🚚 Route summary ---- */
+function modRoutes(){
+  return `<div class="card"><div class="hint" style="margin-bottom:10px">${t('route_hint')}</div><div id="routeBox"></div></div>`;
+}
+function renderRoutes(){
+  const box=$('routeBox'); if(!box) return;
+  const byR={};
+  state.parties.forEach(p=>{ const r=(p.route||'').trim()||t('no_route'); (byR[r]=byR[r]||[]).push(p); });
+  const pre=monthStr();
+  const keys=Object.keys(byR).sort((a,b)=>a.localeCompare(b));
+  box.innerHTML=keys.map(r=>{
+    const ps=byR[r]; const ids=ps.map(p=>p.id);
+    let q=0,a=0,due=0;
+    state.entries.filter(e=>e.date.startsWith(pre)&&e.kind==='sale'&&ids.indexOf(e.partyId)>=0).forEach(e=>{ q+=e.qty; a+=e.amount; });
+    ps.forEach(p=>{ due+=Math.max(0,partyBalance(p.id)); });
+    return `<div class="list-item"><div class="avatar">🚚</div><div class="li-main"><div class="t">${esc(r)}</div><div class="s">${ps.length} ${t('party_lbl')} • ${num(q)} L</div></div><div class="li-amt"><div class="a">${money(a)}</div>${due?`<div class="b due">${money(due)}</div>`:''}</div></div>`;
+  }).join('')||'<div class="empty">'+t('no_data_toast')+'</div>';
+}
+/* ---- 📉 Wastage / loss ---- */
+function modWastage(){
+  const m=monthStr(); const list=state.wastage.filter(w=>w.date.startsWith(m));
+  const tot=list.reduce((s,w)=>s+(w.value||0),0), totQ=list.reduce((s,w)=>s+(w.qty||0),0);
+  return `<div class="card"><h3>${t('wastage')}</h3>
+    <button class="btn" style="width:100%;margin-bottom:12px" onclick="openWastage()">➕ ${t('w_add')}</button>
+    <div class="bill-line"><span class="k">${t('w_month_qty')}</span><span class="v">${num(totQ)} L</span></div>
+    <div class="bill-line"><span class="k">${t('w_month_value')}</span><span class="v" style="color:var(--red)">${money(tot)}</span></div>
+    <div class="divider"></div>
+    <div>${list.length?list.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(wastageRow).join(''):'<div class="empty">'+t('no_data_toast')+'</div>'}</div></div>`;
+}
+function wastageRow(w){
+  return `<div class="list-item"><div class="avatar" style="background:var(--red-l);color:var(--red)">📉</div>
+    <div class="li-main"><div class="t">${fmtDate(w.date)}</div><div class="s">${num(w.qty)} L${w.reason?(' • '+esc(w.reason)):''}</div></div>
+    <div class="li-amt"><div class="b due">${money(w.value||0)}</div></div>
+    <button class="btn danger xs" onclick="delWastage('${w.id}')">🗑</button></div>`;
+}
+function openWastage(){
+  openModal(`<div class="sheet-head"><h2>${t('wastage')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>${t('date')}</label><input type="date" id="w_date" value="${todayStr()}" /></div>
+    <div class="row2"><div class="field"><label>${t('litres')}</label><input type="number" step="0.1" inputmode="decimal" id="w_qty" /></div>
+      <div class="field"><label>${t('rate')}</label><input type="number" step="0.01" inputmode="decimal" id="w_rate" value="${state.settings.defaultRate||0}" /></div></div>
+    <div class="field"><label>${t('reason')}</label><input type="text" id="w_reason" placeholder="${t('reason_ph')}" /></div>
+    <button class="btn" onclick="saveWastage()">${t('save')}</button>`);
+}
+function saveWastage(){
+  const qty=parseFloat($('w_qty').value)||0; if(qty<=0){ toast(t('enter_qty')); return; }
+  const rate=parseFloat($('w_rate').value)||0;
+  state.wastage.push({id:uid(),date:$('w_date').value||todayStr(),qty:qty,rate:rate,value:Math.round(qty*rate),reason:$('w_reason').value.trim()});
+  save(); closeModal(); rerenderModule(); renderHome(); toast(t('saved'));
+}
+function delWastage(id){ const rec=state.wastage.find(w=>w.id===id); if(!rec) return;
+  state.wastage=state.wastage.filter(w=>w.id!==id); save(); rerenderModule(); renderHome();
+  toast(t('deleted_undo'),t('undo'),function(){ state.wastage.push(rec); save(); rerenderModule(); renderHome(); }); }
+/* ---- 🐄 Cattle register ---- */
+function modAnimals(){
+  const list=state.animals.filter(a=>a.active!==false);
+  const daily=list.reduce((s,a)=>s+(parseFloat(a.dailyYield)||0),0);
+  return `<div class="card"><h3>${t('animals')}</h3>
+    <button class="btn" style="width:100%;margin-bottom:12px" onclick="openAnimal('')">➕ ${t('add')}</button>
+    <div class="bill-line"><span class="k">${t('a_count')}</span><span class="v">${list.length}</span></div>
+    <div class="bill-line"><span class="k">${t('a_daily')}</span><span class="v">${num(daily)} L</span></div>
+    <div class="bill-line"><span class="k">${t('a_month')}</span><span class="v">${num(daily*30)} L</span></div>
+    <div class="divider"></div>
+    <div>${state.animals.length?state.animals.map(animalRow).join(''):'<div class="empty">'+t('no_data_toast')+'</div>'}</div></div>`;
+}
+function animalRow(a){
+  return `<div class="list-item"><div class="avatar">${a.type==='buffalo'?'🐃':'🐄'}</div>
+    <div class="li-main"><div class="t">${esc(a.tag||'—')}</div><div class="s">${esc(a.type==='buffalo'?t('buffalo'):t('cow'))} • ${num(a.dailyYield||0)} L/${t('day')}</div></div>
+    <button class="btn grey xs" onclick="openAnimal('${a.id}')">✏️</button>
+    <button class="btn danger xs" onclick="delAnimal('${a.id}')">🗑</button></div>`;
+}
+function openAnimal(id){
+  const a=id?state.animals.find(x=>x.id===id):null;
+  openModal(`<div class="sheet-head"><h2>${t('animals')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>${t('a_tag')}</label><input type="text" id="an_tag" value="${a?esc(a.tag||''):''}" /></div>
+    <div class="field"><label>${t('a_type')}</label><select id="an_type"><option value="cow" ${a&&a.type==='buffalo'?'':'selected'}>${t('cow')}</option><option value="buffalo" ${a&&a.type==='buffalo'?'selected':''}>${t('buffalo')}</option></select></div>
+    <div class="field"><label>${t('a_yield')}</label><input type="number" step="0.1" inputmode="decimal" id="an_yield" value="${a?(a.dailyYield||0):''}" /></div>
+    <button class="btn" onclick="saveAnimal('${id||''}')">${t('save')}</button>`);
+}
+function saveAnimal(id){
+  const tag=$('an_tag').value.trim(); if(!tag){ toast(t('enter_name')); return; }
+  const obj={tag:tag,type:$('an_type').value,dailyYield:parseFloat($('an_yield').value)||0,active:true};
+  if(id){ const a=state.animals.find(x=>x.id===id); if(a) Object.assign(a,obj); }
+  else { state.animals.push(Object.assign({id:uid()},obj)); }
+  save(); closeModal(); rerenderModule(); toast(t('saved'));
+}
+function delAnimal(id){ state.animals=state.animals.filter(a=>a.id!==id); save(); rerenderModule(); toast(t('deleted')); }
+/* ---- 🧮 Calculator ---- */
+let calcBuf='';
+function modCalc(){
+  const keys=['7','8','9','/','4','5','6','*','1','2','3','-','0','.','=','+','C','⌫','%','00'];
+  return `<div class="card"><h3>${t('calc')}</h3>
+    <div class="field" style="margin:0 0 10px"><input type="text" id="calcScreen" readonly value="0" style="text-align:right;font-size:26px;font-weight:800;letter-spacing:1px" /></div>
+    <div class="calc-grid">${keys.map(k=>`<button class="calc-k ${'/=*+-%'.indexOf(k)>=0?'op':''} ${k==='C'?'clr':''}" onclick="calcPress('${k}')">${k}</button>`).join('')}</div>
+    <div class="hint" style="margin-top:10px">${t('calc_hint')}</div></div>`;
+}
+function calcPress(k){
+  const s=$('calcScreen'); if(!s) return;
+  if(k==='C'){ calcBuf=''; s.value='0'; return; }
+  if(k==='⌫'){ calcBuf=calcBuf.slice(0,-1); s.value=calcBuf||'0'; return; }
+  if(k==='='){
+    try{
+      const expr=calcBuf.replace(/[^0-9+\-*/.%()]/g,'');
+      if(!expr){ s.value='0'; return; }
+      const r=Function('return ('+expr+')')();
+      if(isFinite(r)){ calcBuf=String(Math.round(r*10000)/10000); s.value=calcBuf; } else { calcBuf=''; s.value='0'; }
+    }catch(e){ calcBuf=''; s.value='0'; }
+    return;
+  }
+  calcBuf+=k; s.value=calcBuf;
+}
+/* ---- 📝 Notes ---- */
+function modNotes(){
+  const list=state.notes.slice().sort((a,b)=>(a.done?1:0)-(b.done?1:0)||(b.at||0)-(a.at||0));
+  return `<div class="card"><h3>${t('notes')}</h3>
+    <div style="display:flex;gap:8px;margin-bottom:12px"><input type="text" id="noteInput" style="flex:1" placeholder="${t('nt_ph')}" onkeydown="if(event.key==='Enter')addNote()" /><button class="btn ghost sm" onclick="addNote()">➕</button></div>
+    <div>${list.length?list.map(noteRow).join(''):'<div class="empty">'+t('no_data_toast')+'</div>'}</div></div>`;
+}
+function noteRow(n){
+  return `<div class="list-item"><div class="avatar" style="background:${n.done?'var(--green-l)':'var(--amber-l)'};color:${n.done?'var(--green-d)':'var(--amber)'}" onclick="toggleNote('${n.id}')">${n.done?'✔️':'📝'}</div>
+    <div class="li-main" onclick="toggleNote('${n.id}')"><div class="t" style="${n.done?'text-decoration:line-through;opacity:.6':''}">${esc(n.text)}</div><div class="s">${fmtDateTime(n.at||Date.now())}</div></div>
+    <button class="btn danger xs" onclick="delNote('${n.id}')">🗑</button></div>`;
+}
+function addNote(){ const el=$('noteInput'); if(!el) return; const v=el.value.trim(); if(!v) return;
+  state.notes.unshift({id:uid(),text:v,done:false,at:Date.now()}); save(); rerenderModule(); }
+function toggleNote(id){ const n=state.notes.find(x=>x.id===id); if(!n) return; n.done=!n.done; save(); rerenderModule(); }
+function delNote(id){ state.notes=state.notes.filter(x=>x.id!==id); save(); rerenderModule(); toast(t('deleted')); }
+/* ---- 🔍 Global search ---- */
+function modSearch(){
+  return `<div class="card"><h3>${t('search_all')}</h3>
+    <div class="field" style="margin:0"><input type="text" id="gSearch" placeholder="${t('search_ph')}" oninput="runGlobalSearch()" /></div>
+    <div id="gResults" style="margin-top:12px"></div></div>`;
+}
+function runGlobalSearch(){
+  const box=$('gResults'); if(!box) return;
+  const q=($('gSearch').value||'').trim().toLowerCase();
+  if(q.length<2){ box.innerHTML='<div class="hint">'+t('search_min')+'</div>'; return; }
+  const out=[];
+  state.parties.filter(p=>p.name.toLowerCase().includes(q)||(p.phone||'').includes(q)||(p.route||'').toLowerCase().includes(q)).slice(0,20)
+    .forEach(p=>out.push(`<div class="list-item" onclick="openBillDetail('${p.id}',rangeFor('month',todayStr()))">${avatarHtml(p)}<div class="li-main"><div class="t">${esc(p.name)}</div><div class="s">${esc(p.phone||p.route||'')}</div></div></div>`));
+  const res=state.entries.filter(e=>partyName(e.partyId).toLowerCase().includes(q)||e.date.includes(q)).slice(0,20);
+  if(res.length){ out.push(`<div class="hint" style="margin:12px 0 4px">${t('tab_entries')}</div>`); res.forEach(e=>out.push(entryRow(e))); }
+  box.innerHTML=out.length?out.join(''):'<div class="empty">'+t('no_data_toast')+'</div>';
+}
 
 /* ================= DATA CHECK ================= */
 function modDataCheck(){ return `<div class="card"><div class="hint" style="margin-bottom:10px">${t('dc_hint')}</div><div id="dcBox"></div></div>`; }
