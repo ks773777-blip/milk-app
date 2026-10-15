@@ -10,6 +10,8 @@
 <title>दूध हिसाब — Milk Manager</title>
 <script>window.onGisLoad=function(){window.__gisReady=true;try{if(window.waitGis)waitGis();}catch(e){}};</script>
 <script src="https://accounts.google.com/gsi/client" async defer onload="window.onGisLoad()"></script>
+<link rel="manifest" href="manifest.webmanifest" />
+<meta name="apple-mobile-web-app-title" content="दूध हिसाब" />
 <style>
   :root{
     --green:#0f7b53; --green-d:#0a5c3e; --green-l:#e7f5ee;
@@ -48,6 +50,8 @@
   .acct img{width:100%;height:100%;object-fit:cover;display:block}
   .g-ava{width:46px;height:46px;border-radius:50%;object-fit:cover;flex:none;background:var(--soft)}
   #gSignInBtn{min-height:44px}
+  .netbar{position:fixed;left:0;right:0;top:0;z-index:80;background:var(--amber);color:#fff;text-align:center;font-size:13px;font-weight:600;padding:8px 12px;display:none}
+  .dr-chip{font-size:12px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--green-l);color:var(--green-d)}
   main{padding:14px 14px 20px;max-width:760px;margin:0 auto}
   .view{display:none;animation:fade .18s ease}
   .view.active{display:block}
@@ -177,6 +181,7 @@
 </style>
 </head>
 <body>
+<div class="netbar" id="netBar"></div>
 
 <div class="lock" id="lock">
   <div class="big">🥛</div>
@@ -2650,6 +2655,7 @@ const defaultState=()=>({
   settings:{ lang:'hi', defaultRate:50, currency:'₹', defaultShift:'morning', roundOff:false,
     waCode:'91', theme:'green', dark:false, pin:'', target:0, upi:'', upiName:'',
     retention:12, autoBackup:true, autoBackupDays:7, lastBackup:0, customCats:[], driveLink:'',
+    driveAuto:false, driveFileId:'', lastDriveBackup:0,
     business:{ name:'दूध हिसाब', owner:'', phone:'', address:'' } },
   account:null
 });
@@ -2728,6 +2734,7 @@ const T={
   c_del:'हटाना है?', c_del_party_entries:'इस पार्टी की एंट्री/भुगतान भी मौजूद हैं। फिर भी हटाना है?', c_load_backup:'मौजूदा डेटा बदलेगा। आगे बढ़ें?', c_restore:'ऑटो-बैकअप से डेटा बदलेगा। आगे बढ़ें?', c_clear1:'सारा डेटा हमेशा के लिए मिट जाएगा। पक्का?', c_clear2:'यह वापस नहीं आएगा। पुष्टि करें।', c_holiday:'छुट्टी हटानी है?', c_whole:'पूरे दिन (सुबह+शाम) की एंट्री बनाई जाए?',
   lock_title:'PIN डालें', lock_wrong:'गलत PIN', unlock:'खोलें', pin_set:'PIN सेट करें', pin_again:'PIN दोबारा', pin_mismatch:'PIN मेल नहीं', pin_on:'PIN लॉक चालू', pin_off:'PIN लॉक बंद', pin_need4:'4 अंकों का PIN',
   g_account:'Google खाता', g_intro:'अपने Google खाते से साइन इन करें — आपका नाम और फ़ोटो ऐप में दिखेगा। डेटा आपके फ़ोन में ही रहता है।', g_signin:'Google से साइन इन करें', g_signout:'साइन आउट', g_signedin:'साइन इन हो गया', g_signedout:'साइन आउट हो गया', g_loading:'साइन-इन बटन लोड हो रहा है…', g_error:'साइन इन नहीं हो सका', g_note:'यह पहचान सिर्फ़ इस डिवाइस पर सेव होती है। बैकअप/डेटा आपके फ़ोन में ही रहता है।', g_origin_hint:'ध्यान दें: साइन-इन तभी चलेगा जब इस पेज का पता (origin) Google Cloud Console में "Authorized JavaScript origins" में जोड़ा गया हो।', g_owner_fill:'Google नाम से मालिक का नाम भरें',
+  dr_title:'☁️ Google Drive बैकअप', dr_intro:'Google Drive में अपना डेटा सुरक्षित रखें। ऑटो-बैकअप चालू रहने पर हर बदलाव अपने आप Drive में सेव हो जाएगा।', dr_status:'स्थिति', dr_connect:'Drive से जोड़ें', dr_connected:'Drive जुड़ा हुआ है', dr_notconn:'Drive जुड़ा नहीं है', dr_reconnect:'Drive फिर से जोड़ें', dr_auto:'ऑटोमैटिक बैकअप', dr_auto_on:'ऑटो-बैकअप चालू', dr_auto_off:'ऑटो-बैकअप बंद', dr_auto_hint:'डेटा बदलते ही और नेट आने पर अपने आप Drive में सेव होगा।', dr_backup_now:'अभी बैकअप करें', dr_restore:'Drive से रिस्टोर करें', dr_last:'पिछला बैकअप', dr_never:'कभी नहीं', dr_saved:'Drive में बैकअप हो गया', dr_fail:'Drive बैकअप नहीं हो सका', dr_none:'Drive में कोई बैकअप नहीं मिला', dr_authfail:'Drive की अनुमति नहीं मिली', dr_needlogin:'Drive के लिए अनुमति नहीं मिली — दोबारा कोशिश करें', dr_login_first:'पहले ऊपर Google से साइन इन करें', dr_open_file:'Drive में फ़ाइल खोलें', dr_syncing:'सिंक हो रहा है…', dr_scope_hint:'ध्यान दें: Google Cloud Console में "Google Drive API" चालू करें और OAuth consent screen में Drive scope जोड़ें।', dr_go:'☁️ Drive बैकअप', off_msg:'आप ऑफ़लाइन हैं — डेटा फ़ोन में सेव हो रहा है, नेट आने पर Drive में सिंक होगा', on_msg:'ऑनलाइन — Drive से सिंक',
   thank:'धन्यवाद 🙏', bill_title:'बिल', milk_word:'दूध', litres:'लीटर', statement_word:'स्टेटमेंट',
   help_body:'1) ग्राहक जोड़ें — नाम, नंबर, रेट, डिफ़ॉल्ट मात्रा और (चाहें तो) कई आइटम जैसे गाय/भैंस का दूध।\n2) रोज़ की एंट्री — ➕ से एक-एक, 🧺 से बल्क, या ⚡ से सबकी डिफ़ॉल्ट एंट्री एक साथ।\n3) बिल — दैनिक/10-दिन/15-दिन/मासिक चुनें; PDF, प्रिंट, WhatsApp/SMS, UPI QR।\n4) खाता (Ledger) व स्टेटमेंट — ग्राहक का पूरा हिसाब।\n5) मॉड्यूल टैब में बाकी सब कुछ — रिपोर्ट, खर्च, स्टॉक, रिमाइंडर, बैकअप, सेटिंग।'
  },
@@ -2803,11 +2810,13 @@ const T={
   c_del:'Delete?', c_del_party_entries:'This party has entries/payments too. Delete anyway?', c_load_backup:'Current data will be replaced. Continue?', c_restore:'This will replace data with the auto-backup. Continue?', c_clear1:'All data will be erased permanently. Sure?', c_clear2:'This cannot be undone. Please confirm.', c_holiday:'Remove this holiday?', c_whole:'Create the whole day (morning+evening) entries?',
   lock_title:'Enter PIN', lock_wrong:'Wrong PIN', unlock:'Unlock', pin_set:'Set PIN', pin_again:'Repeat PIN', pin_mismatch:'PINs do not match', pin_on:'PIN lock on', pin_off:'PIN lock off', pin_need4:'Enter a 4-digit PIN',
   g_account:'Google account', g_intro:'Sign in with your Google account — your name and photo will show in the app. Your data stays on this device.', g_signin:'Sign in with Google', g_signout:'Sign out', g_signedin:'Signed in', g_signedout:'Signed out', g_loading:'Loading sign-in button…', g_error:'Sign-in failed', g_note:'This identity is stored on this device only. Your backup/data stays on your phone.', g_origin_hint:'Note: sign-in works only after this page\u2019s origin is added under "Authorized JavaScript origins" in Google Cloud Console.', g_owner_fill:'Fill owner name from Google',
+  dr_title:'☁️ Google Drive backup', dr_intro:'Keep your data safe in Google Drive. With auto-backup on, every change is saved to Drive automatically.', dr_status:'Status', dr_connect:'Connect Drive', dr_connected:'Drive connected', dr_notconn:'Drive not connected', dr_reconnect:'Reconnect Drive', dr_auto:'Automatic backup', dr_auto_on:'Auto-backup on', dr_auto_off:'Auto-backup off', dr_auto_hint:'Saves to Drive automatically when data changes or the network returns.', dr_backup_now:'Back up now', dr_restore:'Restore from Drive', dr_last:'Last backup', dr_never:'Never', dr_saved:'Backed up to Drive', dr_fail:'Drive backup failed', dr_none:'No backup found in Drive', dr_authfail:'Drive permission not granted', dr_needlogin:'Drive permission not granted — try again', dr_login_first:'Sign in with Google above first', dr_open_file:'Open file in Drive', dr_syncing:'Syncing…', dr_scope_hint:'Note: enable "Google Drive API" in Google Cloud Console and add the Drive scope to the OAuth consent screen.', dr_go:'☁️ Drive backup', off_msg:'You are offline — data is being saved on your phone and will sync to Drive when the network returns', on_msg:'Online — syncing with Drive',
   thank:'Thank you 🙏', bill_title:'Bill', milk_word:'Milk', litres:'litres',
   help_body:'1) Add customers — name, number, rate, default quantity and (optionally) multiple items like cow/buffalo milk.\n2) Daily entry — ➕ one by one, 🧺 bulk, or ⚡ all default entries at once.\n3) Bill — pick daily/10-day/15-day/monthly; PDF, print, WhatsApp/SMS, UPI QR.\n4) Ledger & statement — a customer\u2019s full account.\n5) The Modules tab holds everything else — reports, expenses, stock, reminders, backup, settings.'
  }
 };
 let LANG='hi';
+let driveToken=null, driveTokenExp=0, tokenClient=null, driveBusy=false, driveSelfSave=false, autoBackupTimer=null;
 function t(k){ return (T[LANG]&&T[LANG][k])||T.hi[k]||k; }
 
 /* ---------------- state ---------------- */
@@ -2844,7 +2853,7 @@ function migrate(o){
   s.account=o.account||null;
   return s;
 }
-function save(){ rebuildIndex(); try{ localStorage.setItem(STORE_KEY,JSON.stringify(state)); }catch(e){ toast('⚠️ Storage full'); } }
+function save(){ rebuildIndex(); try{ localStorage.setItem(STORE_KEY,JSON.stringify(state)); }catch(e){ toast('⚠️ Storage full'); } try{ scheduleAutoDriveBackup(); }catch(e){} }
 
 /* ---------------- helpers ---------------- */
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
@@ -3002,7 +3011,7 @@ const MODULES=[
   {id:'account',    ic:'🔐', hi:'Google लॉगिन',       en:'Google login',      render:modAccount,  after:renderAccountBits},
   {id:'settings',   ic:'⚙️', hi:'सेटिंग',             en:'Settings',          render:modSettings, after:renderSettingsBits},
   {id:'register',   ic:'🗓️', hi:'डेली रजिस्टर',       en:'Daily register',    render:modRegister, after:renderRegister},
-  {id:'drive',      ic:'☁️', hi:'Google Drive',       en:'Google Drive',      render:modDrive,    after:fillDrive},
+  {id:'drive',      ic:'☁️', hi:'Drive बैकअप',        en:'Drive backup',      render:modDrive,    after:renderDriveBits},
   {id:'datacheck',  ic:'✅', hi:'डेटा जाँच',           en:'Data check',        render:modDataCheck, after:renderDataCheck},
   {id:'help',       ic:'❓', hi:'मदद',                en:'Help',              render:modHelp}
 ];
@@ -4289,7 +4298,10 @@ function modAccount(){
       </div>
       <div class="btn-row" style="margin-top:12px">
         <button class="btn ghost" onclick="fillOwnerFromGoogle()">${t('g_owner_fill')}</button>
-        <button class="btn danger" onclick="googleSignOut()">${t('g_signout')}</button>
+        <button class="btn" onclick="openModule('drive')">${t('dr_go')}</button>
+      </div>
+      <div class="btn-row" style="margin-top:9px">
+        <button class="btn danger" style="flex:1" onclick="googleSignOut()">${t('g_signout')}</button>
       </div>
       <div class="hint" style="margin-top:10px">${t('g_note')}</div></div>`;
   }
@@ -4525,22 +4537,127 @@ function printRegister(){
 }
 
 /* ================= GOOGLE DRIVE ================= */
+/* ================= GOOGLE DRIVE BACKUP ================= */
 function modDrive(){
-  return `<div class="card">
-    <div class="hint" style="margin-bottom:12px">${t('drive_intro')}</div>
-    <div class="field"><label>${t('drive_link')}</label><input type="text" id="driveLink" placeholder="${t('drive_link_ph')}" /></div>
-    <div class="btn-row" style="margin-bottom:8px"><button class="btn" onclick="saveDriveLink()">${t('save')}</button><button class="btn ghost" onclick="openDrive()">${t('open_drive')}</button></div>
-    <div class="divider"></div>
-    <button class="btn sm" style="width:100%;margin-bottom:9px" onclick="shareBackup()">☁️ ${t('drive_save')}</button>
-    <button class="btn grey sm" style="width:100%;margin-bottom:9px" onclick="linkBackupFile()">${t('link_file')}</button>
-    <div class="bill-line"><span class="k">${t('linked_to')}</span><span class="v" id="cloudStatus">—</span></div>
-    <div class="btn-row" style="margin-top:9px"><button class="btn grey sm" style="flex:1" onclick="restoreLinked()">♻️</button><button class="btn grey sm" style="flex:1" onclick="exportBackup()">${t('save_backup')}</button></div>
-    <div class="hint" style="margin-top:8px">${t('drive_hint')}</div>
-  </div>`;
+  const signed=!!(state.account&&state.account.email);
+  const ready=driveReady();
+  const last=state.settings.lastDriveBackup||0;
+  return `<div class="card"><h3>${t('dr_title')}</h3>
+    <div class="hint" style="margin-bottom:12px">${t('dr_intro')}</div>
+    ${signed?'':`<div class="hint" style="color:var(--amber);margin-bottom:10px">${t('dr_login_first')}</div>`}
+    <div class="bill-line"><span class="k">${t('dr_status')}</span><span class="v" id="drStatus">${ready?t('dr_connected'):t('dr_notconn')}</span></div>
+    <div class="btn-row" style="margin:10px 0">
+      <button class="btn ${ready?'ghost':''}" onclick="connectDrive()">${ready?t('dr_reconnect'):t('dr_connect')}</button>
+      <button class="btn" onclick="driveBackupNow(false)">${t('dr_backup_now')}</button>
+    </div>
+    <div class="sw"><span class="lb">${t('dr_auto')}</span><div class="tr" id="sw-driveauto" onclick="toggleDriveAuto()"></div></div>
+    <div class="hint">${t('dr_auto_hint')}</div>
+    <div class="bill-line" style="margin-top:10px"><span class="k">${t('dr_last')}</span><span class="v" id="drLast">${last?fmtDateTime(last):t('dr_never')}</span></div>
+    <div class="btn-row" style="margin-top:10px">
+      <button class="btn grey sm" onclick="driveRestoreLatest()">♻️ ${t('dr_restore')}</button>
+      <button class="btn grey sm" onclick="driveOpenFile()">🔗 ${t('dr_open_file')}</button>
+    </div>
+    <div class="hint" style="margin-top:10px">${t('dr_scope_hint')}</div></div>`;
 }
-function fillDrive(){ if($('driveLink')) $('driveLink').value=state.settings.driveLink||''; cloudStatus(); }
-function saveDriveLink(){ state.settings.driveLink=$('driveLink').value.trim(); save(); toast(t('drive_link_saved')); }
-function openDrive(){ const l=state.settings.driveLink; if(!l){ toast(t('no_drive_link')); return; } window.open(l,'_blank'); }
+function fmtDateTime(ts){ const d=new Date(ts); const p=n=>String(n).padStart(2,'0'); return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes()); }
+function renderDriveBits(){
+  const el=$('sw-driveauto'); if(el) el.classList.toggle('on',!!state.settings.driveAuto);
+  const st=$('drStatus'); if(st) st.textContent=driveReady()?t('dr_connected'):t('dr_notconn');
+  const la=$('drLast'); if(la) la.textContent=(state.settings.lastDriveBackup||0)?fmtDateTime(state.settings.lastDriveBackup):t('dr_never');
+}
+function toggleDriveAuto(){
+  state.settings.driveAuto=!state.settings.driveAuto; save();
+  renderDriveBits(); if(curModule==='drive') rerenderModule();
+  toast(state.settings.driveAuto?t('dr_auto_on'):t('dr_auto_off'));
+  if(state.settings.driveAuto && !driveReady()) connectDrive();
+}
+function initDriveAuth(){
+  if(!(window.google&&google.accounts&&google.accounts.oauth2)) return;
+  if(tokenClient) return;
+  try{
+    tokenClient=google.accounts.oauth2.initTokenClient({
+      client_id:GOOGLE_CLIENT_ID,
+      scope:'https://www.googleapis.com/auth/drive.file',
+      callback:function(resp){
+        if(resp&&resp.access_token){ driveToken=resp.access_token; driveTokenExp=Date.now()+(((resp.expires_in||3600)-60)*1000); onDriveConnected(); }
+        else { toast(t('dr_authfail')); }
+      }
+    });
+  }catch(e){}
+}
+function connectDrive(){ initDriveAuth(); if(!tokenClient){ toast(t('dr_needlogin')); return; } try{ tokenClient.requestAccessToken({prompt:''}); }catch(e){ toast(t('dr_authfail')); } }
+function driveReady(){ return !!driveToken && Date.now()<driveTokenExp; }
+function onDriveConnected(){ toast(t('dr_connected')); renderDriveBits(); if(curModule==='drive') rerenderModule(); if(state.settings.driveAuto) driveBackupNow(true); }
+function driveHeaders(extra){ return Object.assign({Authorization:'Bearer '+driveToken}, extra||{}); }
+async function findBackupFile(){
+  const q=encodeURIComponent("name='milk-backup.json' and trashed=false");
+  const res=await fetch('https://www.googleapis.com/drive/v3/files?spaces=drive&q='+q+'&fields=files(id,name,modifiedTime)&orderBy=modifiedTime desc',{headers:driveHeaders()});
+  if(!res.ok) throw new Error('find '+res.status);
+  const j=await res.json(); return (j.files&&j.files[0])||null;
+}
+async function driveUpload(){
+  const body=JSON.stringify(state);
+  let id=state.settings.driveFileId||'';
+  if(id){
+    const res=await fetch('https://www.googleapis.com/upload/drive/v3/files/'+encodeURIComponent(id)+'?uploadType=media&fields=id',{method:'PATCH',headers:driveHeaders({'Content-Type':'application/json'}),body});
+    if(!res.ok){ if(res.status===404) id=''; else throw new Error('upd '+res.status); }
+  }
+  if(!id){
+    const found=await findBackupFile();
+    if(found){
+      id=found.id;
+      const res=await fetch('https://www.googleapis.com/upload/drive/v3/files/'+encodeURIComponent(id)+'?uploadType=media&fields=id',{method:'PATCH',headers:driveHeaders({'Content-Type':'application/json'}),body});
+      if(!res.ok) throw new Error('upd2 '+res.status);
+    } else {
+      const meta={name:'milk-backup.json',mimeType:'application/json'};
+      const boundary='milkbnd'+Date.now();
+      const mp='--'+boundary+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify(meta)+'\r\n--'+boundary+'\r\nContent-Type: application/json\r\n\r\n'+body+'\r\n--'+boundary+'--';
+      const res=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',headers:driveHeaders({'Content-Type':'multipart/related; boundary='+boundary}),body:mp});
+      if(!res.ok){ const tx=await res.text(); throw new Error('new '+res.status+' '+tx.slice(0,150)); }
+      const j=await res.json(); id=j.id;
+    }
+  }
+  state.settings.driveFileId=id; state.settings.lastDriveBackup=Date.now();
+  driveSelfSave=true; save(); driveSelfSave=false;
+}
+async function driveBackupNow(silent){
+  if(driveBusy) return false;
+  if(!driveReady()){ if(!silent) connectDrive(); return false; }
+  if(!navigator.onLine){ if(!silent) toast(t('off_msg')); return false; }
+  driveBusy=true;
+  const st=$('drStatus'); if(st) st.textContent=t('dr_syncing');
+  try{ await driveUpload(); if(!silent) toast(t('dr_saved')); return true; }
+  catch(e){ if(!silent) toast(t('dr_fail')); return false; }
+  finally{ driveBusy=false; renderDriveBits(); if(curModule==='drive') rerenderModule(); }
+}
+function scheduleAutoDriveBackup(){
+  if(driveSelfSave) return;
+  if(!state.settings.driveAuto||!driveReady()||!navigator.onLine) return;
+  clearTimeout(autoBackupTimer);
+  autoBackupTimer=setTimeout(function(){ driveBackupNow(true); },6000);
+}
+async function driveRestoreLatest(){
+  if(!driveReady()){ connectDrive(); return; }
+  try{
+    const f=await findBackupFile(); if(!f){ toast(t('dr_none')); return; }
+    const res=await fetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(f.id)+'?alt=media',{headers:driveHeaders()});
+    if(!res.ok){ toast(t('dr_fail')); return; }
+    const txt=await res.text(); applyImported(txt);
+  }catch(e){ toast(t('dr_fail')); }
+}
+function driveOpenFile(){ if(state.settings.driveFileId) window.open('https://drive.google.com/file/d/'+state.settings.driveFileId+'/view','_blank'); else toast(t('dr_none')); }
+/* ---- online / offline + PWA ---- */
+function updateOnlineStatus(){
+  const bar=$('netBar'); if(!bar) return;
+  if(navigator.onLine){ bar.style.display='none'; }
+  else { bar.textContent=t('off_msg'); bar.style.display='block'; }
+}
+function initOnline(){
+  window.addEventListener('online',function(){ updateOnlineStatus(); toast(t('on_msg')); if(state.settings.driveAuto) scheduleAutoDriveBackup(); });
+  window.addEventListener('offline',updateOnlineStatus);
+  updateOnlineStatus();
+}
+function registerSW(){ try{ if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function(){}); }catch(e){} }
 
 /* ================= DATA CHECK ================= */
 function modDataCheck(){ return `<div class="card"><div class="hint" style="margin-bottom:10px">${t('dc_hint')}</div><div id="dcBox"></div></div>`; }
@@ -4593,7 +4710,7 @@ function init(){
   refreshAll(); switchTab('home');
   loadHandle();
   if(state.settings.pin) showLock();
-  renderHeaderAvatar(); waitGis();
+  renderHeaderAvatar(); waitGis(); initOnline(); registerSW();
 }
 init();
 </script>
