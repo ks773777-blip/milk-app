@@ -408,7 +408,7 @@
   <section class="view" id="view-search">
     <div class="card">
       <h3 id="l-searchAll"></h3>
-      <div class="field" style="margin:0"><input type="text" id="srchInput" placeholder="" oninput="renderSearch()" /></div>
+      <div class="field" style="margin:0"><input type="text" id="srchInput" placeholder="" oninput="debouncedRenderSearch()" /></div>
       <div class="chips" id="srchCats" style="margin-top:10px"></div>
       <div class="hint" id="srchHint" style="margin-top:8px"></div>
     </div>
@@ -426,7 +426,7 @@
         <button class="btn grey sm" onclick="shiftDay(1)"><span id="b-nextDay"></span> ▶</button>
         <button class="btn grey sm" onclick="repeatLast()" title="पिछली एंट्री दोहराएँ">🔁</button>
       </div>
-      <div class="field" style="margin:10px 0 0"><input type="text" id="entrySearch" placeholder="" oninput="renderEntries()" /></div>
+      <div class="field" style="margin:10px 0 0"><input type="text" id="entrySearch" placeholder="" oninput="debouncedRenderEntries()" /></div>
       <div class="seg" style="margin:10px 0 0"><button id="shf-all" class="on" onclick="setShift('')"></button><button id="shf-m" onclick="setShift('morning')"></button><button id="shf-e" onclick="setShift('evening')"></button></div>
     </div>
     <div class="card">
@@ -449,7 +449,7 @@
         <button id="seg-cust" class="on" onclick="setPartyType('customer')"></button>
         <button id="seg-sup" onclick="setPartyType('supplier')"></button>
       </div>
-      <div class="field" style="margin-bottom:8px"><input type="text" id="partySearch" placeholder="" oninput="renderParties()" /></div>
+      <div class="field" style="margin-bottom:8px"><input type="text" id="partySearch" placeholder="" oninput="debouncedRenderParties()" /></div>
       <div class="chips" id="routeChips" style="margin-bottom:8px"></div>
       <div id="partiesList"></div>
       <button class="btn ghost" style="margin-top:12px" id="b-addParty" onclick="openParty()">➕</button>
@@ -490,7 +490,7 @@
   <!-- MODULE HUB -->
   <section class="view" id="view-more">
     <div class="card" id="profileCard"></div>
-    <div class="card"><h3 id="l-modules"></h3><div class="hint" id="l-modHint" style="margin-bottom:10px"></div><div class="hub-searchwrap"><input type="text" id="hubSearch" oninput="renderHub()" /></div><div class="hub-chips" id="hubChips"></div><div id="moduleTiles"></div></div>
+    <div class="card"><h3 id="l-modules"></h3><div class="hint" id="l-modHint" style="margin-bottom:10px"></div><div class="hub-searchwrap"><input type="text" id="hubSearch" oninput="debouncedRenderHub()" /></div><div class="hub-chips" id="hubChips"></div><div id="moduleTiles"></div></div>
   </section>
 
   <!-- MODULE PAGE -->
@@ -2831,7 +2831,7 @@ const OLD_KEYS=['milk_manager_data_v4','milk_manager_data_v3','milk_manager_data
 const defaultState=()=>({
   parties:[], entries:[], payments:[], expenses:[], items:[], moves:[], holidays:[],
   notes:[], wastage:[], animals:[], loans:[], recurring:[], invoices:[], staff:[], att:[], closes:[],
-  cash:[], health:[], prod:[], feed:[], complaints:[], occasions:[],
+  cash:[], health:[], prod:[], feed:[], complaints:[], occasions:[], orders:[], vehicles:[], loyalty:[], insurance:[], breeding:[],
   settings:{ lang:'hi', defaultRate:50, currency:'₹', defaultShift:'morning', roundOff:false,
     waCode:'91', theme:'green', dark:false, pin:'', target:0, upi:'', upiName:'',
     retention:36, autoBackup:true, autoBackupDays:7, lastBackup:0, customCats:[], driveLink:'',
@@ -3000,7 +3000,12 @@ const T={
   thank:'धन्यवाद 🙏', bill_title:'बिल', milk_word:'दूध', litres:'लीटर', statement_word:'स्टेटमेंट',
   help_body:'1) ग्राहक जोड़ें — नाम, नंबर, रेट, डिफ़ॉल्ट मात्रा और (चाहें तो) कई आइटम जैसे गाय/भैंस का दूध।\n2) रोज़ की एंट्री — ➕ से एक-एक, 🧺 से बल्क, या ⚡ से सबकी डिफ़ॉल्ट एंट्री एक साथ।\n3) बिल — दैनिक/10-दिन/15-दिन/मासिक चुनें; PDF, प्रिंट, WhatsApp/SMS, UPI QR।\n4) खाता (Ledger) व स्टेटमेंट — ग्राहक का पूरा हिसाब।\n5) मॉड्यूल टैब में बाकी सब कुछ — रिपोर्ट, खर्च, स्टॉक, रिमाइंडर, बैकअप, सेटिंग।\n6) नए मॉड्यूल — कैलेंडर, टॉप ग्राहक, रूट सारांश, वेस्टेज, पशु रजिस्टर, कैलकुलेटर, नोट्स, खोज।',
   complaints:'शिकायत बुक', cmp_ph:'नई शिकायत लिखें…', cmp_open:'खुली', cmp_done:'हल हो गई',
-  occasions:'त्योहार व जन्मदिन', occ_hint:'ग्राहकों के जन्मदिन व त्योहार याद रखें — जो पास आ रहे हैं वे ऊपर दिखेंगे।', occ_name_ph:'नाम / त्योहार', occ_today:'आज', occ_days:'दिन', occ_in:'में'
+  occasions:'त्योहार व जन्मदिन', occ_hint:'ग्राहकों के जन्मदिन व त्योहार याद रखें — जो पास आ रहे हैं वे ऊपर दिखेंगे।', occ_name_ph:'नाम / त्योहार', occ_today:'आज', occ_days:'दिन', occ_in:'में',
+  supplierorder:'सप्लायर ऑर्डर', so_hint:'किसान/सप्लायर को दिया गया ऑर्डर — माल मिलने पर ✔ कर दें।', so_supplier:'सप्लायर का नाम', so_item:'आइटम', so_qty:'मात्रा', so_unit:'इकाई', so_rate:'रेट', so_received:'मिल गया', so_pending:'बाकी', so_add:'नया ऑर्डर',
+  vehicle:'वाहन व ईंधन', ve_hint:'गाड़ी का डीज़ल, सर्विस, मरम्मत — सब एक जगह।', ve_name:'गाड़ी का नाम / नंबर', ve_kind:'प्रकार', ve_diesel:'डीज़ल', ve_service:'सर्विस', ve_repair:'मरम्मत', ve_tyre:'टायर', ve_other:'अन्य', ve_odo:'ओडोमीटर (किमी)', ve_add:'नई एंट्री', ve_month_total:'इस महीने का खर्च',
+  loyalty:'लॉयल्टी पॉइंट', ly_hint:'हर ₹100 की बिक्री पर 1 पॉइंट अपने आप जुड़ता है। पॉइंट भुनाकर ग्राहक को छूट दे सकते हैं।', ly_earned:'कमाए', ly_redeemed:'भुनाए', ly_balance:'बचे पॉइंट', ly_redeem:'पॉइंट भुनाएँ', ly_points:'कितने पॉइंट', ly_note_ph:'जैसे: दिवाली छूट', ly_none:'अभी किसी ग्राहक के पॉइंट नहीं बने',
+  insurance:'बीमा रिमाइंडर', ins_hint:'गाड़ी, दुकान या पशु का बीमा — नवीनीकरण की तारीख याद रहेगी।', ins_name:'बीमा / पॉलिसी का नाम', ins_premium:'प्रीमियम (₹)', ins_due:'नवीनीकरण तारीख', ins_overdue:'तारीख निकल गई', ins_soon:'जल्द आ रही है', ins_add:'नया बीमा',
+  breeding:'पशु प्रजनन व ब्यांत', br_hint:'गर्भाधान, गर्भ जाँच और ब्यांत की तारीखें — अगली तारीख अपने आप बन जाती है।', br_animal:'पशु (नाम / टैग)', br_kind:'प्रकार', br_ai:'कृत्रिम गर्भाधान', br_preg:'गर्भ जाँच', br_calving:'ब्यांत', br_next:'अगली तारीख', br_add:'नई एंट्री', convert:'यूनिट व रेट कन्वर्टर', cv_hint:'लीटर ↔ किलो और फैट के हिसाब से रकम — तुरंत हिसाब।', cv_liter:'दूध (लीटर)', cv_density:'घनत्व (डिफ़ॉल्ट 1.03)', cv_kg:'वज़न', cv_fat:'फैट', cv_fatrate:'₹ प्रति फैट पॉइंट', cv_qty:'मात्रा (लीटर)', cv_amount:'कुल रकम'
  },
  en:{
   tagline:'Milk Manager',
@@ -3159,7 +3164,12 @@ const T={
   thank:'Thank you 🙏', bill_title:'Bill', milk_word:'Milk', litres:'litres',
   help_body:'1) Add customers — name, number, rate, default quantity and (optionally) multiple items like cow/buffalo milk.\n2) Daily entry — ➕ one by one, 🧺 bulk, or ⚡ all default entries at once.\n3) Bill — pick daily/10-day/15-day/monthly; PDF, print, WhatsApp/SMS, UPI QR.\n4) Ledger & statement — a customer\u2019s full account.\n5) The Modules tab holds everything else — reports, expenses, stock, reminders, backup, settings.\n6) New modules — Calendar, Top customers, Route summary, Wastage, Cattle register, Calculator, Notes, Search.',
   complaints:'Complaints book', cmp_ph:'Write a new complaint…', cmp_open:'open', cmp_done:'resolved',
-  occasions:'Occasions & birthdays', occ_hint:'Remember customers’ birthdays & festivals — the upcoming ones appear on top.', occ_name_ph:'Name / festival', occ_today:'today', occ_days:'days', occ_in:'in'
+  occasions:'Occasions & birthdays', occ_hint:'Remember customers’ birthdays & festivals — the upcoming ones appear on top.', occ_name_ph:'Name / festival', occ_today:'today', occ_days:'days', occ_in:'in',
+  supplierorder:'Supplier orders', so_hint:'Orders placed with farmers/suppliers — tick ✔ when received.', so_supplier:'Supplier name', so_item:'Item', so_qty:'Quantity', so_unit:'Unit', so_rate:'Rate', so_received:'received', so_pending:'pending', so_add:'New order',
+  vehicle:'Vehicle & fuel', ve_hint:'Diesel, service and repairs for your vehicle — all in one place.', ve_name:'Vehicle name / number', ve_kind:'Type', ve_diesel:'Diesel', ve_service:'Service', ve_repair:'Repair', ve_tyre:'Tyre', ve_other:'Other', ve_odo:'Odometer (km)', ve_add:'New entry', ve_month_total:'This month\u2019s spend',
+  loyalty:'Loyalty points', ly_hint:'1 point is added for every ₹100 of sales. Redeem points to give a customer a discount.', ly_earned:'Earned', ly_redeemed:'Redeemed', ly_balance:'Points left', ly_redeem:'Redeem points', ly_points:'How many points', ly_note_ph:'e.g. Diwali discount', ly_none:'No customer has points yet',
+  insurance:'Insurance reminders', ins_hint:'Insurance for vehicle, shop or cattle — the renewal date stays in mind.', ins_name:'Insurance / policy name', ins_premium:'Premium (₹)', ins_due:'Renewal date', ins_overdue:'overdue', ins_soon:'due soon', ins_add:'New insurance',
+  breeding:'Cattle breeding & calving', br_hint:'Insemination, pregnancy check and calving dates — the next date is worked out automatically.', br_animal:'Animal (name / tag)', br_kind:'Type', br_ai:'Insemination', br_preg:'Pregnancy check', br_calving:'Calving', br_next:'Next date', br_add:'New entry', convert:'Unit & rate tool', cv_hint:'Litres ↔ kg and fat-based amount — instant calculation.', cv_liter:'Milk (litres)', cv_density:'Density (default 1.03)', cv_kg:'Weight', cv_fat:'Fat', cv_fatrate:'₹ per fat point', cv_qty:'Quantity (litres)', cv_amount:'Total amount'
  }
 };
 let LANG='hi';
@@ -3188,6 +3198,7 @@ function deepDefaults(d){
   s.invoices=d.invoices||[]; s.staff=d.staff||[]; s.att=d.att||[]; s.closes=d.closes||[];
   s.cash=d.cash||[]; s.health=d.health||[]; s.prod=d.prod||[]; s.feed=d.feed||[];
   s.complaints=d.complaints||[]; s.occasions=d.occasions||[];
+  s.orders=d.orders||[]; s.vehicles=d.vehicles||[]; s.loyalty=d.loyalty||[]; s.insurance=d.insurance||[]; s.breeding=d.breeding||[];
   s.parties.forEach(p=>{ if(!p.items) p.items=[]; });
   return s;
 }
@@ -3210,6 +3221,12 @@ function migrate(o){
 function save(){ rebuildIndex(); try{ localStorage.setItem(STORE_KEY,JSON.stringify(state)); }catch(e){ toast('⚠️ Storage full'); } try{ scheduleAutoDriveBackup(); }catch(e){} }
 
 /* ---------------- helpers ---------------- */
+let _hubT=0,_srchT=0,_entT=0,_ptyT=0,_gT=0;
+function debouncedRenderHub(){ clearTimeout(_hubT); _hubT=setTimeout(renderHub,160); }
+function debouncedRenderSearch(){ clearTimeout(_srchT); _srchT=setTimeout(renderSearch,160); }
+function debouncedRenderEntries(){ clearTimeout(_entT); _entT=setTimeout(renderEntries,160); }
+function debouncedRenderParties(){ clearTimeout(_ptyT); _ptyT=setTimeout(renderParties,160); }
+function debouncedGlobalSearch(){ clearTimeout(_gT); _gT=setTimeout(runGlobalSearch,160); }
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -3362,7 +3379,7 @@ const GMAP={bulk:'daily',bulkMonthly:'daily',holiday:'daily',milkcard:'daily',ca
  animals:'farm',wastage:'farm',
  backup:'app',drive:'app',account:'app',settings:'app',perms:'app',ai:'app',datacheck:'app',support:'app',legal:'app',help:'app',
  insights:'report',monthclose:'money',cashbook:'money',routemap:'people',
- ahealth:'farm',aprod:'farm',avacc:'farm',feed:'farm',fat30:'farm',wastpie:'farm',complaints:'people',occasions:'people'};
+ ahealth:'farm',aprod:'farm',avacc:'farm',feed:'farm',fat30:'farm',wastpie:'farm',complaints:'people',occasions:'people',supplierorder:'money',vehicle:'money',loyalty:'people',insurance:'app',breeding:'farm'};
 const REL={
   invoices:['bills','bulkbill','statement','payments'],
   bills:['invoices','bulkbill','statement','ledger'],
@@ -3410,7 +3427,27 @@ const REL={
   wastpie:['wastage','quality','reports'],
   routemap:['delivery','routes','parties'],
   reports:['trend','compare','pnl','topcust','insights'],
-  settings:['backup','drive','perms','ai','legal']
+  settings:['backup','drive','perms','ai','legal'],
+  account:['settings','perms','drive'],
+  bulk:['bulkMonthly','register','delivery','holiday'],
+  bulkMonthly:['bulk','register','holiday','dayend'],
+  holiday:['calendar','bulkMonthly','register'],
+  milkcard:['register','ledger','parties','statement'],
+  register:['calendar','delivery','dayend','bulk'],
+  calc:['convert','reports','rate'],
+  notes:['reminders','dayend','calendar'],
+  rate:['quality','parties','fat30','reports'],
+  explog:['expenses','budget','pnl','recurring'],
+  datacheck:['backup','drive','settings'],
+  help:['support','legal','settings'],
+  complaints:['occasions','reminders','parties','topcust'],
+  occasions:['complaints','reminders','parties','topcust'],
+  supplierorder:['stock','feed','expenses','loans'],
+  vehicle:['expenses','explog','delivery','budget'],
+  loyalty:['parties','topcust','reports','dues'],
+  insurance:['recurring','expenses','animals','settings'],
+  breeding:['animals','ahealth','aprod','feed'],
+  convert:['calc','rate','quality','settings']
 };
 function relatedRow(id){
   const rel=REL[id]; if(!rel||!rel.length) return '';
@@ -3490,6 +3527,12 @@ const MODULES=[
   {id:'monthclose', ic:'📅', hi:'महीना बंद (हिसाब)',  en:'Month close',       render:modMonthClose,after:renderMonthClose},
   {id:'complaints', ic:'📣', hi:'शिकायत बुक',         en:'Complaints',        render:modComplaints},
   {id:'occasions',  ic:'🎂', hi:'त्योहार व जन्मदिन',  en:'Occasions',         render:modOccasions},
+  {id:'supplierorder',ic:'🛒', hi:'सप्लायर ऑर्डर',      en:'Supplier orders',   render:modSupplierOrder},
+  {id:'vehicle',    ic:'⛽', hi:'वाहन व ईंधन',        en:'Vehicle & fuel',    render:modVehicle},
+  {id:'loyalty',    ic:'🎁', hi:'लॉयल्टी पॉइंट',       en:'Loyalty points',    render:modLoyalty},
+  {id:'insurance',  ic:'🛡️', hi:'बीमा रिमाइंडर',       en:'Insurance',         render:modInsurance},
+  {id:'breeding',   ic:'🐮', hi:'पशु प्रजनन व ब्यांत',  en:'Breeding & calving',render:modBreeding},
+  {id:'convert',    ic:'🔄', hi:'यूनिट व रेट कन्वर्टर', en:'Unit & rate tool',  render:modConvert},
 ];
 function switchTab(tab){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -5932,10 +5975,179 @@ function occasionRow(o){
 }
 function addOccasion(){ const dn=$('occName'), dd=$('occDate'); if(!dn||!dd) return; const name=dn.value.trim(), date=dd.value; if(!name||!date){ toast(t('enter_name')); return; } (state.occasions=state.occasions||[]).push({id:uid(),name:name,date:date}); save(); rerenderModule(); }
 function delOccasion(id){ state.occasions=(state.occasions||[]).filter(x=>x.id!==id); save(); rerenderModule(); toast(t('deleted')); }
+/* ---- 🛒 सप्लायर ऑर्डर (Supplier orders) ---- */
+function modSupplierOrder(){
+  const list=(state.orders||[]).slice().sort((a,b)=>(a.received?1:0)-(b.received?1:0)||((b.date||'').localeCompare(a.date||'')));
+  const pend=list.filter(o=>!o.received).length;
+  return `<div class="card"><h3>🛒 ${t('supplierorder')}${pend?' <span class="sub">'+pend+' '+t('so_pending')+'</span>':''}</h3>
+    <div class="hint" style="margin-bottom:10px">${t('so_hint')}</div>
+    <button class="btn" style="width:100%;margin-bottom:12px" onclick="openOrder()">➕ ${t('so_add')}</button>
+    <div>${list.length?list.map(orderRow).join(''):'<div class="empty">'+t('no_data')+'</div>'}</div></div>`;
+}
+function orderRow(o){
+  const amt=(o.qty||0)*(o.rate||0);
+  return `<div class="list-item"><div class="avatar" style="background:${o.received?'var(--green-l)':'var(--amber-l)'};color:${o.received?'var(--green-d)':'var(--amber)'}" onclick="toggleOrder('${o.id}')">${o.received?'✔️':'🛒'}</div>
+    <div class="li-main" onclick="toggleOrder('${o.id}')"><div class="t" style="${o.received?'text-decoration:line-through;opacity:.6':''}">${esc(o.supplier||'')} — ${esc(o.item||'')}</div><div class="s">${fmtDate(o.date)}${o.qty?' • '+num(o.qty)+(o.unit?' '+esc(o.unit):''):''}${amt?' • '+money(amt):''}${o.note?' • '+esc(o.note):''}</div></div>
+    <button class="btn danger xs" onclick="delOrder('${o.id}')">🗑</button></div>`;
+}
+function openOrder(){
+  openModal(`<div class="sheet-head"><h2>🛒 ${t('so_add')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>${t('so_supplier')}</label><input type="text" id="so_sup" /></div>
+    <div class="field"><label>${t('so_item')}</label><input type="text" id="so_item" placeholder="${t('item_name_ph')}" /></div>
+    <div class="row2"><div class="field"><label>${t('so_qty')}</label><input type="number" step="0.01" inputmode="decimal" id="so_qty" /></div>
+    <div class="field"><label>${t('so_unit')}</label><input type="text" id="so_unit" placeholder="L / kg / नग" /></div></div>
+    <div class="row2"><div class="field"><label>${t('so_rate')}</label><input type="number" step="0.01" inputmode="decimal" id="so_rate" /></div>
+    <div class="field"><label>${t('date')}</label><input type="date" id="so_date" value="${todayStr()}" /></div></div>
+    <div class="field"><label>${t('note')}</label><input type="text" id="so_note" /></div>
+    <button class="btn" style="width:100%;margin-top:6px" onclick="saveOrder()">💾 ${t('save')}</button>`);
+}
+function saveOrder(){ const sup=$('so_sup').value.trim(); if(!sup){ toast(t('enter_name')); return; }
+  (state.orders=state.orders||[]).unshift({id:uid(),date:$('so_date').value||todayStr(),supplier:sup,item:$('so_item').value.trim(),qty:parseFloat($('so_qty').value)||0,unit:$('so_unit').value.trim(),rate:parseFloat($('so_rate').value)||0,note:$('so_note').value.trim(),received:false});
+  save(); closeModal(); rerenderModule(); toast(t('saved')); }
+function toggleOrder(id){ const o=(state.orders||[]).find(x=>x.id===id); if(!o) return; o.received=!o.received; save(); rerenderModule(); }
+function delOrder(id){ state.orders=(state.orders||[]).filter(x=>x.id!==id); save(); rerenderModule(); toast(t('deleted')); }
+
+/* ---- ⛽ वाहन व ईंधन (Vehicle & fuel) ---- */
+function modVehicle(){
+  const m=monthStr();
+  const list=(state.vehicles||[]).slice().sort((a,b)=>((b.date||'').localeCompare(a.date||'')));
+  const mt=list.filter(v=>(v.date||'').startsWith(m)).reduce((s,v)=>s+(v.amount||0),0);
+  return `<div class="card"><h3>⛽ ${t('vehicle')}</h3>
+    <div class="hint" style="margin-bottom:10px">${t('ve_hint')}</div>
+    <div class="bill-line tot" style="border-top:none"><span class="k">${t('ve_month_total')}</span><span class="v">${money(mt)}</span></div>
+    <button class="btn" style="width:100%;margin:12px 0" onclick="openVehicle()">➕ ${t('ve_add')}</button>
+    <div>${list.length?list.map(vehicleRow).join(''):'<div class="empty">'+t('no_data')+'</div>'}</div></div>`;
+}
+function vehicleRow(v){
+  const ic={diesel:'⛽',service:'🔧',repair:'🛠️',tyre:'🛞',other:'📦'}[v.kind]||'⛽';
+  return `<div class="list-item"><div class="avatar" style="background:var(--blue-l);color:var(--blue)">${ic}</div>
+    <div class="li-main"><div class="t">${esc(v.vehicle||'')} — ${t('ve_'+v.kind)}</div><div class="s">${fmtDate(v.date)}${v.odo?' • '+num(v.odo)+' km':''}${v.note?' • '+esc(v.note):''}</div></div>
+    <div class="li-amt"><div class="a">${money(v.amount)}</div></div>
+    <button class="btn danger xs" onclick="delVehicle('${v.id}')">🗑</button></div>`;
+}
+function openVehicle(){
+  openModal(`<div class="sheet-head"><h2>⛽ ${t('ve_add')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>${t('ve_name')}</label><input type="text" id="ve_name" placeholder="जैसे: टाटा 407 / UP-32 AB 1234" /></div>
+    <div class="field"><label>${t('ve_kind')}</label><select id="ve_kind"><option value="diesel">${t('ve_diesel')}</option><option value="service">${t('ve_service')}</option><option value="repair">${t('ve_repair')}</option><option value="tyre">${t('ve_tyre')}</option><option value="other">${t('ve_other')}</option></select></div>
+    <div class="row2"><div class="field"><label>${t('amount')}</label><input type="number" step="0.01" inputmode="decimal" id="ve_amt" /></div>
+    <div class="field"><label>${t('date')}</label><input type="date" id="ve_date" value="${todayStr()}" /></div></div>
+    <div class="field"><label>${t('ve_odo')}</label><input type="number" inputmode="numeric" id="ve_odo" /></div>
+    <div class="field"><label>${t('note')}</label><input type="text" id="ve_note" /></div>
+    <button class="btn" style="width:100%;margin-top:6px" onclick="saveVehicle()">💾 ${t('save')}</button>`);
+}
+function saveVehicle(){ const n=$('ve_name').value.trim(); if(!n){ toast(t('enter_name')); return; }
+  (state.vehicles=state.vehicles||[]).unshift({id:uid(),date:$('ve_date').value||todayStr(),vehicle:n,kind:$('ve_kind').value,amount:parseFloat($('ve_amt').value)||0,odo:parseFloat($('ve_odo').value)||0,note:$('ve_note').value.trim()});
+  save(); closeModal(); rerenderModule(); toast(t('saved')); }
+function delVehicle(id){ state.vehicles=(state.vehicles||[]).filter(x=>x.id!==id); save(); rerenderModule(); toast(t('deleted')); }
+
+/* ---- 🎁 लॉयल्टी पॉइंट (Loyalty) ---- */
+function loyaltyEarned(p){ return Math.floor(((state.entries||[]).filter(e=>e.partyId===p.id&&e.kind==='sale').reduce((s,e)=>s+(e.amount||0),0))/100); }
+function loyaltyRedeemed(id){ return (state.loyalty||[]).filter(l=>l.partyId===id).reduce((s,l)=>s+(l.points||0),0); }
+function modLoyalty(){
+  const custs=(state.parties||[]).filter(p=>p.type==='customer'&&p.active!==false);
+  const rows=custs.map(p=>({p:p,earn:loyaltyEarned(p),red:loyaltyRedeemed(p.id)})).filter(r=>r.earn>0).sort((a,b)=>((b.earn-b.red)-(a.earn-a.red)));
+  const total=rows.reduce((s,r)=>s+(r.earn-r.red),0);
+  return `<div class="card"><h3>🎁 ${t('loyalty')}</h3>
+    <div class="hint" style="margin-bottom:10px">${t('ly_hint')}</div>
+    <div class="bill-line tot" style="border-top:none"><span class="k">${t('ly_balance')}</span><span class="v">${num(total)} ⭐</span></div>
+    <div>${rows.length?rows.map(r=>`<div class="list-item"><div class="avatar" style="background:var(--amber-l);color:var(--amber)">🎁</div>
+      <div class="li-main"><div class="t">${esc(r.p.name)}</div><div class="s">${t('ly_earned')}: ${num(r.earn)} • ${t('ly_redeemed')}: ${num(r.red)}</div></div>
+      <div class="li-amt"><div class="b">${num(r.earn-r.red)} ⭐</div></div>
+      <button class="btn ghost xs" onclick="openLoyaltyRedeem('${r.p.id}')">${t('ly_redeem')}</button></div>`).join(''):'<div class="empty">'+t('ly_none')+'</div>'}</div></div>`;
+}
+function openLoyaltyRedeem(id){
+  const p=partyById(id); const bal=loyaltyEarned(p)-loyaltyRedeemed(id);
+  openModal(`<div class="sheet-head"><h2>🎁 ${t('ly_redeem')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+    <div class="hint" style="margin-bottom:8px">${esc(p.name)} — ${t('ly_balance')}: ${num(bal)} ⭐</div>
+    <div class="field"><label>${t('ly_points')}</label><input type="number" inputmode="numeric" id="ly_pts" value="${bal>0?bal:''}" /></div>
+    <div class="field"><label>${t('note')}</label><input type="text" id="ly_note" placeholder="${t('ly_note_ph')}" /></div>
+    <button class="btn" style="width:100%;margin-top:6px" onclick="saveLoyaltyRedeem('${id}')">💾 ${t('save')}</button>`);
+}
+function saveLoyaltyRedeem(id){ const pts=parseInt($('ly_pts').value)||0; if(pts<=0){ toast(t('enter_amount')); return; }
+  (state.loyalty=state.loyalty||[]).push({id:uid(),date:todayStr(),partyId:id,points:pts,note:$('ly_note').value.trim()});
+  save(); closeModal(); rerenderModule(); toast(t('saved')); }
+
+/* ---- 🛡️ बीमा रिमाइंडर (Insurance) ---- */
+function daysUntil(dateStr){ if(!dateStr) return null; const n=new Date(); const today=new Date(n.getFullYear(),n.getMonth(),n.getDate()); const d=new Date(dateStr+'T00:00:00'); return Math.round((d-today)/86400000); }
+function modInsurance(){
+  const list=(state.insurance||[]).slice().sort((a,b)=>(a.paid?1:0)-(b.paid?1:0)||((daysUntil(a.due)||0)-(daysUntil(b.due)||0)));
+  return `<div class="card"><h3>🛡️ ${t('insurance')}</h3>
+    <div class="hint" style="margin-bottom:10px">${t('ins_hint')}</div>
+    <button class="btn" style="width:100%;margin-bottom:12px" onclick="openInsurance()">➕ ${t('ins_add')}</button>
+    <div>${list.length?list.map(insuranceRow).join(''):'<div class="empty">'+t('no_data')+'</div>'}</div></div>`;
+}
+function insuranceRow(v){
+  const d=daysUntil(v.due); const over=(!v.paid&&d!=null&&d<0); const soon=(!v.paid&&d!=null&&d<=30&&d>=0);
+  const st=over?t('ins_overdue'):(soon?t('ins_soon'):'');
+  return `<div class="list-item"><div class="avatar" style="background:${over?'var(--red-l)':(soon?'var(--amber-l)':'var(--green-l)')};color:${over?'var(--red)':(soon?'var(--amber)':'var(--green-d)')}" onclick="toggleInsurance('${v.id}')">${v.paid?'✔️':'🛡️'}</div>
+    <div class="li-main" onclick="toggleInsurance('${v.id}')"><div class="t" style="${v.paid?'text-decoration:line-through;opacity:.6':''}">${esc(v.name||'')}</div><div class="s">${t('ins_due')}: ${fmtDate(v.due)}${st?' • '+st:''}${v.premium?' • '+money(v.premium):''}</div></div>
+    <button class="btn danger xs" onclick="delInsurance('${v.id}')">🗑</button></div>`;
+}
+function openInsurance(){
+  openModal(`<div class="sheet-head"><h2>🛡️ ${t('ins_add')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>${t('ins_name')}</label><input type="text" id="in_name" placeholder="जैसे: गाड़ी बीमा / पशु बीमा" /></div>
+    <div class="row2"><div class="field"><label>${t('ins_premium')}</label><input type="number" inputmode="numeric" id="in_prem" /></div>
+    <div class="field"><label>${t('ins_due')}</label><input type="date" id="in_due" value="${todayStr()}" /></div></div>
+    <div class="field"><label>${t('note')}</label><input type="text" id="in_note" /></div>
+    <button class="btn" style="width:100%;margin-top:6px" onclick="saveInsurance()">💾 ${t('save')}</button>`);
+}
+function saveInsurance(){ const n=$('in_name').value.trim(); if(!n){ toast(t('enter_name')); return; }
+  (state.insurance=state.insurance||[]).push({id:uid(),name:n,premium:parseFloat($('in_prem').value)||0,due:$('in_due').value||todayStr(),note:$('in_note').value.trim(),paid:false});
+  save(); closeModal(); rerenderModule(); toast(t('saved')); }
+function toggleInsurance(id){ const v=(state.insurance||[]).find(x=>x.id===id); if(!v) return; v.paid=!v.paid; save(); rerenderModule(); }
+function delInsurance(id){ state.insurance=(state.insurance||[]).filter(x=>x.id!==id); save(); rerenderModule(); toast(t('deleted')); }
+
+/* ---- 🐮 पशु प्रजनन व ब्यांत (Breeding) ---- */
+function addDays(dateStr,n){ const d=new Date(dateStr+'T00:00:00'); d.setDate(d.getDate()+n); const p=x=>String(x).padStart(2,'0'); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
+function modBreeding(){
+  const list=(state.breeding||[]).slice().sort((a,b)=>((b.date||'').localeCompare(a.date||'')));
+  return `<div class="card"><h3>🐮 ${t('breeding')}</h3>
+    <div class="hint" style="margin-bottom:10px">${t('br_hint')}</div>
+    <button class="btn" style="width:100%;margin-bottom:12px" onclick="openBreeding()">➕ ${t('br_add')}</button>
+    <div>${list.length?list.map(breedingRow).join(''):'<div class="empty">'+t('no_data')+'</div>'}</div></div>`;
+}
+function breedingRow(v){
+  const ic=v.kind==='ai'?'💉':(v.kind==='preg'?'🤰':'🐄');
+  let next='';
+  if(v.kind==='ai') next=t('br_next')+': '+fmtDate(addDays(v.date,285));
+  else if(v.kind==='preg') next=t('br_next')+': '+fmtDate(addDays(v.date,90));
+  return `<div class="list-item"><div class="avatar" style="background:var(--green-l);color:var(--green-d)">${ic}</div>
+    <div class="li-main"><div class="t">${esc(v.animal||'')} — ${t('br_'+v.kind)}</div><div class="s">${fmtDate(v.date)}${next?' • '+next:''}${v.note?' • '+esc(v.note):''}</div></div>
+    <button class="btn danger xs" onclick="delBreeding('${v.id}')">🗑</button></div>`;
+}
+function openBreeding(){
+  openModal(`<div class="sheet-head"><h2>🐮 ${t('br_add')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>${t('br_animal')}</label><input type="text" id="br_animal" /></div>
+    <div class="field"><label>${t('br_kind')}</label><select id="br_kind"><option value="ai">${t('br_ai')}</option><option value="preg">${t('br_preg')}</option><option value="calving">${t('br_calving')}</option></select></div>
+    <div class="field"><label>${t('date')}</label><input type="date" id="br_date" value="${todayStr()}" /></div>
+    <div class="field"><label>${t('note')}</label><input type="text" id="br_note" /></div>
+    <button class="btn" style="width:100%;margin-top:6px" onclick="saveBreeding()">💾 ${t('save')}</button>`);
+}
+function saveBreeding(){ const a=$('br_animal').value.trim(); if(!a){ toast(t('enter_name')); return; }
+  (state.breeding=state.breeding||[]).unshift({id:uid(),animal:a,kind:$('br_kind').value,date:$('br_date').value||todayStr(),note:$('br_note').value.trim()});
+  save(); closeModal(); rerenderModule(); toast(t('saved')); }
+function delBreeding(id){ state.breeding=(state.breeding||[]).filter(x=>x.id!==id); save(); rerenderModule(); toast(t('deleted')); }
+
+/* ---- 🔄 यूनिट व रेट कन्वर्टर (Unit & rate tool) ---- */
+function modConvert(){
+  return `<div class="card"><h3>🔄 ${t('convert')}</h3>
+    <div class="hint" style="margin-bottom:10px">${t('cv_hint')}</div>
+    <div class="field"><label>${t('cv_liter')}</label><input type="number" step="0.01" inputmode="decimal" id="cv_l" oninput="cvLiter()" /></div>
+    <div class="field"><label>${t('cv_density')}</label><input type="number" step="0.001" inputmode="decimal" id="cv_d" value="1.03" oninput="cvLiter()" /></div>
+    <div class="bill-line"><span class="k">${t('cv_kg')}</span><span class="v" id="cv_kg">0 kg</span></div>
+    <div class="divider"></div>
+    <div class="field"><label>${t('cv_fat')}</label><input type="number" step="0.1" inputmode="decimal" id="cv_fat" placeholder="6.5" oninput="cvRate()" /></div>
+    <div class="row2"><div class="field"><label>${t('cv_fatrate')}</label><input type="number" step="0.1" inputmode="decimal" id="cv_fr" placeholder="7" oninput="cvRate()" /></div>
+    <div class="field"><label>${t('cv_qty')}</label><input type="number" step="0.01" inputmode="decimal" id="cv_q" value="1" oninput="cvRate()" /></div></div>
+    <div class="bill-line tot"><span class="k">${t('cv_amount')}</span><span class="v" id="cv_amt">₹0</span></div></div>`;
+}
+function cvLiter(){ const l=parseFloat($('cv_l').value)||0, d=parseFloat($('cv_d').value)||1.03; $('cv_kg').textContent=num(l*d)+' kg'; }
+function cvRate(){ const fat=parseFloat($('cv_fat').value)||0, fr=parseFloat($('cv_fr').value)||0, q=parseFloat($('cv_q').value)||0; $('cv_amt').textContent=money(fat*fr*q); }
+
 /* ---- 🔍 Global search ---- */
 function modSearch(){
   return `<div class="card"><h3>${t('search_all')}</h3>
-    <div class="field" style="margin:0"><input type="text" id="gSearch" placeholder="${t('search_ph')}" oninput="runGlobalSearch()" /></div>
+    <div class="field" style="margin:0"><input type="text" id="gSearch" placeholder="${t('search_ph')}" oninput="debouncedGlobalSearch()" /></div>
     <div id="gResults" style="margin-top:12px"></div></div>`;
 }
 function runGlobalSearch(){
