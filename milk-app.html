@@ -275,6 +275,24 @@
   .srch-group{font-size:12px;font-weight:800;color:var(--muted);margin:14px 0 6px;letter-spacing:.3px}
   .stat{border:1px solid var(--line)}
   .list-item{border:1px solid var(--line)}
+  /* ---- v14 ---- */
+  .cal-c .bar{display:flex;gap:2px;width:100%;margin-top:3px;height:4px}
+  .cal-c .bar i{flex:1;border-radius:3px;background:var(--line)}
+  .cal-c .bar i.m{background:var(--green)}
+  .cal-c .bar i.e{background:var(--blue)}
+  .cal-c .bar.both i{box-shadow:0 0 0 1px var(--amber)}
+  .tag.pend{background:var(--amber-l);color:var(--amber)}
+  .hero{position:relative;overflow:hidden}
+  .hero:after{content:'';position:absolute;right:-46px;top:-46px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.12)}
+  .stat{transition:transform .12s}
+  .stat:active{transform:scale(.98)}
+  .btn{transition:transform .12s,filter .12s}
+  .btn:active{transform:scale(.97);filter:brightness(.95)}
+  .tile{backdrop-filter:saturate(1.1)}
+  .chips .chip.on{background:var(--green);color:#fff}
+  .fatstrip{display:flex;gap:2px;height:110px;align-items:flex-end}
+  .fatstrip i{flex:1;background:var(--green);border-radius:3px 3px 0 0;min-height:3px;opacity:.85}
+  .pie{width:118px;height:118px;border-radius:50%;flex:none}
 
 </style>
 </head>
@@ -396,6 +414,7 @@
         <button class="btn grey sm" onclick="shiftDay(-1)">◀ <span id="b-prevDay"></span></button>
         <button class="btn ghost sm" onclick="jumpToday()" id="b-today"></button>
         <button class="btn grey sm" onclick="shiftDay(1)"><span id="b-nextDay"></span> ▶</button>
+        <button class="btn grey sm" onclick="repeatLast()" title="पिछली एंट्री दोहराएँ">🔁</button>
       </div>
       <div class="field" style="margin:10px 0 0"><input type="text" id="entrySearch" placeholder="" oninput="renderEntries()" /></div>
       <div class="seg" style="margin:10px 0 0"><button id="shf-all" class="on" onclick="setShift('')"></button><button id="shf-m" onclick="setShift('morning')"></button><button id="shf-e" onclick="setShift('evening')"></button></div>
@@ -2802,6 +2821,7 @@ const OLD_KEYS=['milk_manager_data_v4','milk_manager_data_v3','milk_manager_data
 const defaultState=()=>({
   parties:[], entries:[], payments:[], expenses:[], items:[], moves:[], holidays:[],
   notes:[], wastage:[], animals:[], loans:[], recurring:[], invoices:[], staff:[], att:[], closes:[],
+  cash:[], health:[], prod:[], feed:[],
   settings:{ lang:'hi', defaultRate:50, currency:'₹', defaultShift:'morning', roundOff:false,
     waCode:'91', theme:'green', dark:false, pin:'', target:0, upi:'', upiName:'',
     retention:12, autoBackup:true, autoBackupDays:7, lastBackup:0, customCats:[], driveLink:'',
@@ -2921,6 +2941,13 @@ const T={
   favs:'⭐ मेरे पसंदीदा', recent:'🕘 हाल में खोले', fav_on:'⭐ पसंदीदा में जोड़ा', fav_off:'पसंदीदा से हटाया',
   hub_hint:'किसी भी मॉड्यूल पर देर तक दबाकर उसे ⭐ पसंदीदा बनाएँ। फ़ोल्डर के नाम पर टैप करके फ़ोल्डर छोटा/बड़ा करें।',
   hero_today:'आज की बिक्री', hero_due:'कुल बकाया', recent_srch:'हाल की खोज',
+  cashbook:'दैनिक कैश बुक', cb_hint:'सुबह की नकद + शाम की नकद = क्लोज़िंग कैश।', cb_m:'सुबह की नकद', cb_e:'शाम की नकद', cb_total:'कुल नकद', cb_saved:'नकद सेव', cb_mismatch:'ध्यान दें: नकद और बकाया वसूली में फ़र्क़ है',
+  repeat_last:'पिछली एंट्री दोहराएँ', repeat_done:'पिछली एंट्री कॉपी हो गई ✓', repeat_none:'पिछली कोई एंट्री नहीं', sync_pending:'सिंक बाकी',
+  holiday_weekly:'हर रविवार (दोहराने वाली)', weekly:'हर रविवार',
+  ahealth:'पशु स्वास्थ्य', ah_hint:'टीका, बीमारी, दवा, डॉक्टर — सब रिकॉर्ड रखें।', ah_kind:'प्रकार', ah_vaccine:'टीका', ah_illness:'बीमारी', ah_med:'दवा', ah_detail:'विवरण', ah_next:'अगली बार',
+  aprod:'दूध उत्पादन (पशु-वार)', avacc:'टीका रिमाइंडर', feed:'चारा इन्वेंटरी', feed_hint:'चारे का स्टॉक रखें — कम होने पर चेतावनी।', feed_stock:'स्टॉक', feed_low:'कम होने पर', feed_name:'चारे का नाम',
+  fat30:'गुणवत्ता ट्रेंड (30 दिन)', wastpie:'वेस्टेज कारण विश्लेषण', wast_qty:'कितना (L)', wast_reason:'कारण',
+  exp_tag:'टैग / सब-श्रेणी (जैसे: चारा-भैंस)',
   ai:'AI सहायक', ai_hint:'अपने दूध-व्यापार के बारे में सवाल पूछें — जवाब आपके असली डेटा के हिसाब से मिलेगा।', ai_ph:'सवाल लिखें…', ai_send:'पूछें', ai_nokey:'पहले सेटिंग में AI key डालें', ai_offline:'इसके लिए इंटरनेट चाहिए', ai_fail:'जवाब नहीं मिला — key या इंटरनेट जाँचें',
   ai_key:'AI API key (सिर्फ़ इस फ़ोन में सेव होगी)', ai_key_hint:'key आपके फ़ोन में ही रहती है — ऐप की फ़ाइल या GitHub में कभी नहीं जाती।', ai_key_saved:'AI key सेव हो गई', ai_key_clear:'AI key हटाएँ',
   ai_q1:'इस महीने का हिसाब बताओ', ai_q2:'सबसे ज़्यादा बकाया किसका है?', ai_q3:'मुनाफ़ा कैसे बढ़ाऊँ?', ai_q4:'आज का सारांश दो',
@@ -3057,6 +3084,13 @@ const T={
   favs:'⭐ My favourites', recent:'🕘 Recently opened', fav_on:'⭐ Added to favourites', fav_off:'Removed from favourites',
   hub_hint:'Long-press any module to mark it ⭐ favourite. Tap a folder name to collapse or expand it.',
   hero_today:'Today\u2019s sale', hero_due:'Total dues', recent_srch:'Recent searches',
+  cashbook:'Daily cash book', cb_hint:'Morning cash + evening cash = closing cash.', cb_m:'Morning cash', cb_e:'Evening cash', cb_total:'Total cash', cb_saved:'Cash saved', cb_mismatch:'Note: cash and collections do not match',
+  repeat_last:'Repeat last entry', repeat_done:'Last entry copied ✓', repeat_none:'No previous entry', sync_pending:'sync pending',
+  holiday_weekly:'Every Sunday (repeats)', weekly:'Every Sunday',
+  ahealth:'Animal health', ah_hint:'Vaccine, illness, medicine, vet — keep it all on record.', ah_kind:'Type', ah_vaccine:'Vaccine', ah_illness:'Illness', ah_med:'Medicine', ah_detail:'Details', ah_next:'Next due',
+  aprod:'Milk production (per animal)', avacc:'Vaccine reminder', feed:'Feed inventory', feed_hint:'Track feed stock — warns when low.', feed_stock:'Stock', feed_low:'Warn below', feed_name:'Feed name',
+  fat30:'Quality trend (30 days)', wastpie:'Wastage reason analysis', wast_qty:'How much (L)', wast_reason:'Reason',
+  exp_tag:'Tag / sub-category (e.g. feed-buffalo)',
   ai:'AI assistant', ai_hint:'Ask anything about your dairy business — answers use your real data.', ai_ph:'Type a question…', ai_send:'Ask', ai_nokey:'Add the AI key in Settings first', ai_offline:'This needs internet', ai_fail:'No answer — check the key or your internet',
   ai_key:'AI API key (saved on this phone only)', ai_key_hint:'The key stays on your phone — it is never written into the app file or GitHub.', ai_key_saved:'AI key saved', ai_key_clear:'Remove AI key',
   ai_q1:'How is this month going?', ai_q2:'Who owes me the most?', ai_q3:'How can I increase profit?', ai_q4:'Give me today\u2019s summary',
@@ -3110,6 +3144,7 @@ function deepDefaults(d){
   s.account=d.account||null;
   s.notes=d.notes||[]; s.wastage=d.wastage||[]; s.animals=d.animals||[]; s.loans=d.loans||[]; s.recurring=d.recurring||[];
   s.invoices=d.invoices||[]; s.staff=d.staff||[]; s.att=d.att||[]; s.closes=d.closes||[];
+  s.cash=d.cash||[]; s.health=d.health||[]; s.prod=d.prod||[]; s.feed=d.feed||[];
   s.parties.forEach(p=>{ if(!p.items) p.items=[]; });
   return s;
 }
@@ -3126,6 +3161,7 @@ function migrate(o){
   s.account=o.account||null;
   s.notes=o.notes||[]; s.wastage=o.wastage||[]; s.animals=o.animals||[]; s.loans=o.loans||[]; s.recurring=o.recurring||[];
   s.invoices=o.invoices||[]; s.staff=o.staff||[]; s.att=o.att||[]; s.closes=o.closes||[];
+  s.cash=o.cash||[]; s.health=o.health||[]; s.prod=o.prod||[]; s.feed=o.feed||[];
   return s;
 }
 function save(){ rebuildIndex(); try{ localStorage.setItem(STORE_KEY,JSON.stringify(state)); }catch(e){ toast('⚠️ Storage full'); } try{ scheduleAutoDriveBackup(); }catch(e){} }
@@ -3282,7 +3318,8 @@ const GMAP={bulk:'daily',bulkMonthly:'daily',holiday:'daily',milkcard:'daily',ca
  reports:'report',compare:'report',trend:'report',statement:'report',ledger:'report',invoices:'report',bills:'report',bulkbill:'report',quality:'report',
  animals:'farm',wastage:'farm',
  backup:'app',drive:'app',account:'app',settings:'app',perms:'app',ai:'app',datacheck:'app',support:'app',legal:'app',help:'app',
- insights:'report',monthclose:'money'};
+ insights:'report',monthclose:'money',cashbook:'money',
+ ahealth:'farm',aprod:'farm',avacc:'farm',feed:'farm',fat30:'farm',wastpie:'farm'};
 const REL={
   invoices:['bills','bulkbill','statement','payments'],
   bills:['invoices','bulkbill','statement','ledger'],
@@ -3321,6 +3358,13 @@ const REL={
   ai:['insights','reports','dayend','trend'],
   insights:['reports','trend','compare','budget','ai'],
   monthclose:['reports','compare','dues','pnl'],
+  cashbook:['payments','dues','dayend','monthclose'],
+  ahealth:['animals','avacc','feed','aprod'],
+  aprod:['animals','quality','ahealth','fat30'],
+  avacc:['ahealth','animals','feed'],
+  feed:['ahealth','animals','expenses'],
+  fat30:['quality','aprod','reports'],
+  wastpie:['wastage','quality','reports'],
   reports:['trend','compare','pnl','topcust','insights'],
   settings:['backup','drive','perms','ai','legal']
 };
@@ -3388,6 +3432,13 @@ const MODULES=[
   {id:'support',    ic:'🆘', hi:'सहायता',             en:'Help & support',    render:modSupport},
   {id:'legal',      ic:'📜', hi:'नियम व प्राइवेसी',    en:'Legal & privacy',   render:modLegal},
   {id:'help',       ic:'❓', hi:'मदद',                en:'Help',              render:modHelp},
+  {id:'cashbook',   ic:'💵', hi:'दैनिक कैश बुक',     en:'Daily cash book',   render:modCashBook, after:renderCashBook},
+  {id:'ahealth',    ic:'🩺', hi:'पशु स्वास्थ्य',      en:'Animal health',     render:modAHealth},
+  {id:'aprod',      ic:'🥛', hi:'दूध उत्पादन (पशु)',  en:'Milk production',   render:modAProd,    after:renderAProd},
+  {id:'avacc',      ic:'💊', hi:'टीका रिमाइंडर',      en:'Vaccine reminder',  render:modAVacc},
+  {id:'feed',       ic:'🌾', hi:'चारा इन्वेंटरी',     en:'Feed inventory',    render:modFeed,     after:renderFeed},
+  {id:'fat30',      ic:'📊', hi:'गुणवत्ता ट्रेंड',    en:'Quality trend',     render:modFat30,    after:renderFat30},
+  {id:'wastpie',    ic:'📉', hi:'वेस्टेज विश्लेषण',   en:'Wastage analysis',  render:modWastPie,  after:renderWastPie},
   {id:'perms',      ic:'🔐', hi:'परमिशन (अनुमतियाँ)',  en:'Permissions',       render:modPerms,    after:renderPerms},
   {id:'ai',         ic:'🤖', hi:'AI सहायक',           en:'AI assistant',      render:modAI},
   {id:'insights',   ic:'🔎', hi:'स्मार्ट इनसाइट्स',    en:'Smart insights',    render:modInsights, after:renderInsights},
@@ -3596,13 +3647,16 @@ function renderTarget(){
 function entryRow(e){
   const p=partyById(e.partyId), sup=isSup(p), it=itemById(p,e.itemId);
   const itTag=it?`<span class="tag">${esc(it.name)}</span>`:'';
+  const pend=(state.settings.driveAuto && !e.syncAt)?`<span class="tag pend" title="${t('sync_pending')}">⏳</span>`:'';
+  const ph=(p&&p.phone)?p.phone:'';
   return `<div class="list-item">
     <div class="avatar ${sup?'sup':''}">${sup?'🚚':'🥛'}</div>
     <div class="li-main" onclick="openEntry('${e.id}')">
-      <div class="t">${esc(partyName(e.partyId))}<span class="tag ${e.shift==='evening'?'eve':''}">${shiftLbl(e.shift)}</span>${itTag}<span class="tag ${sup?'sup':''}">${sup?t('purchase'):t('sale')}</span></div>
+      <div class="t">${esc(partyName(e.partyId))}<span class="tag ${e.shift==='evening'?'eve':''}">${shiftLbl(e.shift)}</span>${itTag}<span class="tag ${sup?'sup':''}">${sup?t('purchase'):t('sale')}</span>${pend}</div>
       <div class="s">${num(e.qty)} L${e.fat?' • '+t('fat_short')+' '+num(e.fat):''} • ${cur()}${num(e.rate)}/L</div>
     </div>
     <div class="li-amt" onclick="openEntry('${e.id}')"><div class="a">${money(e.amount)}</div></div>
+    ${ph?`<button class="btn grey xs" onclick="event.stopPropagation();callParty('${p.id}')">📞</button><button class="btn wa xs" onclick="event.stopPropagation();waParty('${p.id}')">💬</button>`:''}
     <button class="btn danger xs" onclick="delEntry('${e.id}')">🗑</button>
   </div>`;
 }
@@ -4273,6 +4327,7 @@ function modHoliday(){
       <div class="field" style="margin:0"><label>${t('date')}</label><input type="date" id="hd_date" value="${todayStr()}" /></div>
       <div class="field" style="margin:0"><label>${t('party_lbl')}</label><select id="hd_party"><option value="">${t('holiday_all')}</option>${state.parties.filter(p=>p.type==='customer').map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select></div>
     </div>
+    <label class="sw" style="margin:10px 0"><span class="lb">${t('holiday_weekly')}</span><input type="checkbox" id="hd_weekly" style="width:20px;height:20px;accent-color:var(--green)" /></label>
     <button class="btn" onclick="addHoliday()">${t('add_holiday')}</button>
   </div>
   <div class="card"><h3>${t('holiday')}</h3>
@@ -4283,8 +4338,16 @@ function modHoliday(){
 }
 function addHoliday(){
   const date=$('hd_date').value||todayStr(), partyId=$('hd_party').value||'';
-  state.holidays.push({id:uid(),date,partyId}); save(); rerenderModule(); toast(t('holiday_added'));
+  const weekly=!!($('hd_weekly')&&$('hd_weekly').checked);
+  state.holidays.push({id:uid(),date,partyId,weekly:weekly}); save(); rerenderModule(); toast(t('holiday_added'));
 }
+function callParty(id){ const p=partyById(id); if(!p||!p.phone){ toast(t('no_phone')); return; }
+  try{ if(window.MilkNative&&window.MilkNative.dial){ window.MilkNative.dial(p.phone); return; } }catch(e){}
+  try{ window.location.href='tel:'+p.phone; }catch(e){} }
+function waParty(id){ const p=partyById(id); if(!p||!p.phone){ toast(t('no_phone')); return; }
+  const code=(state.settings.waCode||'91').replace(/\D/g,''); const ph=(p.phone||'').replace(/\D/g,'');
+  const full=ph.startsWith(code)?ph:code+ph;
+  try{ window.open('https://wa.me/'+full,'_blank'); }catch(e){} }
 function delHoliday(id){ if(!confirm(t('c_holiday'))) return; state.holidays=state.holidays.filter(h=>h.id!==id); save(); rerenderModule(); toast(t('deleted')); }
 function modMilkCard(){
   const month=monthStr();
@@ -4677,7 +4740,7 @@ function renderExpenses(){
   const list=state.expenses.filter(x=>x.date.startsWith(month)).sort((a,b)=>b.date.localeCompare(a.date));
   $('expTotal').textContent=money(list.reduce((s,x)=>s+x.amount,0));
   el.innerHTML=list.length?list.map(x=>`<div class="list-item"><div class="avatar" style="background:var(--red-l);color:var(--red)">💸</div>
-    <div class="li-main"><div class="t">${esc(catLabel(x.cat))}</div><div class="s">${fmtDate(x.date)}${x.note?' • '+esc(x.note):''}</div></div>
+    <div class="li-main"><div class="t">${esc(catLabel(x.cat))}${x.sub?`<span class="tag">${esc(x.sub)}</span>`:''}</div><div class="s">${fmtDate(x.date)}${x.note?' • '+esc(x.note):''}</div></div>
     <div class="li-amt"><div class="a">${money(x.amount)}</div></div>
     <button class="btn danger xs" onclick="delExpense('${x.id}')">🗑</button></div>`).join(''):'<div class="empty">'+t('no_expenses')+'</div>';
 }
@@ -4686,12 +4749,13 @@ function openExpense(){
     <div class="field"><label>${t('date')}</label><input type="date" id="x_date" value="${todayStr()}" /></div>
     <div class="field"><label>${t('exp_cat')}</label><select id="x_cat">${allCats().map(c=>`<option value="${c.key}">${esc(c.name)}</option>`).join('')}</select></div>
     <div class="field"><label>${t('amount')}</label><input type="number" step="0.01" inputmode="decimal" id="x_amt" placeholder="${t('amount_ph')}" /></div>
+    <div class="field"><label>${t('exp_tag')}</label><input type="text" id="x_tag" placeholder="चारा-भैंस / ट्रांसपोर्ट-ट्रक" /></div>
     <div class="field"><label>${t('note')}</label><input type="text" id="x_note" placeholder="${t('note_ph')}" /></div>
     <button class="btn" onclick="saveExpense()">${t('save')}</button>`);
 }
 function saveExpense(){
   const amt=parseFloat($('x_amt').value); if(!amt||amt<=0){ toast(t('enter_amount')); return; }
-  state.expenses.push({id:uid(),date:$('x_date').value||todayStr(),cat:$('x_cat').value,amount:amt,note:$('x_note').value.trim()});
+  state.expenses.push({id:uid(),date:$('x_date').value||todayStr(),cat:$('x_cat').value,amount:amt,note:$('x_note').value.trim(),sub:($('x_tag')?$('x_tag').value.trim():'')});
   save(); closeModal(); toast(t('expense_saved')); rerenderModule(); renderHome();
 }
 function delExpense(id){
@@ -5106,7 +5170,7 @@ function initDriveAuth(){
 }
 function connectDrive(){ initDriveAuth(); if(!tokenClient){ toast(t('dr_needlogin')); return; } try{ tokenClient.requestAccessToken({prompt:''}); }catch(e){ toast(t('dr_authfail')); } }
 function driveReady(){ return !!driveToken && Date.now()<driveTokenExp; }
-function onDriveConnected(){ state.settings.driveConnected=true; try{ save(); }catch(e){} toast(t('dr_connected')); renderDriveBits(); if(curModule==='drive') rerenderModule(); if(state.settings.driveAuto) driveBackupNow(true); }
+function onDriveConnected(){ state.settings.driveConnected=true; try{ save(); }catch(e){} toast(t('dr_connected')); renderDriveBits(); if(curModule==='drive') rerenderModule(); if(state.settings.driveAuto) driveBackupNow(true); try{ markSynced(); }catch(e){} }
 function driveHeaders(extra){ return Object.assign({Authorization:'Bearer '+driveToken}, extra||{}); }
 async function findBackupFile(){
   const q=encodeURIComponent("name='milk-backup.json' and trashed=false");
@@ -5201,12 +5265,17 @@ function renderCalendar(){
   const startDow=(new Date(y,m-1,1).getDay()+6)%7;
   const days=lastDay(y,m); const D=IDX.date; const today=todayStr();
   const dow=DOW[LANG].slice(1).concat(DOW[LANG][0]);
+  const calAgg={};
+  state.entries.forEach(function(e){ if(e.kind!=='sale'||!e.date||!e.date.startsWith(calMonth)) return;
+    const r=calAgg[e.date]||(calAgg[e.date]={m:0,e:0}); if(e.shift==='evening') r.e+=e.qty; else r.m+=e.qty; });
   let html='<div class="cal">'+dow.map(d=>`<div class="cal-h">${d}</div>`).join('');
   for(let i=0;i<startDow;i++) html+='<div class="cal-c empty"></div>';
   for(let d=1;d<=days;d++){
     const ds=y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
     const rec=D[ds]; const q=rec?rec.qty:0; const a=rec?rec.sale:0;
-    html+=`<div class="cal-c ${ds===today?'today':''}" onclick="calOpen('${ds}')"><span class="d">${d}</span>${q?`<span class="q">${num(q)}L</span>`:''}${a?`<span class="a">${money(a)}</span>`:''}</div>`;
+    const ag=calAgg[ds]||{m:0,e:0};
+    const bar=`<div class="bar ${(ag.m>0&&ag.e>0)?'both':''}"><i class="${ag.m>0?'m':''}"></i><i class="${ag.e>0?'e':''}"></i></div>`;
+    html+=`<div class="cal-c ${ds===today?'today':''}" onclick="calOpen('${ds}')"><span class="d">${d}</span>${q?`<span class="q">${num(q)}L</span>`:''}${bar}</div>`;
   }
   html+='</div>';
   box.innerHTML=html;
@@ -6279,6 +6348,185 @@ function doMonthClose(){
   save(); renderMonthClose(); toast(t('mclose_saved'));
 }
 
+/* ================= v14: cash book, farm, reminders ================= */
+function animalName(id){ const a=state.animals.find(x=>x.id===id); return a?(a.tag||a.name||'—'):'—'; }
+function modCashBook(){
+  return `<div class="card"><h3>💵 ${t('cashbook')}</h3>
+    <div class="hint" style="margin-bottom:10px">${t('cb_hint')}</div>
+    <div class="row2">
+      <div class="field" style="margin:0"><label>${t('cb_m')}</label><input type="number" inputmode="decimal" id="cb_m" /></div>
+      <div class="field" style="margin:0"><label>${t('cb_e')}</label><input type="number" inputmode="decimal" id="cb_e" /></div>
+    </div>
+    <button class="btn" style="width:100%;margin-top:10px" onclick="saveCash()">${t('save')}</button>
+    <div id="cbBox" style="margin-top:12px"></div></div>`;
+}
+function renderCashBook(){
+  const el=$('cbBox'); if(!el) return;
+  const dt=todayStr(), c=state.cash.filter(x=>x.date===dt);
+  const m=(c.find(x=>x.shift==='morning')||{}).amount||0, e=(c.find(x=>x.shift==='evening')||{}).amount||0;
+  const pays=state.payments.filter(x=>x.date===dt).reduce((s,x)=>s+x.amount,0);
+  const exp=state.expenses.filter(x=>x.date===dt).reduce((s,x)=>s+x.amount,0);
+  const expect=pays-exp, diff=(m+e)-expect;
+  el.innerHTML=`<div class="bill-line"><span class="k">${t('cb_m')}</span><span class="v">${money(m)}</span></div>
+    <div class="bill-line"><span class="k">${t('cb_e')}</span><span class="v">${money(e)}</span></div>
+    <div class="bill-line tot"><span class="k">${t('cb_total')}</span><span class="v">${money(m+e)}</span></div>
+    <div class="bill-line"><span class="k">${t('pay_lbl')} − ${t('exp_lbl')}</span><span class="v">${money(expect)}</span></div>
+    ${(Math.abs(diff)>1 && (m+e)>0)?`<div class="ins warn"><span class="ii">⚠️</span><div>${t('cb_mismatch')} (${money(diff)})</div></div>`:''}
+    <div class="divider"></div>
+    ${state.cash.length?state.cash.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,10).map(x=>`<div class="list-item"><div class="avatar">💵</div><div class="li-main"><div class="t">${fmtDate(x.date)}</div><div class="s">${x.shift==='evening'?t('cb_e'):t('cb_m')}</div></div><div class="li-amt"><div class="a">${money(x.amount)}</div></div></div>`).join(''):'<div class="empty">'+t('no_data')+'</div>'}`;
+}
+function saveCash(){
+  const m=parseFloat(($('cb_m')||{}).value)||0, e=parseFloat(($('cb_e')||{}).value)||0, dt=todayStr();
+  state.cash=state.cash.filter(x=>x.date!==dt);
+  if(m>0) state.cash.push({id:uid(),date:dt,shift:'morning',amount:m});
+  if(e>0) state.cash.push({id:uid(),date:dt,shift:'evening',amount:e});
+  save(); renderCashBook(); toast(t('cb_saved'));
+}
+/* ---- farm ---- */
+function modAHealth(){
+  const list=state.animals.filter(a=>a.active!==false);
+  const opts=list.length?list.map(a=>`<option value="${a.id}">${esc(a.tag||a.name||'—')}</option>`).join(''):'<option value="">—</option>';
+  const rows=state.health.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  return `<div class="card"><h3>🩺 ${t('ahealth')}</h3>
+    <div class="hint" style="margin-bottom:10px">${t('ah_hint')}</div>
+    <div class="row2">
+      <div class="field" style="margin:0"><label>${t('animals')}</label><select id="ah_an">${opts}</select></div>
+      <div class="field" style="margin:0"><label>${t('ah_kind')}</label><select id="ah_kind"><option value="vaccine">${t('ah_vaccine')}</option><option value="illness">${t('ah_illness')}</option><option value="med">${t('ah_med')}</option></select></div>
+    </div>
+    <div class="row2">
+      <div class="field" style="margin:0"><label>${t('date')}</label><input type="date" id="ah_date" value="${todayStr()}" /></div>
+      <div class="field" style="margin:0"><label>${t('ah_next')}</label><input type="date" id="ah_next" /></div>
+    </div>
+    <div class="field"><label>${t('ah_detail')}</label><input type="text" id="ah_detail" /></div>
+    <button class="btn" onclick="saveHealth()">${t('save')}</button></div>
+  <div class="card"><h3>📒 रिकॉर्ड</h3>
+    ${rows.length?rows.map(h=>`<div class="list-item"><div class="avatar">🩺</div><div class="li-main"><div class="t">${esc(animalName(h.animalId))} · ${h.kind==='vaccine'?t('ah_vaccine'):h.kind==='illness'?t('ah_illness'):t('ah_med')}</div><div class="s">${fmtDate(h.date)}${h.next?' • '+t('ah_next')+' '+fmtDate(h.next):''}${h.detail?' • '+esc(h.detail):''}</div></div><button class="btn danger xs" onclick="delHealth('${h.id}')">🗑</button></div>`).join(''):'<div class="empty">'+t('no_data')+'</div>'}</div>`;
+}
+function saveHealth(){
+  const an=($('ah_an')||{}).value||''; if(!an){ toast(t('no_data_toast')); return; }
+  state.health.push({id:uid(),animalId:an,kind:($('ah_kind')||{}).value||'vaccine',date:($('ah_date')||{}).value||todayStr(),next:($('ah_next')||{}).value||'',detail:($('ah_detail')||{}).value||''});
+  save(); rerenderModule(); toast(t('saved'));
+}
+function delHealth(id){ state.health=state.health.filter(x=>x.id!==id); save(); rerenderModule(); toast(t('deleted')); }
+function modAVacc(){
+  const today=todayStr();
+  const up=state.health.filter(h=>h.next).sort((a,b)=>a.next.localeCompare(b.next));
+  const late=up.filter(h=>h.next<today);
+  return `<div class="card"><h3>💊 ${t('avacc')}</h3>
+    ${late.length?`<div class="ins warn"><span class="ii">⚠️</span><div>${late.length} की तारीख निकल गई</div></div>`:''}
+    ${up.length?up.map(h=>`<div class="list-item"><div class="avatar" style="background:${h.next<today?'var(--red-l)':'var(--green-l)'};color:${h.next<today?'var(--red)':'var(--green-d)'}">💊</div><div class="li-main"><div class="t">${esc(animalName(h.animalId))}</div><div class="s">${fmtDate(h.next)}${h.detail?' • '+esc(h.detail):''}</div></div></div>`).join(''):'<div class="empty">कोई आगामी टीका नहीं</div>'}</div>`;
+}
+function modAProd(){
+  const list=state.animals.filter(a=>a.active!==false);
+  const opts=list.length?list.map(a=>`<option value="${a.id}">${esc(a.tag||a.name||'—')}</option>`).join(''):'<option value="">—</option>';
+  return `<div class="card"><h3>🥛 ${t('aprod')}</h3>
+    <div class="row2">
+      <div class="field" style="margin:0"><label>${t('animals')}</label><select id="ap_an">${opts}</select></div>
+      <div class="field" style="margin:0"><label>${t('date')}</label><input type="date" id="ap_date" value="${todayStr()}" /></div>
+    </div>
+    <div class="row2">
+      <div class="field" style="margin:0"><label>🌅 ${t('morning')}</label><input type="number" inputmode="decimal" id="ap_m" /></div>
+      <div class="field" style="margin:0"><label>🌙 ${t('evening')}</label><input type="number" inputmode="decimal" id="ap_e" /></div>
+    </div>
+    <button class="btn" style="width:100%;margin-top:10px" onclick="saveProd()">${t('save')}</button>
+    <div id="apBox" style="margin-top:12px"></div></div>`;
+}
+function renderAProd(){
+  const el=$('apBox'); if(!el) return;
+  const dt=todayStr();
+  const rows=state.animals.filter(a=>a.active!==false).map(function(a){
+    const m=state.prod.filter(x=>x.animalId===a.id&&x.date===dt&&x.shift==='morning').reduce((s,x)=>s+x.qty,0);
+    const e=state.prod.filter(x=>x.animalId===a.id&&x.date===dt&&x.shift==='evening').reduce((s,x)=>s+x.qty,0);
+    return {a:a,m:m,e:e,t:m+e};
+  }).sort((x,y)=>y.t-x.t);
+  const best=rows[0];
+  el.innerHTML=((best&&best.t>0)?`<div class="ins ok"><span class="ii">🏆</span><div>${esc(best.a.tag||best.a.name||'—')} — ${num(best.t)} L (सबसे ज़्यादा)</div></div>`:'')
+    +rows.map(r=>`<div class="bill-line"><span class="k">${esc(r.a.tag||r.a.name||'—')}</span><span class="v">${num(r.m)} + ${num(r.e)} = ${num(r.t)} L</span></div>`).join('');
+}
+function saveProd(){
+  const an=($('ap_an')||{}).value||''; if(!an){ toast(t('no_data_toast')); return; }
+  const dt=($('ap_date')||{}).value||todayStr();
+  const m=parseFloat(($('ap_m')||{}).value)||0, e=parseFloat(($('ap_e')||{}).value)||0;
+  state.prod=state.prod.filter(x=>!(x.animalId===an&&x.date===dt));
+  if(m>0) state.prod.push({id:uid(),animalId:an,date:dt,shift:'morning',qty:m});
+  if(e>0) state.prod.push({id:uid(),animalId:an,date:dt,shift:'evening',qty:e});
+  save(); renderAProd(); toast(t('saved'));
+}
+function modFeed(){
+  return `<div class="card"><h3>🌾 ${t('feed')}</h3>
+    <div class="hint" style="margin-bottom:10px">${t('feed_hint')}</div>
+    <div class="field"><label>${t('feed_name')}</label><input type="text" id="fd_name" /></div>
+    <div class="row2">
+      <div class="field" style="margin:0"><label>${t('feed_stock')}</label><input type="number" inputmode="decimal" id="fd_stock" /></div>
+      <div class="field" style="margin:0"><label>${t('feed_low')}</label><input type="number" inputmode="decimal" id="fd_low" /></div>
+    </div>
+    <button class="btn" style="width:100%;margin-top:10px" onclick="saveFeed()">${t('save')}</button>
+    <div id="fdBox" style="margin-top:12px"></div></div>`;
+}
+function renderFeed(){
+  const el=$('fdBox'); if(!el) return;
+  const list=state.feed||[];
+  el.innerHTML=list.length?list.map(f=>{ const low=(f.stock||0)<=(f.lowAt||0);
+    return `<div class="list-item"><div class="avatar" style="background:${low?'var(--amber-l)':'var(--green-l)'};color:${low?'var(--amber)':'var(--green-d)'}">🌾</div><div class="li-main"><div class="t">${esc(f.name)}</div><div class="s">${t('feed_stock')}: ${num(f.stock||0)}${low?' • ⚠️ '+t('feed_low')+' '+num(f.lowAt||0):''}</div></div><button class="btn danger xs" onclick="delFeed('${f.id}')">🗑</button></div>`; }).join(''):'<div class="empty">'+t('no_data')+'</div>';
+}
+function saveFeed(){
+  const n=($('fd_name')||{}).value||''; if(!n.trim()){ toast(t('enter_name')); return; }
+  state.feed=state.feed||[];
+  state.feed.push({id:uid(),name:n.trim(),stock:parseFloat(($('fd_stock')||{}).value)||0,lowAt:parseFloat(($('fd_low')||{}).value)||0});
+  save(); rerenderModule(); toast(t('saved'));
+}
+function delFeed(id){ state.feed=(state.feed||[]).filter(x=>x.id!==id); save(); rerenderModule(); toast(t('deleted')); }
+function modFat30(){ return `<div class="card"><h3>📊 ${t('fat30')}</h3><div id="fatBox"></div></div>`; }
+function renderFat30(){
+  const box=$('fatBox'); if(!box) return;
+  const days=[]; const now=new Date();
+  for(let i=29;i>=0;i--){ const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i); days.push(ymd(d)); }
+  const ag=days.map(function(dt){ const es=state.entries.filter(e=>e.date===dt&&e.kind==='sale'&&e.fat>0);
+    const q=es.reduce((s,e)=>s+e.qty,0), w=es.reduce((s,e)=>s+e.qty*e.fat,0); return {dt:dt,f:q?w/q:0}; });
+  const vals=ag.filter(x=>x.f>0).map(x=>x.f);
+  if(!vals.length){ box.innerHTML='<div class="empty">'+t('no_fat')+'</div>'; return; }
+  const max=Math.max.apply(null,vals), min=Math.min.apply(null,vals);
+  const avg=vals.reduce((s,v)=>s+v,0)/vals.length;
+  box.innerHTML='<div class="fatstrip">'+ag.map(x=>`<i style="height:${Math.round(x.f/max*100)}%" title="${x.dt} · ${x.f?x.f.toFixed(1):'-'}"></i>`).join('')+'</div>'
+    +`<div class="bill-line" style="margin-top:10px"><span class="k">${t('q_avg')}</span><span class="v">${num(Math.round(avg*100)/100)}</span></div>`
+    +`<div class="bill-line"><span class="k">सबसे कम / ज़्यादा</span><span class="v">${num(Math.round(min*100)/100)} / ${num(Math.round(max*100)/100)}</span></div>`;
+}
+function modWastPie(){ return `<div class="card"><h3>📉 ${t('wastpie')}</h3><div id="wpBox"></div></div>`; }
+function renderWastPie(){
+  const box=$('wpBox'); if(!box) return;
+  const m=monthStr(); const list=state.wastage.filter(x=>x.date.startsWith(m));
+  if(!list.length){ box.innerHTML='<div class="empty">'+t('no_data')+'</div>'; return; }
+  const by={}; list.forEach(x=>{ const r=((x.reason||'').trim()||'अन्य'); by[r]=(by[r]||0)+(x.value||0); });
+  const keys=Object.keys(by), tot=keys.reduce((s,k)=>s+by[k],0)||1;
+  const cols=['#0f7b53','#b7791f','#c0392b','#1d6fb8','#7b3fb0','#0c7b7b'];
+  let acc=0;
+  const stops=keys.map(function(k,i){ const a=acc/tot*360; acc+=by[k]; const b=acc/tot*360; return cols[i%cols.length]+' '+a+'deg '+b+'deg'; }).join(',');
+  box.innerHTML='<div style="display:flex;gap:14px;align-items:center"><div class="pie" style="background:conic-gradient('+stops+')"></div><div style="flex:1">'
+    +keys.map((k,i)=>`<div class="bill-line" style="padding:3px 0"><span class="k"><i style="display:inline-block;width:9px;height:9px;border-radius:2px;background:${cols[i%cols.length]};margin-right:6px"></i>${esc(k)}</span><span class="v">${money(by[k])} (${Math.round(by[k]/tot*100)}%)</span></div>`).join('')
+    +'</div></div>';
+}
+/* ---- repeat last + reminders + sync ---- */
+function repeatLast(){
+  const es=state.entries.filter(e=>e.kind==='sale').slice().sort((a,b)=>(String(b.date)+String(b.id)).localeCompare(String(a.date)+String(a.id)));
+  const last=es[0];
+  if(!last){ toast(t('repeat_none')); return; }
+  const dup=Object.assign({},last,{id:uid(),date:todayStr()});
+  state.entries.push(dup); save(); refreshAll(); toast(t('repeat_done'));
+}
+function shiftRemindCheck(){
+  if(state.settings.shiftRemind===false) return;
+  const h=new Date().getHours();
+  if(h!==6 && h!==17) return;
+  const key=todayStr()+(h<12?'M':'E');
+  if(state.settings.lastRemind===key) return;
+  state.settings.lastRemind=key; save();
+  const msg=(h<12?'सुबह':'शाम')+' की एंट्री भरनी है 🥛';
+  try{ if(window.Notification && Notification.permission==='granted') new Notification('दूध हिसाब', {body:msg}); }catch(e){}
+  toast('⏰ '+msg);
+}
+function requestNotif(){ try{ if(window.Notification){ Notification.requestPermission().then(function(p){ toast(p==='granted'?'🔔 नोटिफिकेशन चालू':t('perms_web')); }); } else toast(t('perms_web')); }catch(e){ toast(t('perms_web')); } }
+function markSynced(){ try{ const now=Date.now(); state.entries.forEach(function(e){ e.syncAt=now; }); save(); }catch(e){} }
+
 /* ================= DATA CHECK ================= */
 function modDataCheck(){ return `<div class="card"><div class="hint" style="margin-bottom:10px">${t('dc_hint')}</div><div id="dcBox"></div></div>`; }
 function renderDataCheck(){
@@ -6343,6 +6591,7 @@ function init(){
   window.addEventListener('focus',function(){ try{ driveAutoSync(); }catch(e){} });
   if(navigator.serviceWorker){ try{ navigator.serviceWorker.addEventListener('message',function(e){ if(e.data&&e.data.type==='drive-sync'){ try{ driveAutoSync(); }catch(_){} } }); }catch(e){} }
   registerPeriodicSync();
+  try{ shiftRemindCheck(); setInterval(shiftRemindCheck, 60000); }catch(e){}
 }
 init();
 </script>
