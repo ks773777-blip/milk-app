@@ -269,6 +269,7 @@
       <div class="stat blue"><div class="ico">📈</div><div class="lbl" id="l-monthProfit"></div><div class="val" id="s-monthProfit">₹0</div></div>
       <div class="stat red"><div class="ico">⏳</div><div class="lbl" id="l-receivable"></div><div class="val" id="s-receivable">₹0</div></div>
     </div>
+    <div class="card" id="shiftCard"></div>
     <div class="card" id="lowStockCard" style="display:none"><h3 id="l-lowStock"></h3><div id="lowStockList"></div></div>
     <div class="card" id="targetCard" style="display:none">
       <h3 id="l-targetProgress"></h3>
@@ -377,6 +378,7 @@
         <div class="bill-line tot"><span class="k" id="l-duePeriod"></span><span class="v" id="bs-due">₹0</span></div>
       </div>
       <div class="btn-row" style="margin-top:12px">
+        <button class="btn wa" onclick="switchTab('more');openModule('bulkbill')" id="b-bulkBill">📤</button>
         <button class="btn grey" onclick="downloadAllBillsPdf()" id="b-allPdf">📄 PDF</button>
         <button class="btn grey" onclick="printAllStatements()" id="b-allPrint">🖨️</button>
       </div>
@@ -2825,6 +2827,7 @@ const T={
   n_dues:'बकाया याद दिलाएँ', n_backup:'बैकअप ले लें', n_stock:'स्टॉक कम', n_target:'मासिक लक्ष्य', n_drive:'Drive जोड़ें',
   profile:'प्रोफ़ाइल', pf_signedin:'साइन इन', pf_guest:'अतिथि', pf_guest_x:'साइन इन करके अपनी पहचान जोड़ें', pf_local:'नाम और नंबर से शुरू करें', pf_name:'आपका नाम', pf_phone:'मोबाइल नंबर', pf_saved:'प्रोफ़ाइल सेव', pf_local_note:'यह सिर्फ़ इस डिवाइस पर सेव होगा — कोई OTP या सर्वर नहीं।',
   qa_bills:'बिल', qa_pay:'भुगतान', qa_rep:'रिपोर्ट', qa_drive:'बैकअप', qa_cal:'कैलेंडर', qa_help:'सहायता',
+  bulkbill:'बल्क बिल भेजें', bb_start:'भेजना शुरू करें', bb_hint:'एक-एक ग्राहक का बिल WhatsApp पर भेजें — “भेजें” दबाएँ, फिर “अगला”। (बिना टैप ऑटो-सेंड के लिए WhatsApp Business API चाहिए।)', bb_pdf:'PDF / प्रिंट', bb_done:'सब बिल भेज दिए गए', shift_coll:'सुबह / शाम कलेक्शन',
   hl1_t:'आज का हिसाब', hl1_x:'{q} लीटर · {a}', hl2_t:'बकाया', hl2_x:'ग्राहकों से {a} लेना है', hl3_t:'इस महीने का लक्ष्य', hl4_t:'ऑटो शिफ्ट चालू', hl4_x:'एंट्री खोलते ही सुबह/शाम अपने आप चुनी जाएगी', hl5_t:'Drive बैकअप चालू', hl5_x:'हर बदलाव अपने आप Drive में सेव होगा',
   support:'सहायता', support_x:'आम सवाल नीचे दिए हैं — खोलकर पढ़ें।',
   faq1_q:'ऑटो शिफ्ट कैसे बंद करें?', faq1_a:'सेटिंग → “ऑटो शिफ्ट” टॉगल बंद कर दें; फिर डिफ़ॉल्ट शिफ्ट इस्तेमाल होगी।',
@@ -2935,6 +2938,7 @@ const T={
   n_dues:'Dues to collect', n_backup:'Time to back up', n_stock:'Low stock', n_target:'Monthly target', n_drive:'Connect Drive',
   profile:'Profile', pf_signedin:'signed in', pf_guest:'Guest', pf_guest_x:'Sign in to add your identity', pf_local:'Continue with name & number', pf_name:'Your name', pf_phone:'Mobile number', pf_saved:'Profile saved', pf_local_note:'Saved on this device only — no OTP or server.',
   qa_bills:'Bills', qa_pay:'Payments', qa_rep:'Reports', qa_drive:'Backup', qa_cal:'Calendar', qa_help:'Help',
+  bulkbill:'Send bills in bulk', bb_start:'Start sending', bb_hint:'Send each customer their bill on WhatsApp — tap Send, then Next. (True no-tap auto-send needs the WhatsApp Business API.)', bb_pdf:'PDF / Print', bb_done:'All bills sent', shift_coll:'Morning / evening collection',
   hl1_t:'Today\u2019s numbers', hl1_x:'{q} litres · {a}', hl2_t:'Dues', hl2_x:'{a} to collect from customers', hl3_t:'This month\u2019s target', hl4_t:'Auto shift is on', hl4_x:'Morning/evening will be picked automatically when you open an entry', hl5_t:'Drive backup is on', hl5_x:'Every change is saved to Drive automatically',
   support:'Help & support', support_x:'Common questions below — tap to open.',
   faq1_q:'How do I turn off auto shift?', faq1_a:'Settings → turn off the “Auto shift” toggle; the default shift will be used instead.',
@@ -3169,6 +3173,7 @@ const MODULES=[
   {id:'calc',       ic:'🧮', hi:'कैलकुलेटर',           en:'Calculator',        render:modCalc},
   {id:'notes',      ic:'📝', hi:'नोट्स',               en:'Notes',             render:modNotes},
   {id:'bills',      ic:'🧾', hi:'बिल बनाएँ',          en:'Create bills',      jump:'bills'},
+  {id:'bulkbill',   ic:'📤', hi:'बल्क बिल भेजें',     en:'Bulk send bills',   render:modBulkBill, after:renderBulkBill},
   {id:'support',    ic:'🆘', hi:'सहायता',             en:'Help & support',    render:modSupport},
   {id:'legal',      ic:'📜', hi:'नियम व प्राइवेसी',    en:'Legal & privacy',   render:modLegal},
   {id:'help',       ic:'❓', hi:'मदद',                en:'Help',              render:modHelp}
@@ -3259,7 +3264,7 @@ function renderHome(){
         <div class="li-amt"><div class="b due">${money(bal)} ${isSup(p)?t('to_pay'):t('owes')}</div></div>
         ${p.phone?`<button class="btn wa xs" onclick="event.stopPropagation();waRemind('${p.id}')">🔔</button>`:''}</div>`).join('')
     :'<div class="empty"><span class="big">✅</span>'+t('no_dues')+'</div>';
-  renderHighlights(); updateBell();
+  renderHighlights(); updateBell(); renderShiftCard();
 }
 function renderChart(){
   const days=[], now=new Date();
@@ -5211,6 +5216,94 @@ function modLegal(){
     <div class="card"><h3>📜 ${t('terms')}</h3><div style="font-size:13.5px;line-height:1.7;color:var(--muted);white-space:pre-line">${esc(t('terms_body'))}</div></div>`;
 }
 
+/* ================= SHIFT COLLECTION + BULK BILL SEND ================= */
+function renderShiftCard(){
+  const el=$('shiftCard'); if(!el) return;
+  const t0=todayStr(); const e=state.entries.filter(x=>x.date===t0&&x.kind==='sale');
+  const m=e.filter(x=>x.shift==='morning'), v=e.filter(x=>x.shift==='evening');
+  const sm=m.reduce((s,x)=>s+x.qty,0), sa=m.reduce((s,x)=>s+x.amount,0);
+  const vm=v.reduce((s,x)=>s+x.qty,0), va=v.reduce((s,x)=>s+x.amount,0);
+  el.innerHTML=`<h3>${t('shift_coll')}</h3>
+    <div class="bill-line"><span class="k">🌅 ${t('morning')}</span><span class="v">${num(sm)} L • ${money(sa)}</span></div>
+    <div class="bill-line"><span class="k">🌙 ${t('evening')}</span><span class="v">${num(vm)} L • ${money(va)}</span></div>
+    <div class="bill-line tot"><span class="k">${t('total')}</span><span class="v">${num(sm+vm)} L • ${money(sa+va)}</span></div>`;
+}
+let bbPeriod='month';
+function modBulkBill(){
+  return `<div class="card"><h3>📤 ${t('bulkbill')}</h3>
+    <div class="seg wrap">
+      <button id="bb-day" onclick="setBbPeriod('day')">${t('rep_day')}</button>
+      <button id="bb-d10" onclick="setBbPeriod('d10')">${t('rep_tenday')}</button>
+      <button id="bb-d15" onclick="setBbPeriod('d15')">${t('rep_d15')}</button>
+      <button id="bb-month" onclick="setBbPeriod('month')">${t('rep_month')}</button>
+    </div>
+    <div class="field" style="margin:10px 0 0"><label>${t('anchor')}</label><input type="date" id="bbAnchor" value="${todayStr()}" onchange="renderBulkBill()" /></div>
+    <div class="hint" id="bbLbl" style="margin-top:8px"></div>
+    <div class="btn-row" style="margin-top:10px">
+      <button class="btn grey sm" onclick="bbSelect(true)">${t('select_all')}</button>
+      <button class="btn grey sm" onclick="bbSelect(false)">${t('clear_all_sel')}</button>
+    </div>
+    <div id="bbList" style="margin-top:8px"></div>
+    <button class="btn" style="margin-top:12px" onclick="startBillQueue()">📤 ${t('bb_start')}</button>
+    <div class="hint" style="margin-top:8px">${t('bb_hint')}</div></div>`;
+}
+function setBbPeriod(p){ bbPeriod=p; renderBulkBill(); }
+function bbData(){
+  const r=rangeFor(bbPeriod,($('bbAnchor')&&$('bbAnchor').value)||todayStr());
+  const list=state.parties.filter(p=>p.type==='customer').map(p=>{
+    const e=state.entries.filter(x=>x.partyId===p.id&&inRange(x.date,r.start,r.end));
+    const q=e.reduce((s,x)=>s+x.qty,0), amt=e.reduce((s,x)=>s+x.amount,0);
+    const pd=state.payments.filter(x=>x.partyId===p.id&&inRange(x.date,r.start,r.end)).reduce((s,x)=>s+x.amount,0);
+    return {p,q,amt,pd,due:amt-pd};
+  }).filter(b=>b.q||b.amt).sort((a,b)=>b.due-a.due);
+  return {r,list};
+}
+function renderBulkBill(){
+  if(!$('bbList')) return;
+  ['day','d10','d15','month'].forEach(p=>{ const el=$('bb-'+p); if(el) el.classList.toggle('on',p===bbPeriod); });
+  const d=bbData(); if($('bbLbl')) $('bbLbl').textContent=d.r.label;
+  window._bb={r:d.r,list:d.list,sel:{}};
+  d.list.forEach(b=>{ if(b.p.phone) window._bb.sel[b.p.id]=true; });
+  bbPaint();
+}
+function bbPaint(){
+  const bb=window._bb||{list:[],sel:{}};
+  $('bbList').innerHTML=bb.list.length?bb.list.map(b=>`<div class="list-item">
+      <input type="checkbox" ${bb.sel[b.p.id]?'checked':''} ${b.p.phone?'':'disabled'} onchange="window._bb.sel['${b.p.id}']=this.checked" style="width:22px;height:22px;flex:none;accent-color:var(--green)" />
+      ${avatarHtml(b.p)}<div class="li-main"><div class="t">${esc(b.p.name)}</div><div class="s">${num(b.q)} L • ${esc(b.p.phone||t('no_phone'))}</div></div>
+      <div class="li-amt"><div class="a">${money(b.due)}</div></div></div>`).join(''):'<div class="empty">'+t('no_data')+'</div>';
+}
+function bbSelect(v){ const bb=window._bb; if(!bb) return; bb.list.forEach(b=>{ if(b.p.phone) bb.sel[b.p.id]=v; }); bbPaint(); }
+function startBillQueue(){
+  const bb=window._bb; if(!bb) return;
+  const ps=bb.list.filter(b=>bb.sel[b.p.id]&&b.p.phone).map(b=>b.p);
+  if(!ps.length){ toast(t('no_sel')); return; }
+  window._bq={r:bb.r,ps:ps,i:0}; renderBillQueue();
+}
+function renderBillQueue(){
+  const q=window._bq, p=q.ps[q.i], r=q.r;
+  openModal(`<div class="sheet-head"><h2>📤 ${t('bulkbill')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+    <div class="hint" style="text-align:center;margin-bottom:10px">${t('party_x_of_y').replace('{a}',q.i+1).replace('{b}',q.ps.length)}</div>
+    <div style="display:flex;justify-content:center">${avatarHtml(p,'lg')}</div>
+    <div style="text-align:center;font-weight:800;font-size:17px;margin-top:8px">${esc(p.name)}</div>
+    <div style="text-align:center;color:var(--muted);font-size:13px;margin-bottom:8px">${esc(p.phone)} · ${r.label}</div>
+    <div class="bill-box" style="margin-bottom:12px"><div style="white-space:pre-line;font-size:13px">${esc(billText(p.id,r))}</div></div>
+    <button class="btn wa" style="margin-bottom:8px" onclick="bqSendWa()">💬 ${t('btn_send')}</button>
+    <button class="btn grey" style="margin-bottom:8px" onclick="bqPdf()">📄 ${t('bb_pdf')}</button>
+    <div class="btn-row"><button class="btn grey" ${q.i===0?'disabled':''} onclick="bqPrev()">${t('prev')}</button>
+      <button class="btn" onclick="bqNext()">${q.i>=q.ps.length-1?t('done_all'):t('next')}</button></div>`);
+}
+function bqCur(){ return window._bq.ps[window._bq.i]; }
+function bqSendWa(){ const p=bqCur(); window.open('https://wa.me/'+dial(p)+'?text='+encodeURIComponent(billText(p.id,window._bq.r)),'_blank'); }
+function bqPdf(){ const p=bqCur(), r=window._bq.r; printBillR(p.id,r); }
+function bqNext(){ const q=window._bq; if(q.i>=q.ps.length-1){ closeModal(); toast(t('bb_done')); return; } q.i++; renderBillQueue(); }
+function bqPrev(){ const q=window._bq; if(q.i>0){ q.i--; renderBillQueue(); } }
+function printBillR(id,r){
+  const w=window.open('','_blank'); if(!w) return;
+  w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+t('bill_title')+'</title>'+billPageCss()+'</head><body>'+billPageHtml(id,r)+'<script>setTimeout(function(){window.print();},350);<\/script></body></html>');
+  w.document.close();
+}
+
 /* ================= DATA CHECK ================= */
 function modDataCheck(){ return `<div class="card"><div class="hint" style="margin-bottom:10px">${t('dc_hint')}</div><div id="dcBox"></div></div>`; }
 function renderDataCheck(){
@@ -5246,7 +5339,7 @@ function applyStatic(){
     'b-remind':'reminders','b-bulkRemind':'bulk_remind','b-addParty':'add_customer','b-bkNow':'backup_now','b-allPdf':'all_pdf','b-allPrint':'print','b-summary':'send','b-shareChart':'send',
     'b-morHome':'morning_entry','b-eveHome':'evening_entry',
     'per-day':'rep_day','per-d10':'rep_tenday','per-d15':'rep_d15','per-month':'rep_month','seg-cust':'customers','seg-sup':'farmers',
-    'b-prevDay':'prev','b-today':'today','b-nextDay':'next','t-search':'tab_search','l-searchAll':'search_all'};
+    'b-prevDay':'prev','b-today':'today','b-nextDay':'next','t-search':'tab_search','l-searchAll':'search_all','b-bulkBill':'bulkbill'};
   for(const k in map) if($(k)) $(k).textContent=t(map[k]);
   $('b-addParty').textContent=uiPartyType==='supplier'?t('add_farmer'):t('add_customer');
   if($('partySearch')) $('partySearch').placeholder=t('search_ph');
