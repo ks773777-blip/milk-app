@@ -494,7 +494,7 @@
   <!-- MODULE HUB -->
   <section class="view" id="view-more">
     <div class="card" id="profileCard"></div>
-    <div class="card"><h3 id="l-modules"></h3><div class="hint" id="l-modHint" style="margin-bottom:10px"></div><div class="hub-searchwrap"><input type="text" id="hubSearch" oninput="debouncedRenderHub()" /></div><div class="hub-chips" id="hubChips"></div><div id="moduleTiles"></div></div>
+    <div class="card"><h3 id="l-modules"></h3><div class="hint" id="l-modHint" style="margin-bottom:10px"></div><div class="hub-searchwrap"><input type="text" id="hubSearch" oninput="debouncedRenderHub()" /></div><div class="hub-chips" id="hubChips"></div><div id="moduleTiles"></div><button class="btn grey sm" style="width:100%;margin-top:10px" onclick="openModManager()" id="b-modMgr"></button></div>
   </section>
 
   <!-- MODULE PAGE -->
@@ -2840,7 +2840,7 @@ const defaultState=()=>({
     waCode:'91', theme:'green', dark:false, pin:'', target:0, upi:'', upiName:'',
     retention:36, autoBackup:true, autoBackupDays:7, lastBackup:0, customCats:[], driveLink:'',
     driveAuto:false, driveFileId:'', lastDriveBackup:0, autoShift:true, onboarded:false, driveConnected:false, shiftRemind:true, lastRemind:'', billLang:'', billColor:'',
-    biometricLock:false, bioCredId:'', invNext:1, budget:{}, favs:[], recent:[], collapsed:[], bkSchedOn:false, bkSchedTime:'21:00', bkSchedEvery:1, bkSchedTarget:'file', bkSchedLast:0, bkHistory:[], missRemind:true, missTime:'21:00', missLastRemind:'',
+    biometricLock:false, bioCredId:'', invNext:1, budget:{}, favs:[], recent:[], collapsed:[], bkSchedOn:false, bkSchedTime:'21:00', bkSchedEvery:1, bkSchedTarget:'file', bkSchedLast:0, bkHistory:[], missRemind:true, missTime:'21:00', missLastRemind:'', hiddenMods:['creditlimit','calc','calendar','checklist','loans','emi','complaints','occasions','loyalty','quality','ai','insurance','convert'],
     business:{ name:'दूध हिसाब', owner:'', phone:'', address:'' } },
   account:null
 });
@@ -3016,7 +3016,8 @@ const T={
   emi:'EMI / किस्त कैलकुलेटर', emi_hint:'कर्ज़ की मासिक किस्त, कुल ब्याज और कुल भुगतान तुरंत निकालें।', emi_amount:'कर्ज़ की रकम (₹)', emi_rate:'सालाना ब्याज दर (%)', emi_months:'कितने महीने', emi_val:'मासिक किस्त (EMI)', emi_interest:'कुल ब्याज', emi_total:'कुल भुगतान',
   creditlimit:'ग्राहक क्रेडिट लिमिट', cl_hint:'हर ग्राहक की उधार सीमा तय करें — बकाया सीमा से बढ़ते ही लाल दिखेगा।', cl_limit:'सीमा (₹)', cl_over:'सीमा पार',
   checklist:'डेली टास्क चेकलिस्ट', ck_hint:'रोज़ के ज़रूरी काम — हर दिन अपने आप रीसेट हो जाते हैं।', ck_ph:'जैसे: सुबह दूध बाँटना', ck_none:'कोई काम नहीं', ck_done:'आज हो गया', ck_todo:'आज बाकी',
-  missed:'छूटी हुई एंट्री', miss_hint:'जिन दिनों किसी ग्राहक की एंट्री नहीं बनी, वे दिन यहाँ दिखेंगे। नीचे “भरें” दबाकर उस दिन की एंट्री भर सकते हैं।', miss_none:'बढ़िया! पिछले दिनों की सारी एंट्री भरी हुई है ✓', miss_days:'कितने दिन देखें', miss_d7:'7 दिन', miss_d14:'14 दिन', miss_d30:'30 दिन', miss_missing:'ग्राहकों की एंट्री नहीं', miss_fill:'भरें', miss_all_ok:'सबकी एंट्री भर गई ✓', miss_today:'आज इनकी एंट्री बाकी', miss_remind:'छूटी एंट्री रिमाइंडर', miss_remind_hint:'तय समय पर, अगर आज किसी ग्राहक की एंट्री अधूरी हो तो नोटिफिकेशन और आवाज़ मिलेगी।', miss_notify:'आज {n} ग्राहकों की एंट्री नहीं भरी — भर दें।', miss_go:'उस दिन की एंट्री भरें', miss_card:'आज की एंट्री बाकी'
+  missed:'छूटी हुई एंट्री', miss_hint:'जिन दिनों किसी ग्राहक की एंट्री नहीं बनी, वे दिन यहाँ दिखेंगे। नीचे “भरें” दबाकर उस दिन की एंट्री भर सकते हैं।', miss_none:'बढ़िया! पिछले दिनों की सारी एंट्री भरी हुई है ✓', miss_days:'कितने दिन देखें', miss_d7:'7 दिन', miss_d14:'14 दिन', miss_d30:'30 दिन', miss_missing:'ग्राहकों की एंट्री नहीं', miss_fill:'भरें', miss_all_ok:'सबकी एंट्री भर गई ✓', miss_today:'आज इनकी एंट्री बाकी', miss_remind:'छूटी एंट्री रिमाइंडर', miss_remind_hint:'तय समय पर, अगर आज किसी ग्राहक की एंट्री अधूरी हो तो नोटिफिकेशन और आवाज़ मिलेगी।', miss_notify:'आज {n} ग्राहकों की एंट्री नहीं भरी — भर दें।', miss_go:'उस दिन की एंट्री भरें', miss_card:'आज की एंट्री बाकी',
+  mod_mgr:'मॉड्यूल प्रबंधन', mod_mgr_hint:'जो मॉड्यूल नहीं चाहिए उसे बंद कर दें — वह सूची से हट जाएगा। कभी भी दोबारा चालू कर सकते हैं।', mod_off:'बंद', mod_on:'चालू'
  },
  en:{
   tagline:'Milk Manager',
@@ -3187,7 +3188,8 @@ const T={
   emi:'EMI / instalment calculator', emi_hint:'Work out the monthly instalment, total interest and total payment instantly.', emi_amount:'Loan amount (₹)', emi_rate:'Annual interest rate (%)', emi_months:'Number of months', emi_val:'Monthly instalment (EMI)', emi_interest:'Total interest', emi_total:'Total payment',
   creditlimit:'Customer credit limits', cl_hint:'Set a credit limit for each customer — the balance turns red as soon as it crosses the limit.', cl_limit:'Limit (₹)', cl_over:'over limit',
   checklist:'Daily task checklist', ck_hint:'Your daily must-do tasks — they reset automatically every day.', ck_ph:'e.g. Deliver morning milk', ck_none:'No tasks yet', ck_done:'done today', ck_todo:'pending today',
-  missed:'Missed entries', miss_hint:'Days on which a customer had no entry show up here. Tap “Fill” to enter that day.', miss_none:'Great! Every recent day is fully entered ✓', miss_days:'How many days to check', miss_d7:'7 days', miss_d14:'14 days', miss_d30:'30 days', miss_missing:'customers without an entry', miss_fill:'Fill', miss_all_ok:'Everyone is entered ✓', miss_today:'Still pending today', miss_remind:'Missed-entry reminder', miss_remind_hint:'At the set time, if any customer is still missing an entry today, you get a notification and a sound.', miss_notify:'{n} customers have no entry today — please fill them.', miss_go:'Enter that day', miss_card:'Today\u2019s entries pending'
+  missed:'Missed entries', miss_hint:'Days on which a customer had no entry show up here. Tap “Fill” to enter that day.', miss_none:'Great! Every recent day is fully entered ✓', miss_days:'How many days to check', miss_d7:'7 days', miss_d14:'14 days', miss_d30:'30 days', miss_missing:'customers without an entry', miss_fill:'Fill', miss_all_ok:'Everyone is entered ✓', miss_today:'Still pending today', miss_remind:'Missed-entry reminder', miss_remind_hint:'At the set time, if any customer is still missing an entry today, you get a notification and a sound.', miss_notify:'{n} customers have no entry today — please fill them.', miss_go:'Enter that day', miss_card:'Today\u2019s entries pending',
+  mod_mgr:'Manage modules', mod_mgr_hint:'Switch off any module you do not need — it disappears from the list. You can switch it back on anytime.', mod_off:'off', mod_on:'on'
  }
 };
 let LANG='hi';
@@ -3487,9 +3489,28 @@ const REL={
   backup:['drive','settings','datacheck','account'],
   missed:['register','delivery','bulkMonthly','calendar','holiday','dayend']
 };
+function isHiddenMod(id){ try{ return (state.settings.hiddenMods||[]).indexOf(id)>=0; }catch(e){ return false; } }
+function visibleMods(){ return MODULES.filter(function(m){ return !isHiddenMod(m.id); }); }
+function toggleModHidden(id){
+  const h=state.settings.hiddenMods||(state.settings.hiddenMods=[]);
+  const i=h.indexOf(id); if(i>=0) h.splice(i,1); else h.push(id);
+  save(); try{ renderHub(); }catch(e){}
+  openModManager();
+}
+function openModManager(){
+  const body=GROUPS.map(function(g){
+    const list=MODULES.filter(function(m){ return (GMAP[m.id]||'app')===g.id; });
+    if(!list.length) return '';
+    return '<div class="divider"></div><h3 style="font-size:14px">'+g.ic+' '+esc(LANG==='hi'?g.hi:g.en)+'</h3>'+
+      list.map(function(m){ const off=isHiddenMod(m.id);
+        return '<div class="list-item"><div class="avatar">'+m.ic+'</div><div class="li-main"><div class="t">'+esc(LANG==='hi'?m.hi:m.en)+'</div><div class="s">'+(off?t('mod_off'):t('mod_on'))+'</div></div><div class="tr '+(off?'':'on')+'" onclick="toggleModHidden(\''+m.id+'\')"></div></div>';
+      }).join('');
+  }).join('');
+  openModal('<div class="sheet-head"><h2>⚙️ '+t('mod_mgr')+'</h2><button class="x" onclick="closeModal()">✕</button></div><div class="hint" style="margin-bottom:6px">'+t('mod_mgr_hint')+'</div>'+body);
+}
 function relatedRow(id){
   const rel=REL[id]; if(!rel||!rel.length) return '';
-  const chips=rel.map(function(r){ const m=MODULES.find(function(x){return x.id===r;}); if(!m) return '';
+  const chips=rel.map(function(r){ const m=MODULES.find(function(x){return x.id===r;}); if(!m||isHiddenMod(m.id)) return '';
     return `<button class="chip" onclick="${m.jump?("switchTab('"+m.jump+"')"):("openModule('"+m.id+"')")}">${m.ic} ${esc(LANG==='hi'?m.hi:m.en)}</button>`; }).join('');
   if(!chips) return '';
   return `<div class="card"><h3>🔗 ${t('related')}</h3><div class="chips">${chips}</div></div>`;
@@ -3604,10 +3625,11 @@ function hubHead(g, n, folded){
 function renderHub(){
   if($('hubSearch')) $('hubSearch').placeholder=t('hub_search');
   if($('l-modHint')) $('l-modHint').textContent=t('hub_hint');
+  if($('b-modMgr')) $('b-modMgr').textContent='⚙️ '+t('mod_mgr');
   const q=(($('hubSearch')&&$('hubSearch').value)||'').trim().toLowerCase();
   const hit=function(m){ if(!q) return true; return ((LANG==='hi'?m.hi:m.en)+' '+(LANG==='hi'?m.en:m.hi)).toLowerCase().indexOf(q)>=0; };
-  const favs=(state.settings.favs||[]).map(function(id){ return MODULES.find(function(x){return x.id===id;}); }).filter(Boolean);
-  const rec=(state.settings.recent||[]).map(function(id){ return MODULES.find(function(x){return x.id===id;}); }).filter(Boolean);
+  const favs=(state.settings.favs||[]).map(function(id){ return MODULES.find(function(x){return x.id===id;}); }).filter(function(x){ return x && !isHiddenMod(x.id); });
+  const rec=(state.settings.recent||[]).map(function(id){ return MODULES.find(function(x){return x.id===id;}); }).filter(function(x){ return x && !isHiddenMod(x.id); });
   let out='';
   if(!q && favs.length){
     out+='<div class="hub-group"><div class="hub-head"><span>'+t('favs')+'</span><span class="hcnt">'+favs.length+'</span><span class="hcaret"></span></div><div class="tiles">'+favs.map(hubTile).join('')+'</div></div>';
@@ -3616,11 +3638,11 @@ function renderHub(){
     out+='<div class="hub-group"><div class="hub-head"><span>'+t('recent')+'</span><span class="hcnt">'+rec.length+'</span><span class="hcaret"></span></div><div class="tiles">'+rec.map(hubTile).join('')+'</div></div>';
   }
   if($('hubChips')) $('hubChips').innerHTML=GROUPS.map(function(g){
-    const n=MODULES.filter(function(m){ return (GMAP[m.id]||'app')===g.id; }).length;
+    const n=visibleMods().filter(function(m){ return (GMAP[m.id]||'app')===g.id; }).length;
     return '<button class="hchip" onclick="hubJump(\''+g.id+'\')">'+g.ic+' '+esc(LANG==='hi'?g.hi:g.en)+' · '+n+'</button>';
   }).join('');
   GROUPS.forEach(function(g){
-    const all=MODULES.filter(function(m){ return (GMAP[m.id]||'app')===g.id; });
+    const all=visibleMods().filter(function(m){ return (GMAP[m.id]||'app')===g.id; });
     const items=all.filter(hit);
     if(!items.length) return;
     const folded=(state.settings.collapsed||[]).indexOf(g.id)>=0 && !q;
@@ -6527,7 +6549,7 @@ function renderSearch(){
   if(srchCat==='mod'){
     let html='';
     GROUPS.forEach(function(g){
-      const list=MODULES.filter(function(m){ return (GMAP[m.id]||'app')===g.id && (q==='' || ((LANG==='hi'?m.hi:m.en)||'').toLowerCase().includes(q)); });
+      const list=visibleMods().filter(function(m){ return (GMAP[m.id]||'app')===g.id && (q==='' || ((LANG==='hi'?m.hi:m.en)||'').toLowerCase().includes(q)); });
       if(!list.length) return;
       html+='<div class="srch-group">'+g.ic+' '+esc(LANG==='hi'?g.hi:g.en)+' · '+list.length+'</div>'+list.map(m=>`<div class="list-item" onclick="openModule('${m.id}')"><div class="avatar">${m.ic}</div><div class="li-main"><div class="t">${esc(LANG==='hi'?m.hi:m.en)}</div></div></div>`).join('');
     });
@@ -6537,7 +6559,7 @@ function renderSearch(){
     let html='';
     const rec=(state.settings.srchRecent||[]);
     if(rec.length) html+='<div class="srch-group">🕘 '+t('recent_srch')+'</div>'+rec.map(r=>`<div class="list-item" onclick="srchUse('${esc(r)}')"><div class="avatar">🔍</div><div class="li-main"><div class="t">${esc(r)}</div></div><div class="li-amt"><div class="a">↗</div></div></div>`).join('');
-    const favs=(state.settings.favs||[]).map(id=>MODULES.find(m=>m.id===id)).filter(Boolean).slice(0,6);
+    const favs=(state.settings.favs||[]).map(id=>MODULES.find(m=>m.id===id)).filter(function(m){ return m && !isHiddenMod(m.id); }).slice(0,6);
     if(favs.length) html+='<div class="srch-group">⭐ '+t('favs')+'</div>'+favs.map(m=>`<div class="list-item" onclick="openModule('${m.id}')"><div class="avatar">${m.ic}</div><div class="li-main"><div class="t">${esc(LANG==='hi'?m.hi:m.en)}</div></div></div>`).join('');
     box.innerHTML=html||`<div class="empty"><span class="big">🔍</span>${t('srch_hint')}</div>`;
     return;
@@ -6604,7 +6626,7 @@ function renderHighlights(){
 function startHighlightTimer(){ clearInterval(hlTimer); hlTimer=setInterval(function(){ const n=buildHighlights().length||1; hlIdx=(hlIdx+1)%n; renderHighlights(); },5000); }
 function renderQuick(){
   const el=$('quickActions'); if(!el) return;
-  const qs=[['➕',t('add_entry'),'openEntry()'],['🧺',t('bulk_entry'),'openBulk()'],['🧾',t('qa_bills'),"switchTab('bills')"],['💵',t('qa_pay'),"openModule('payments')"],['📊',t('qa_rep'),"openModule('reports')"],['☁️',t('qa_drive'),"openModule('drive')"],['📅',t('qa_cal'),"openModule('calendar')"],['🆘',t('qa_help'),"openModule('support')"]];
+  const qs=[['➕',t('add_entry'),'openEntry()'],['🧺',t('bulk_entry'),'openBulk()'],['🧾',t('qa_bills'),"switchTab('bills')"],['💵',t('qa_pay'),"openModule('payments')"],['📊',t('qa_rep'),"openModule('reports')"],['☁️',t('qa_drive'),"openModule('drive')"],['📅',t('qa_cal'),"openModule('calendar')"],['🆘',t('qa_help'),"openModule('support')"]].filter(function(x){ const mm=/openModule\(.([A-Za-z0-9_]+).\)/.exec(x[2]); return !(mm && isHiddenMod(mm[1])); });
   el.innerHTML=qs.map(([ic,lb,fn])=>`<button class="qbtn" onclick="${fn}"><span class="qi">${ic}</span><span class="qt">${esc(lb)}</span></button>`).join('');
 }
 /* ---- help & support ---- */
