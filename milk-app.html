@@ -2941,6 +2941,9 @@ const T={
   favs:'⭐ मेरे पसंदीदा', recent:'🕘 हाल में खोले', fav_on:'⭐ पसंदीदा में जोड़ा', fav_off:'पसंदीदा से हटाया',
   hub_hint:'किसी भी मॉड्यूल पर देर तक दबाकर उसे ⭐ पसंदीदा बनाएँ। फ़ोल्डर के नाम पर टैप करके फ़ोल्डर छोटा/बड़ा करें।',
   hero_today:'आज की बिक्री', hero_due:'कुल बकाया', recent_srch:'हाल की खोज',
+  pay_due_now:'अभी बकाया', pay_total_milk:'कुल दूध का बिल', pay_total_paid:'कुल जमा', pay_after:'भुगतान के बाद बाकी', pay_full:'पूरा बकाया', pay_edit:'भुगतान बदलें',
+  bill_view:'बिल देखें', bill_dl:'डाउनलोड', bill_wa:'WhatsApp पर भेजें', bill_month:'महीने का बिल', edit:'बदलें',
+  shift_remind:'शिफ्ट रिमाइंडर (सुबह 6, शाम 5)', notif_on:'नोटिफिकेशन चालू करें', notif_test:'अभी टेस्ट करें',
   cashbook:'दैनिक कैश बुक', cb_hint:'सुबह की नकद + शाम की नकद = क्लोज़िंग कैश।', cb_m:'सुबह की नकद', cb_e:'शाम की नकद', cb_total:'कुल नकद', cb_saved:'नकद सेव', cb_mismatch:'ध्यान दें: नकद और बकाया वसूली में फ़र्क़ है',
   repeat_last:'पिछली एंट्री दोहराएँ', repeat_done:'पिछली एंट्री कॉपी हो गई ✓', repeat_none:'पिछली कोई एंट्री नहीं', sync_pending:'सिंक बाकी',
   holiday_weekly:'हर रविवार (दोहराने वाली)', weekly:'हर रविवार',
@@ -3084,6 +3087,9 @@ const T={
   favs:'⭐ My favourites', recent:'🕘 Recently opened', fav_on:'⭐ Added to favourites', fav_off:'Removed from favourites',
   hub_hint:'Long-press any module to mark it ⭐ favourite. Tap a folder name to collapse or expand it.',
   hero_today:'Today\u2019s sale', hero_due:'Total dues', recent_srch:'Recent searches',
+  pay_due_now:'Currently due', pay_total_milk:'Total milk bill', pay_total_paid:'Total received', pay_after:'Balance after payment', pay_full:'Full due', pay_edit:'Edit payment',
+  bill_view:'View bill', bill_dl:'Download', bill_wa:'Send on WhatsApp', bill_month:'Monthly bill', edit:'Edit',
+  shift_remind:'Shift reminder (6am, 5pm)', notif_on:'Turn on notifications', notif_test:'Test now',
   cashbook:'Daily cash book', cb_hint:'Morning cash + evening cash = closing cash.', cb_m:'Morning cash', cb_e:'Evening cash', cb_total:'Total cash', cb_saved:'Cash saved', cb_mismatch:'Note: cash and collections do not match',
   repeat_last:'Repeat last entry', repeat_done:'Last entry copied ✓', repeat_none:'No previous entry', sync_pending:'sync pending',
   holiday_weekly:'Every Sunday (repeats)', weekly:'Every Sunday',
@@ -3657,6 +3663,7 @@ function entryRow(e){
     </div>
     <div class="li-amt" onclick="openEntry('${e.id}')"><div class="a">${money(e.amount)}</div></div>
     ${ph?`<button class="btn grey xs" onclick="event.stopPropagation();callParty('${p.id}')">📞</button><button class="btn wa xs" onclick="event.stopPropagation();waParty('${p.id}')">💬</button>`:''}
+    <button class="btn grey xs" onclick="event.stopPropagation();openEntry('${e.id}')">✏️</button>
     <button class="btn danger xs" onclick="delEntry('${e.id}')">🗑</button>
   </div>`;
 }
@@ -3850,7 +3857,10 @@ function renderParties(){
       <div onclick="openParty('${p.id}')">${avatarHtml(p)}</div>
       <div class="li-main" onclick="openParty('${p.id}')"><div class="t">${esc(p.name)}${p.defaultQty?'<span class="tag">'+num(p.defaultQty)+' L</span>':''}</div><div class="s">${rateTxt}${p.route?' • '+esc(p.route):''}${p.phone?' • 📞 '+esc(p.phone):''}</div></div>
       <div class="li-amt" onclick="openBillDetail('${p.id}',rangeFor('month',todayStr()))"><div class="b ${bal>0.5?'due':'ok'}">${bal>0.5?money(bal)+' '+t('owes'):t('clean')}</div></div>
+      <button class="btn grey xs" onclick="event.stopPropagation();openBillDetail('${p.id}',rangeFor('month',todayStr()))">🧾</button>
+      <button class="btn grey xs" onclick="event.stopPropagation();openParty('${p.id}')">✏️</button>
       ${p.phone?`<button class="btn wa xs" onclick="event.stopPropagation();waRemind('${p.id}')">🔔</button>`:''}
+      <button class="btn danger xs" onclick="event.stopPropagation();delParty('${p.id}')">🗑</button>
     </div>`;
   }).join('');
 }
@@ -3992,7 +4002,14 @@ function openBillDetail(id,r){
       <button class="btn ghost" onclick="printBill('${id}')">${t('print')}</button>
     </div>
     <div class="btn-row" style="margin-top:8px">
-      <button class="btn grey" onclick="shareBillPdf('${id}')">${t('share_pdf')}</button>
+      <button class="btn ghost" onclick="billView('${id}')">👁️ ${t('bill_view')}</button>
+      <button class="btn ghost" onclick="billDownload('${id}')">⬇️ ${t('bill_dl')}</button>
+    </div>
+    <div class="btn-row" style="margin-top:8px">
+      <button class="btn wa" onclick="billWhatsApp('${id}')">💬 ${t('bill_wa')}</button>
+      <button class="btn grey" onclick="shareBillPdf('${id}')">📤 ${t('share_pdf')}</button>
+    </div>
+    <div class="btn-row" style="margin-top:8px">
       <button class="btn grey" onclick="shareBillLink('${id}')">${t('share_link')}</button>
     </div>
     <div class="btn-row" style="margin-top:8px">
@@ -4012,17 +4029,58 @@ function openBillDetail(id,r){
     ${pays.length?pays.map(x=>`<div class="list-item"><div class="avatar">💵</div>
       <div class="li-main"><div class="t">${fmtDate(x.date)}</div><div class="s">${esc(x.mode||'')}${x.note?' • '+esc(x.note):''}</div></div>
       <div class="li-amt"><div class="a">${money(x.amount)}</div></div>
+      <button class="btn grey xs" onclick="editPayment('${x.id}')">✏️</button>
       <button class="btn danger xs" onclick="delPayment('${x.id}')">🗑</button></div>`).join(''):'<div class="empty">'+t('no_payments')+'</div>'}`);
 }
+function payStats(id){
+  const billed=state.entries.filter(e=>e.partyId===id&&e.kind==='sale').reduce((s,e)=>s+e.amount,0);
+  const pur=state.entries.filter(e=>e.partyId===id&&e.kind==='purchase').reduce((s,e)=>s+e.amount,0);
+  const paid=state.payments.filter(p=>p.partyId===id).reduce((s,p)=>s+p.amount,0);
+  return {billed:billed, pur:pur, paid:paid, bal:partyBalance(id)};
+}
 function openPayment(id){
+  const st=payStats(id), due=Math.max(0,st.bal);
   openModal(`
     <div class="sheet-head"><h2>${t('payment_add')}</h2><button class="x" onclick="closeModal()">✕</button></div>
     <div class="field"><label>${t('party_lbl')}</label><input type="text" value="${esc(partyName(id))}" disabled /></div>
+    <div class="bill-box" style="margin-bottom:10px">
+      <div class="bill-line"><span class="k">${t('pay_total_milk')}</span><span class="v">${money2(st.billed)}</span></div>
+      <div class="bill-line"><span class="k">${t('pay_total_paid')}</span><span class="v">${money2(st.paid)}</span></div>
+      <div class="bill-line tot"><span class="k">${t('pay_due_now')}</span><span class="v" style="color:${due>0.5?'var(--red)':'var(--green)'}">${money2(due)}</span></div>
+    </div>
     <div class="field"><label>${t('date')}</label><input type="date" id="p_date" value="${todayStr()}" /></div>
-    <div class="field"><label>${t('amount')}</label><input type="number" step="0.01" inputmode="decimal" id="p_amt" placeholder="${t('amount_ph')}" /></div>
+    <div class="field"><label>${t('amount')}</label><input type="number" step="0.01" inputmode="decimal" id="p_amt" placeholder="${t('amount_ph')}" oninput="payPreview('${id}')" /></div>
+    <div class="chips" style="margin:-4px 0 10px">
+      ${due>0.5?`<button class="chip" onclick="payFill('${id}',${Math.round(due*100)/100})">${t('pay_full')} · ${money2(due)}</button>`:''}
+      <button class="chip" onclick="payFill('${id}',0)">${t('clear_all_sel')}</button>
+    </div>
+    <div class="amt-preview" id="payAfter"><span>${t('pay_after')}</span><b id="payAfterVal">${money2(due)}</b></div>
     <div class="field"><label>${t('method')}</label><select id="p_mode"><option>${t('cash')}</option><option>${t('upi')}</option><option>${t('bank')}</option><option>${t('other')}</option></select></div>
     <div class="field"><label>${t('note')}</label><input type="text" id="p_note" placeholder="${t('note_ph')}" /></div>
     <button class="btn" onclick="savePayment('${id}')">${t('save_payment')}</button>`);
+}
+function payFill(id,amt){ const e=$('p_amt'); if(e){ e.value=amt>0?amt:''; payPreview(id); } }
+function payPreview(id){
+  const st=payStats(id); const amt=parseFloat(($('p_amt')||{}).value)||0; const after=st.bal-amt;
+  const el=$('payAfterVal'); if(!el) return;
+  el.textContent=money2(after);
+  el.style.color=after>0.5?'var(--red)':(after<-0.5?'var(--blue)':'var(--green)');
+}
+function editPayment(id){
+  const x=state.payments.find(p=>p.id===id); if(!x) return;
+  openModal(`<div class="sheet-head"><h2>${t('pay_edit')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>${t('party_lbl')}</label><input type="text" value="${esc(partyName(x.partyId))}" disabled /></div>
+    <div class="field"><label>${t('date')}</label><input type="date" id="ep_date" value="${x.date}" /></div>
+    <div class="field"><label>${t('amount')}</label><input type="number" step="0.01" inputmode="decimal" id="ep_amt" value="${x.amount}" /></div>
+    <div class="field"><label>${t('method')}</label><input type="text" id="ep_mode" value="${esc(x.mode||'')}" /></div>
+    <div class="field"><label>${t('note')}</label><input type="text" id="ep_note" value="${esc(x.note||'')}" /></div>
+    <button class="btn" onclick="saveEditPayment('${id}')">${t('save')}</button>`);
+}
+function saveEditPayment(id){
+  const x=state.payments.find(p=>p.id===id); if(!x) return;
+  const amt=parseFloat($('ep_amt').value); if(!amt||amt<=0){ toast(t('enter_amount')); return; }
+  x.date=$('ep_date').value||x.date; x.amount=amt; x.mode=$('ep_mode').value.trim(); x.note=$('ep_note').value.trim();
+  save(); closeModal(); toast(t('saved')); renderBilling(); renderHome(); rerenderModule();
 }
 function savePayment(id){
   const amt=parseFloat($('p_amt').value); if(!amt||amt<=0){ toast(t('enter_amount')); return; }
@@ -4188,6 +4246,64 @@ function shareBillPdf(id){
   }catch(err){ toast(t('no_pdf')); }
 }
 
+/* ---------- bill: view / download / WhatsApp ---------- */
+function billRange(){ try{ return rangeFor(billPeriod,$('billAnchor').value||todayStr()); }catch(e){ return rangeFor('month',todayStr()); } }
+function billPdfBytes(id,r){ try{ const c=billCanvas(id,r); return buildPdfMulti([{bytes:dataUrlToBytes(c.toDataURL('image/jpeg',0.92)),iw:c.width,ih:c.height,w:c.width,h:c.height}]); }catch(e){ return null; } }
+function billFileName(id){ const p=partyById(id); return 'bill-'+((p&&p.name)||'party').replace(/\s+/g,'-')+'-'+todayStr()+'.pdf'; }
+function billView(id){
+  const pdf=billPdfBytes(id,billRange()); if(!pdf){ toast(t('no_pdf')); return; }
+  try{
+    const url=URL.createObjectURL(new Blob([pdf],{type:'application/pdf'}));
+    const w=window.open(url,'_blank');
+    if(!w) toast(t('no_pdf'));
+    setTimeout(function(){ try{ URL.revokeObjectURL(url); }catch(e){} },90000);
+  }catch(e){ toast(t('no_pdf')); }
+}
+function billDownload(id){
+  const pdf=billPdfBytes(id,billRange()); if(!pdf){ toast(t('no_pdf')); return; }
+  try{
+    const url=URL.createObjectURL(new Blob([pdf],{type:'application/pdf'}));
+    const a=document.createElement('a'); a.href=url; a.download=billFileName(id); document.body.appendChild(a); a.click();
+    setTimeout(function(){ try{ URL.revokeObjectURL(url); a.remove(); }catch(e){} },1500);
+    toast(t('pdf_saved'));
+  }catch(e){ toast(t('no_pdf')); }
+}
+function billWhatsApp(id){
+  const p=partyById(id); if(!p||!p.phone){ toast(t('no_phone')); return; }
+  const txt=billText(id,billRange());
+  const code=(state.settings.waCode||'91').replace(/\D/g,''), ph=(p.phone||'').replace(/\D/g,'');
+  const full=ph.startsWith(code)?ph:code+ph;
+  try{ window.open('https://wa.me/'+full+'?text='+encodeURIComponent(txt),'_blank'); }catch(e){}
+}
+/* ---------- generic record edit/delete (har jagah) ---------- */
+const REC_DEF={
+  note:{arr:'notes', icon:'📝', title:'नोट', f:[['text','नोट','text']]},
+  loan:{arr:'loans', icon:'💳', title:'उधार', f:[['name','नाम','text'],['amount','रकम','number'],['note','नोट','text']]},
+  feed:{arr:'feed', icon:'🌾', title:'चारा', f:[['name','नाम','text'],['stock','स्टॉक','number'],['lowAt','कम होने पर','number']]},
+  holiday:{arr:'holidays', icon:'🎉', title:'छुट्टी', f:[['date','तारीख','date']]},
+  animal:{arr:'animals', icon:'🐄', title:'पशु', f:[['tag','टैग','text'],['dailyYield','रोज़ का दूध','number']]},
+  invoice:{arr:'invoices', icon:'🧾', title:'इनवॉइस', f:[['amount','रकम','number'],['note','नोट','text']]}
+};
+function editRec(type,id){
+  const d=REC_DEF[type]; if(!d) return;
+  const rec=(state[d.arr]||[]).find(x=>x.id===id); if(!rec) return;
+  const fields=d.f.map(function(f){
+    const v=(rec[f[0]]==null?'':rec[f[0]]);
+    return '<div class="field"><label>'+f[1]+'</label><input type="'+f[2]+'" id="er_'+f[0]+'" value="'+esc(String(v))+'" /></div>';
+  }).join('');
+  openModal('<div class="sheet-head"><h2>'+d.icon+' '+d.title+'</h2><button class="x" onclick="closeModal()">✕</button></div>'+fields
+    +'<button class="btn" onclick="saveRec(\''+type+'\',\''+id+'\')">'+t('save')+'</button>');
+}
+function saveRec(type,id){
+  const d=REC_DEF[type]; if(!d) return;
+  const rec=(state[d.arr]||[]).find(x=>x.id===id); if(!rec) return;
+  d.f.forEach(function(f){ const el=$('er_'+f[0]); if(!el) return; rec[f[0]]=(f[2]==='number')?(parseFloat(el.value)||0):el.value; });
+  save(); closeModal(); toast(t('saved')); rerenderModule(); renderHome();
+}
+function delRec(type,id){
+  const d=REC_DEF[type]; if(!d) return;
+  state[d.arr]=(state[d.arr]||[]).filter(x=>x.id!==id); save(); toast(t('deleted')); rerenderModule();
+}
 /* ---------- UPI QR ---------- */
 function upiUri(amount){
   const vpa=state.settings.upi; if(!vpa) return '';
@@ -4333,6 +4449,7 @@ function modHoliday(){
   <div class="card"><h3>${t('holiday')}</h3>
     ${hs.length?hs.map(h=>`<div class="list-item"><div class="avatar" style="background:var(--amber-l);color:var(--amber)">🎉</div>
       <div class="li-main"><div class="t">${fmtDate(h.date)}</div><div class="s">${h.partyId?esc(partyName(h.partyId)):t('holiday_all')}</div></div>
+      <button class="btn grey xs" onclick="editRec('holiday','${h.id}')">✏️</button>
       <button class="btn danger xs" onclick="delHoliday('${h.id}')">🗑</button></div>`).join(''):'<div class="empty">'+t('no_holidays')+'</div>'}
   </div>`;
 }
@@ -4487,6 +4604,7 @@ function renderPayments(mode){
   $('payList').innerHTML=list.length?list.map(x=>`<div class="list-item"><div class="avatar">💵</div>
     <div class="li-main"><div class="t">${esc(partyName(x.partyId))}</div><div class="s">${fmtDate(x.date)} • ${esc(x.mode||'')}</div></div>
     <div class="li-amt"><div class="a">${money(x.amount)}</div></div>
+    <button class="btn grey xs" onclick="editPayment('${x.id}')">✏️</button>
     <button class="btn danger xs" onclick="delPayment('${x.id}')">🗑</button></div>`).join(''):'<div class="empty">'+t('no_pay')+'</div>';
 }
 function modDues(){
@@ -4880,6 +4998,7 @@ function modAccount(){
     <div class="hint" style="margin-top:12px">${t('g_origin_hint')}</div>
     <div class="hint" style="margin-top:8px;color:var(--amber)">${t('g_test_hint')}</div></div>`;
 }
+function toggleShiftRemind(){ state.settings.shiftRemind=(state.settings.shiftRemind===false); save(); try{ if($('sw-remind')) $('sw-remind').classList.toggle('on',state.settings.shiftRemind!==false); }catch(e){} toast(state.settings.shiftRemind!==false?'⏰ रिमाइंडर चालू':'⏰ रिमाइंडर बंद'); }
 function modSettings(){
   return `<div class="card"><h3>${t('settings')}</h3>
     <div class="field"><label>${t('language')}</label><div class="seg" style="margin-bottom:0"><button id="lang-hi" onclick="setLang('hi')">हिंदी</button><button id="lang-en" onclick="setLang('en')">English</button></div></div>
@@ -4901,6 +5020,8 @@ function modSettings(){
     <div class="sw"><span class="lb">${t('dark')}</span><div class="tr" id="sw-dark" onclick="toggleDark()"></div></div>
     <div class="sw"><span class="lb">${t('auto_shift')}</span><div class="tr" id="sw-autoshift" onclick="toggleAutoShift()"></div></div>
     <div class="hint" style="margin-top:-4px">${t('auto_shift_hint')}</div>
+    <div class="sw"><span class="lb">⏰ ${t('shift_remind')}</span><div class="tr" id="sw-remind" onclick="toggleShiftRemind()"></div></div>
+    <div class="btn-row" style="margin:-2px 0 8px"><button class="btn grey sm" style="flex:1" onclick="requestNotif()">🔔 ${t('notif_on')}</button><button class="btn grey sm" style="flex:1" onclick="shiftRemindCheck()">${t('notif_test')}</button></div>
     <div class="sw"><span class="lb">${t('round')}</span><div class="tr" id="sw-round" onclick="toggleRound()"></div></div>
     <div class="sw"><span class="lb">${t('pin')}</span><div class="tr" id="sw-pin" onclick="togglePin()"></div></div>
     <div class="sw"><span class="lb">${t('bio')}</span><div class="tr" id="sw-bio" onclick="toggleBio()"></div></div>
@@ -4916,6 +5037,7 @@ function modSettings(){
 function renderSettingsBits(){
   if($('sw-dark')) $('sw-dark').classList.toggle('on',!!state.settings.dark);
   if($('sw-autoshift')) $('sw-autoshift').classList.toggle('on',state.settings.autoShift!==false);
+  if($('sw-remind')) $('sw-remind').classList.toggle('on',state.settings.shiftRemind!==false);
   if($('sw-round')) $('sw-round').classList.toggle('on',!!state.settings.roundOff);
   if($('sw-pin')) $('sw-pin').classList.toggle('on',!!state.settings.pin);
   if($('sw-bio')) $('sw-bio').classList.toggle('on',!!state.settings.biometricLock);
@@ -5416,6 +5538,7 @@ function modNotes(){
 function noteRow(n){
   return `<div class="list-item"><div class="avatar" style="background:${n.done?'var(--green-l)':'var(--amber-l)'};color:${n.done?'var(--green-d)':'var(--amber)'}" onclick="toggleNote('${n.id}')">${n.done?'✔️':'📝'}</div>
     <div class="li-main" onclick="toggleNote('${n.id}')"><div class="t" style="${n.done?'text-decoration:line-through;opacity:.6':''}">${esc(n.text)}</div><div class="s">${fmtDateTime(n.at||Date.now())}</div></div>
+    <button class="btn grey xs" onclick="editRec('note','${n.id}')">✏️</button>
     <button class="btn danger xs" onclick="delNote('${n.id}')">🗑</button></div>`;
 }
 function addNote(){ const el=$('noteInput'); if(!el) return; const v=el.value.trim(); if(!v) return;
@@ -5844,6 +5967,7 @@ function loanRow(l){
     <div class="li-main"><div class="t" style="${l.settled?'text-decoration:line-through;opacity:.6':''}">${esc(l.name)}</div><div class="s">${fmtDate(l.date)}${l.note?' • '+esc(l.note):''}</div></div>
     <div class="li-amt"><div class="a">${money(l.amount)}</div></div>
     <button class="btn grey xs" onclick="toggleLoan('${l.id}')">${l.settled?'↺':'✔'}</button>
+    <button class="btn grey xs" onclick="editRec('loan','${l.id}')">✏️</button>
     <button class="btn danger xs" onclick="delLoan('${l.id}')">🗑</button></div>`;
 }
 function openLoan(){
@@ -6467,7 +6591,7 @@ function renderFeed(){
   const el=$('fdBox'); if(!el) return;
   const list=state.feed||[];
   el.innerHTML=list.length?list.map(f=>{ const low=(f.stock||0)<=(f.lowAt||0);
-    return `<div class="list-item"><div class="avatar" style="background:${low?'var(--amber-l)':'var(--green-l)'};color:${low?'var(--amber)':'var(--green-d)'}">🌾</div><div class="li-main"><div class="t">${esc(f.name)}</div><div class="s">${t('feed_stock')}: ${num(f.stock||0)}${low?' • ⚠️ '+t('feed_low')+' '+num(f.lowAt||0):''}</div></div><button class="btn danger xs" onclick="delFeed('${f.id}')">🗑</button></div>`; }).join(''):'<div class="empty">'+t('no_data')+'</div>';
+    return `<div class="list-item"><div class="avatar" style="background:${low?'var(--amber-l)':'var(--green-l)'};color:${low?'var(--amber)':'var(--green-d)'}">🌾</div><div class="li-main"><div class="t">${esc(f.name)}</div><div class="s">${t('feed_stock')}: ${num(f.stock||0)}${low?' • ⚠️ '+t('feed_low')+' '+num(f.lowAt||0):''}</div></div><button class="btn grey xs" onclick="editRec('feed','${f.id}')">✏️</button><button class="btn danger xs" onclick="delFeed('${f.id}')">🗑</button></div>`; }).join(''):'<div class="empty">'+t('no_data')+'</div>';
 }
 function saveFeed(){
   const n=($('fd_name')||{}).value||''; if(!n.trim()){ toast(t('enter_name')); return; }
