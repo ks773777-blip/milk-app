@@ -69,6 +69,38 @@
   .navbtn{width:40px;height:34px;border-radius:10px;background:rgba(255,255,255,.2);color:#fff;font-size:20px;font-weight:800;line-height:1;display:grid;place-items:center;border:1px solid rgba(255,255,255,.3)}
   .navbtn:disabled{opacity:.35}
   .navlbl{flex:1;font-size:12.5px;font-weight:600;opacity:.95;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bell{position:relative;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:16px;flex:none;border:1.5px solid rgba(255,255,255,.35)}
+  .bellbadge{position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;border-radius:9px;background:var(--red);color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center;padding:0 4px}
+  .topsearch{flex:1;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);border-radius:10px;padding:7px 12px;color:#fff;min-width:0;text-align:left}
+  .topsearch .si{font-size:14px}
+  .onboard{position:fixed;inset:0;z-index:200;background:var(--bg);display:none;flex-direction:column;padding:calc(26px + env(safe-area-inset-top,0px)) 22px calc(20px + env(safe-area-inset-bottom,0px))}
+  .onboard.on{display:flex}
+  .ob-top{display:flex;justify-content:flex-end}
+  .ob-skip{font-size:14px;font-weight:700;color:var(--muted)}
+  .ob-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px}
+  .ob-ic{width:118px;height:118px;border-radius:32px;background:var(--green-l);display:grid;place-items:center;font-size:56px}
+  .ob-t{font-size:22px;font-weight:800}
+  .ob-x{font-size:14.5px;color:var(--muted);max-width:330px;line-height:1.6}
+  .ob-dots{display:flex;gap:7px;justify-content:center;margin:16px 0}
+  .ob-dot{width:8px;height:8px;border-radius:50%;background:var(--line)}
+  .ob-dot.on{background:var(--green);width:22px;border-radius:5px}
+  .card.hlcard{background:linear-gradient(135deg,var(--green),var(--green-d));color:#fff;border:none;position:relative;overflow:hidden;min-height:96px}
+  .hlcard .hl-ic{font-size:26px}
+  .hlcard .hl-t{font-size:16px;font-weight:800;margin-top:6px}
+  .hlcard .hl-x{font-size:12.5px;opacity:.92;margin-top:3px}
+  .hlcard .hl-dots{position:absolute;right:14px;bottom:10px;display:flex;gap:5px}
+  .hlcard .hl-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.45)}
+  .hlcard .hl-dot.on{background:#fff}
+  .quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 12px}
+  .qbtn{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:5px}
+  .qbtn .qi{font-size:21px}
+  .qbtn .qt{font-size:10.5px;font-weight:700;color:var(--muted);text-align:center;line-height:1.2}
+  .faq{border-bottom:1px solid var(--line);padding:11px 0}
+  .faq summary{font-weight:700;font-size:14.5px;cursor:pointer;list-style:none}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq p{font-size:13.5px;color:var(--muted);margin-top:7px;line-height:1.6}
+  .chat-b{background:var(--soft);border-radius:12px;padding:9px 12px;font-size:13.5px;margin:6px 0;max-width:86%}
+  .chat-u{background:var(--green-l);color:var(--green-d);border-radius:12px;padding:9px 12px;font-size:13.5px;margin:6px 0 6px auto;max-width:86%;text-align:right}
   main{padding:14px 14px 20px;max-width:760px;margin:0 auto}
   .view{display:none;animation:fade .18s ease}
   .view.active{display:block}
@@ -214,13 +246,14 @@
       <div><h1 id="appTitle">दूध हिसाब</h1><small id="appSub">Milk Manager</small></div>
     </div>
     <div class="top-right">
+      <button class="bell" id="bellBtn" onclick="openNotifications()" aria-label="Notifications">🔔<span class="bellbadge" id="bellBadge" style="display:none"></span></button>
       <button class="acct" id="acctBtn" onclick="openModule('account')" aria-label="Account"><span id="acctIco">👤</span><img id="acctImg" alt="" style="display:none"/></button>
       <div><div class="top-date" id="topDate"></div><div class="clock" id="topClock">--:--:--</div></div>
     </div>
   </div>
   <div class="navrow">
     <button class="navbtn" id="navBack" onclick="navBack()">‹</button>
-    <span class="navlbl" id="navLbl"></span>
+    <button class="topsearch" onclick="switchTab('search')"><span class="si">🔍</span><span class="navlbl" id="navLbl"></span></button>
     <button class="navbtn" id="navFwd" onclick="navForward()">›</button>
   </div>
 </header>
@@ -228,6 +261,8 @@
 <main>
   <!-- HOME -->
   <section class="view active" id="view-home">
+    <div class="card hlcard" id="hlCard"></div>
+    <div class="quick" id="quickActions"></div>
     <div class="stats">
       <div class="stat green"><div class="ico">🥛</div><div class="lbl" id="l-todaySale"></div><div class="val" id="s-todaySale">0</div></div>
       <div class="stat amber"><div class="ico">🚚</div><div class="lbl" id="l-todayPurchase"></div><div class="val" id="s-todayPurchase">0</div></div>
@@ -266,6 +301,17 @@
       <div id="todayCustList"></div>
     </div>
     <div class="card"><h3 id="l-partyDues"></h3><div id="homeDues"></div></div>
+  </section>
+
+  <!-- SEARCH -->
+  <section class="view" id="view-search">
+    <div class="card">
+      <h3 id="l-searchAll"></h3>
+      <div class="field" style="margin:0"><input type="text" id="srchInput" placeholder="" oninput="renderSearch()" /></div>
+      <div class="chips" id="srchCats" style="margin-top:10px"></div>
+      <div class="hint" id="srchHint" style="margin-top:8px"></div>
+    </div>
+    <div class="card"><div id="srchResults"></div></div>
   </section>
 
   <!-- ENTRIES -->
@@ -340,6 +386,7 @@
 
   <!-- MODULE HUB -->
   <section class="view" id="view-more">
+    <div class="card" id="profileCard"></div>
     <div class="card"><h3 id="l-modules"></h3><div class="hint" id="l-modHint" style="margin-bottom:12px"></div><div class="tiles" id="moduleTiles"></div></div>
   </section>
 
@@ -354,14 +401,15 @@
 
 <nav class="tabs">
   <button data-tab="home" class="on" onclick="switchTab('home')"><span class="ic">🏠</span><span class="tl" id="t-home"></span></button>
+  <button data-tab="search" onclick="switchTab('search')"><span class="ic">🔍</span><span class="tl" id="t-search"></span></button>
   <button data-tab="entries" onclick="switchTab('entries')"><span class="ic">🥛</span><span class="tl" id="t-entries"></span></button>
   <button data-tab="parties" onclick="switchTab('parties')"><span class="ic">👥</span><span class="tl" id="t-parties"></span></button>
-  <button data-tab="bills" onclick="switchTab('bills')"><span class="ic">🧾</span><span class="tl" id="t-bills"></span></button>
-  <button data-tab="more" onclick="switchTab('more')"><span class="ic">⊞</span><span class="tl" id="t-more"></span></button>
+  <button data-tab="more" onclick="switchTab('more')"><span class="ic">👤</span><span class="tl" id="t-more"></span></button>
 </nav>
 
 <div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()"><div class="sheet" id="sheet"></div></div>
 <div class="toast" id="toast"></div>
+<div class="onboard" id="onboard"></div>
 
 <script>
 /* --- qrcode-generator (c) Kazuhiko Arase, MIT License --- */
@@ -2683,7 +2731,7 @@ const defaultState=()=>({
   settings:{ lang:'hi', defaultRate:50, currency:'₹', defaultShift:'morning', roundOff:false,
     waCode:'91', theme:'green', dark:false, pin:'', target:0, upi:'', upiName:'',
     retention:12, autoBackup:true, autoBackupDays:7, lastBackup:0, customCats:[], driveLink:'',
-    driveAuto:false, driveFileId:'', lastDriveBackup:0, autoShift:true,
+    driveAuto:false, driveFileId:'', lastDriveBackup:0, autoShift:true, onboarded:false,
     business:{ name:'दूध हिसाब', owner:'', phone:'', address:'' } },
   account:null
 });
@@ -2764,7 +2812,39 @@ const T={
   g_account:'Google खाता', g_intro:'अपने Google खाते से साइन इन करें — आपका नाम और फ़ोटो ऐप में दिखेगा। डेटा आपके फ़ोन में ही रहता है।', g_signin:'Google से साइन इन करें', g_signout:'साइन आउट', g_signedin:'साइन इन हो गया', g_signedout:'साइन आउट हो गया', g_loading:'साइन-इन बटन लोड हो रहा है…', g_error:'साइन इन नहीं हो सका', g_note:'यह पहचान सिर्फ़ इस डिवाइस पर सेव होती है। बैकअप/डेटा आपके फ़ोन में ही रहता है।', g_origin_hint:'ध्यान दें: साइन-इन तभी चलेगा जब इस पेज का पता (origin) Google Cloud Console में "Authorized JavaScript origins" में जोड़ा गया हो।', g_owner_fill:'Google नाम से मालिक का नाम भरें', g_test_hint:'अगर Google "Access blocked / verification" error दे, तो Google Cloud Console → OAuth consent screen → Audience में अपना Gmail "Test users" में जोड़ें, या "Publish app" दबाएँ।',
   dr_title:'☁️ Google Drive बैकअप', dr_intro:'Google Drive में अपना डेटा सुरक्षित रखें। ऑटो-बैकअप चालू रहने पर हर बदलाव अपने आप Drive में सेव हो जाएगा।', dr_status:'स्थिति', dr_connect:'Drive से जोड़ें', dr_connected:'Drive जुड़ा हुआ है', dr_notconn:'Drive जुड़ा नहीं है', dr_reconnect:'Drive फिर से जोड़ें', dr_auto:'ऑटोमैटिक बैकअप', dr_auto_on:'ऑटो-बैकअप चालू', dr_auto_off:'ऑटो-बैकअप बंद', dr_auto_hint:'डेटा बदलते ही और नेट आने पर अपने आप Drive में सेव होगा।', dr_backup_now:'अभी बैकअप करें', dr_restore:'Drive से रिस्टोर करें', dr_last:'पिछला बैकअप', dr_never:'कभी नहीं', dr_saved:'Drive में बैकअप हो गया', dr_fail:'Drive बैकअप नहीं हो सका', dr_none:'Drive में कोई बैकअप नहीं मिला', dr_authfail:'Drive की अनुमति नहीं मिली', dr_needlogin:'Drive के लिए अनुमति नहीं मिली — दोबारा कोशिश करें', dr_login_first:'पहले ऊपर Google से साइन इन करें', dr_open_file:'Drive में फ़ाइल खोलें', dr_syncing:'सिंक हो रहा है…', dr_scope_hint:'ध्यान दें: Google Cloud Console में "Google Drive API" चालू करें और OAuth consent screen में Drive scope जोड़ें।', dr_go:'☁️ Drive बैकअप', off_msg:'आप ऑफ़लाइन हैं — डेटा फ़ोन में सेव हो रहा है, नेट आने पर Drive में सिंक होगा', on_msg:'ऑनलाइन — Drive से सिंक',
   cal:'कैलेंडर', topcust:'टॉप ग्राहक', routes:'रूट सारांश', wastage:'वेस्टेज / नुकसान', animals:'पशु रजिस्टर', calc:'कैलकुलेटर', notes:'नोट्स', search_all:'खोज', cal_hint:'किसी दिन पर टैप करें — उस दिन की एंट्री खुल जाएगी।', route_hint:'ग्राहक के "रूट" के हिसाब से इस महीने का सारांश।', no_route:'रूट नहीं', w_add:'वेस्टेज जोड़ें', w_month_qty:'इस महीने की मात्रा', w_month_value:'इस महीने का मूल्य', reason:'कारण', reason_ph:'जैसे: गिर गया, खराब', rate:'रेट', a_count:'कुल पशु', a_daily:'रोज़ का दूध', a_month:'महीने का अनुमान', a_tag:'नाम / टैग', a_type:'प्रकार', a_yield:'रोज़ का दूध (L)', cow:'गाय', buffalo:'भैंस', day:'दिन', add:'जोड़ें', nt_ph:'नया नोट लिखें…', search_min:'कम से कम 2 अक्षर लिखें',
-  prev:'पिछला', next:'अगला', today:'आज', now_lbl:'अभी', auto_shift:'ऑटो शिफ्ट (समय के हिसाब से)', auto_shift_hint:'चालू रहने पर एंट्री खोलते ही सुबह/शाम अपने आप चुनी जाएगी।', entry_auto:'समय के हिसाब से अपने आप चुना', back:'पीछे', forward:'आगे', calc_hint:'+ − × ÷ से तुरंत हिसाब। "=" दबाएँ।',
+  prev:'पिछला', next:'अगला', today:'आज', now_lbl:'अभी', auto_shift:'ऑटो शिफ्ट (समय के हिसाब से)', auto_shift_hint:'चालू रहने पर एंट्री खोलते ही सुबह/शाम अपने आप चुनी जाएगी।', entry_auto:'समय के हिसाब से अपने आप चुना', back:'पीछे', forward:'आगे',
+  tab_search:'खोज',
+  ob_skip:'छोड़ें', ob_next:'आगे', ob_start:'शुरू करें',
+  ob1_t:'दूध हिसाब में स्वागत 🙏', ob1_x:'आपके दूध के धंधे का पूरा हिसाब — ग्राहक, एंट्री, बिल, बकाया — सब एक ही जगह, आसान भाषा में।',
+  ob2_t:'एक टैप में एंट्री', ob2_x:'घड़ी के हिसाब से सुबह/शाम अपने आप चुनी जाती है। “पिछला/अगला” बटन से एक के बाद एक ग्राहक की एंट्री भरें।',
+  ob3_t:'स्मार्ट रिपोर्ट और टूल', ob3_x:'कैलेंडर, टॉप ग्राहक, रूट सारांश, वेस्टेज, पशु रजिस्टर, कैलकुलेटर और नोट्स — सब अंदर ही।',
+  ob4_t:'सुरक्षित और ऑफ़लाइन', ob4_x:'बिना इंटरनेट भी पूरा चलता है, और Google Drive में अपने आप बैकअप होता रहता है।',
+  srch_ph:'ग्राहक, एंट्री, रकम, तारीख…', srch_hint:'कम से कम 2 अक्षर लिखें', no_res:'कुछ नहीं मिला',
+  cat_all:'सब', cat_party:'ग्राहक', cat_entry:'एंट्री', cat_bill:'बिल', cat_pay:'भुगतान', cat_mod:'मॉड्यूल',
+  notif:'सूचनाएँ', notif_none:'कोई सूचना नहीं — सब ठीक है!',
+  n_dues:'बकाया याद दिलाएँ', n_backup:'बैकअप ले लें', n_stock:'स्टॉक कम', n_target:'मासिक लक्ष्य', n_drive:'Drive जोड़ें',
+  profile:'प्रोफ़ाइल', pf_signedin:'साइन इन', pf_guest:'अतिथि', pf_guest_x:'साइन इन करके अपनी पहचान जोड़ें', pf_local:'नाम और नंबर से शुरू करें', pf_name:'आपका नाम', pf_phone:'मोबाइल नंबर', pf_saved:'प्रोफ़ाइल सेव', pf_local_note:'यह सिर्फ़ इस डिवाइस पर सेव होगा — कोई OTP या सर्वर नहीं।',
+  qa_bills:'बिल', qa_pay:'भुगतान', qa_rep:'रिपोर्ट', qa_drive:'बैकअप', qa_cal:'कैलेंडर', qa_help:'सहायता',
+  hl1_t:'आज का हिसाब', hl1_x:'{q} लीटर · {a}', hl2_t:'बकाया', hl2_x:'ग्राहकों से {a} लेना है', hl3_t:'इस महीने का लक्ष्य', hl4_t:'ऑटो शिफ्ट चालू', hl4_x:'एंट्री खोलते ही सुबह/शाम अपने आप चुनी जाएगी', hl5_t:'Drive बैकअप चालू', hl5_x:'हर बदलाव अपने आप Drive में सेव होगा',
+  support:'सहायता', support_x:'आम सवाल नीचे दिए हैं — खोलकर पढ़ें।',
+  faq1_q:'ऑटो शिफ्ट कैसे बंद करें?', faq1_a:'सेटिंग → “ऑटो शिफ्ट” टॉगल बंद कर दें; फिर डिफ़ॉल्ट शिफ्ट इस्तेमाल होगी।',
+  faq2_q:'डेटा कहाँ सेव होता है?', faq2_a:'पूरा डेटा आपके फ़ोन/ब्राउज़र में ही रहता है। Drive बैकअप चालू करने पर वह आपकी Google Drive में भी सेव होता है।',
+  faq3_q:'बिल प्रिंट या PDF कैसे बनाएँ?', faq3_a:'“बिल” खोलें, अवधि चुनें, फिर PDF या प्रिंट बटन दबाएँ।',
+  faq4_q:'दूसरे फ़ोन पर डेटा कैसे लाएँ?', faq4_a:'पहले फ़ोन से Drive बैकअप लें, दूसरे फ़ोन पर Google से साइन इन करके “Drive से रिस्टोर करें” दबाएँ।',
+  faq5_q:'PIN लॉक कैसे लगाएँ?', faq5_a:'सेटिंग → “PIN लॉक” चालू करें और 4 अंकों का PIN बनाएँ।',
+  helper:'ऑफ़लाइन सहायक', helper_x:'नीचे अपना सवाल लिखें — जवाब तुरंत मिलेगा (बिना इंटरनेट)।', helper_ph:'अपना सवाल लिखें…',
+  hp_backup:'बैकअप', hp_drive:'Drive', hp_shift:'शिफ्ट', hp_bill:'बिल', hp_print:'प्रिंट', hp_pin:'PIN', hp_lang:'भाषा',
+  help_a_backup:'डेटा बचाने के लिए “बैकअप व डेटा” खोलें और “बैकअप सेव” दबाएँ। Drive ऑटो-बैकअप चालू करने पर यह अपने आप होता रहेगा।',
+  help_a_shift:'एंट्री खोलते ही समय के हिसाब से सुबह/शाम अपने आप चुनी जाती है। बदलना हो तो शिफ्ट बदल लें; बंद करने के लिए सेटिंग में “ऑटो शिफ्ट” हटाएँ।',
+  help_a_bill:'“बिल” खोलें, दैनिक/10-दिन/15-दिन/मासिक चुनें, फिर PDF, प्रिंट या WhatsApp बटन दबाएँ।',
+  help_a_pin:'सेटिंग → “PIN लॉक” चालू करें और 4 अंकों का PIN डालें। अगली बार ऐप खोलने पर PIN माँगा जाएगा।',
+  help_a_lang:'सेटिंग → “भाषा” में हिंदी या English चुनें — पूरा ऐप उसी भाषा में दिखेगा।',
+  help_a_offline:'यह ऐप ऑफ़लाइन भी पूरा चलता है। इंटरनेट आने पर बदलाव अपने आप Drive में सिंक हो जाते हैं।',
+  help_a_default:'माफ़ कीजिए, यह सवाल मैं समझ नहीं पाया। नीचे दिए चिप पर दबाएँ, या “संपर्क करें” से WhatsApp/ईमेल करें।',
+  contact:'संपर्क करें', contact_x:'कोई और सवाल हो तो सीधे बात कीजिए।', contact_no:'पहले सेटिंग में अपना फ़ोन नंबर भरें',
+  privacy:'प्राइवेसी पॉलिसी', terms:'नियम व शर्तें',
+  privacy_body:'1) यह ऐप आपका सारा डेटा (ग्राहक, एंट्री, भुगतान, खर्च) आपके ही फ़ोन/ब्राउज़र में सेव करता है।\n2) कोई भी डेटा हमारे किसी सर्वर पर नहीं भेजा जाता — हमारा कोई सर्वर ही नहीं है।\n3) Google से साइन इन करने पर सिर्फ़ आपका नाम, ईमेल और फ़ोटो ऐप में दिखता है।\n4) Drive बैकअप चालू करने पर डेटा आपकी खुद की Google Drive में सेव होता है; ऐप सिर्फ़ अपनी बनाई फ़ाइल तक पहुँच रखती है।\n5) ऐप में कोई विज्ञापन नहीं है और डेटा किसी को नहीं बेचा जाता।\n6) “सारा डेटा मिटाएँ” दबाने पर आपका सारा डेटा हमेशा के लिए हट जाता है।',
+  terms_body:'1) यह ऐप आपके अपने इस्तेमाल के लिए है — दूध के धंधे का हिसाब रखने हेतु।\n2) बैकअप समय-समय पर लेते रहें; फ़ोन बदलने या ब्राउज़र डेटा मिटने पर बिना बैकअप डेटा चला जा सकता है।\n3) ऐप “जैसा है” (as-is) दिया गया है।\n4) रकम, बिल और रिपोर्ट अपनी जाँच के बाद ही भरोसे लायक मानें।\n5) आप अपना डेटा कभी भी निर्यात या मिटा सकते हैं।', calc_hint:'+ − × ÷ से तुरंत हिसाब। "=" दबाएँ।',
   thank:'धन्यवाद 🙏', bill_title:'बिल', milk_word:'दूध', litres:'लीटर', statement_word:'स्टेटमेंट',
   help_body:'1) ग्राहक जोड़ें — नाम, नंबर, रेट, डिफ़ॉल्ट मात्रा और (चाहें तो) कई आइटम जैसे गाय/भैंस का दूध।\n2) रोज़ की एंट्री — ➕ से एक-एक, 🧺 से बल्क, या ⚡ से सबकी डिफ़ॉल्ट एंट्री एक साथ।\n3) बिल — दैनिक/10-दिन/15-दिन/मासिक चुनें; PDF, प्रिंट, WhatsApp/SMS, UPI QR।\n4) खाता (Ledger) व स्टेटमेंट — ग्राहक का पूरा हिसाब।\n5) मॉड्यूल टैब में बाकी सब कुछ — रिपोर्ट, खर्च, स्टॉक, रिमाइंडर, बैकअप, सेटिंग।\n6) नए मॉड्यूल — कैलेंडर, टॉप ग्राहक, रूट सारांश, वेस्टेज, पशु रजिस्टर, कैलकुलेटर, नोट्स, खोज।'
  },
@@ -2842,7 +2922,39 @@ const T={
   g_account:'Google account', g_intro:'Sign in with your Google account — your name and photo will show in the app. Your data stays on this device.', g_signin:'Sign in with Google', g_signout:'Sign out', g_signedin:'Signed in', g_signedout:'Signed out', g_loading:'Loading sign-in button…', g_error:'Sign-in failed', g_note:'This identity is stored on this device only. Your backup/data stays on your phone.', g_origin_hint:'Note: sign-in works only after this page\u2019s origin is added under "Authorized JavaScript origins" in Google Cloud Console.', g_owner_fill:'Fill owner name from Google', g_test_hint:'If Google shows an "Access blocked / verification" error, open Google Cloud Console → OAuth consent screen → Audience, add your Gmail under "Test users", or press "Publish app".',
   dr_title:'☁️ Google Drive backup', dr_intro:'Keep your data safe in Google Drive. With auto-backup on, every change is saved to Drive automatically.', dr_status:'Status', dr_connect:'Connect Drive', dr_connected:'Drive connected', dr_notconn:'Drive not connected', dr_reconnect:'Reconnect Drive', dr_auto:'Automatic backup', dr_auto_on:'Auto-backup on', dr_auto_off:'Auto-backup off', dr_auto_hint:'Saves to Drive automatically when data changes or the network returns.', dr_backup_now:'Back up now', dr_restore:'Restore from Drive', dr_last:'Last backup', dr_never:'Never', dr_saved:'Backed up to Drive', dr_fail:'Drive backup failed', dr_none:'No backup found in Drive', dr_authfail:'Drive permission not granted', dr_needlogin:'Drive permission not granted — try again', dr_login_first:'Sign in with Google above first', dr_open_file:'Open file in Drive', dr_syncing:'Syncing…', dr_scope_hint:'Note: enable "Google Drive API" in Google Cloud Console and add the Drive scope to the OAuth consent screen.', dr_go:'☁️ Drive backup', off_msg:'You are offline — data is being saved on your phone and will sync to Drive when the network returns', on_msg:'Online — syncing with Drive',
   cal:'Calendar', topcust:'Top customers', routes:'Route summary', wastage:'Wastage / loss', animals:'Cattle register', calc:'Calculator', notes:'Notes', search_all:'Search', cal_hint:'Tap a day to open that day\u2019s entries.', route_hint:'This month\u2019s summary grouped by the customer\u2019s route.', no_route:'No route', w_add:'Add wastage', w_month_qty:'This month qty', w_month_value:'This month value', reason:'Reason', reason_ph:'e.g. spilled, spoiled', rate:'Rate', a_count:'Total animals', a_daily:'Daily milk', a_month:'Monthly estimate', a_tag:'Name / tag', a_type:'Type', a_yield:'Daily milk (L)', cow:'Cow', buffalo:'Buffalo', day:'day', add:'Add', nt_ph:'Write a new note…', search_min:'Type at least 2 letters',
-  prev:'Previous', next:'Next', today:'Today', now_lbl:'Now', auto_shift:'Auto shift (by time of day)', auto_shift_hint:'When on, morning/evening is chosen automatically when you open an entry.', entry_auto:'Chosen automatically from the time', back:'Back', forward:'Forward', calc_hint:'Use + − × ÷ for quick maths. Press "=".',
+  prev:'Previous', next:'Next', today:'Today', now_lbl:'Now', auto_shift:'Auto shift (by time of day)', auto_shift_hint:'When on, morning/evening is chosen automatically when you open an entry.', entry_auto:'Chosen automatically from the time', back:'Back', forward:'Forward',
+  tab_search:'Search',
+  ob_skip:'Skip', ob_next:'Next', ob_start:'Get started',
+  ob1_t:'Welcome to Milk Hisaab 🙏', ob1_x:'Your whole dairy business — customers, entries, bills, dues — all in one place, in simple language.',
+  ob2_t:'Entry in one tap', ob2_x:'Morning/evening is picked automatically from the clock. Use “Previous/Next” to fill one customer after another.',
+  ob3_t:'Smart reports & tools', ob3_x:'Calendar, top customers, route summary, wastage, cattle register, calculator and notes — all built in.',
+  ob4_t:'Safe and offline', ob4_x:'Works fully without internet, and backs up to Google Drive automatically.',
+  srch_ph:'Customer, entry, amount, date…', srch_hint:'Type at least 2 letters', no_res:'Nothing found',
+  cat_all:'All', cat_party:'Customers', cat_entry:'Entries', cat_bill:'Bills', cat_pay:'Payments', cat_mod:'Modules',
+  notif:'Notifications', notif_none:'No notifications — all good!',
+  n_dues:'Dues to collect', n_backup:'Time to back up', n_stock:'Low stock', n_target:'Monthly target', n_drive:'Connect Drive',
+  profile:'Profile', pf_signedin:'signed in', pf_guest:'Guest', pf_guest_x:'Sign in to add your identity', pf_local:'Continue with name & number', pf_name:'Your name', pf_phone:'Mobile number', pf_saved:'Profile saved', pf_local_note:'Saved on this device only — no OTP or server.',
+  qa_bills:'Bills', qa_pay:'Payments', qa_rep:'Reports', qa_drive:'Backup', qa_cal:'Calendar', qa_help:'Help',
+  hl1_t:'Today\u2019s numbers', hl1_x:'{q} litres · {a}', hl2_t:'Dues', hl2_x:'{a} to collect from customers', hl3_t:'This month\u2019s target', hl4_t:'Auto shift is on', hl4_x:'Morning/evening will be picked automatically when you open an entry', hl5_t:'Drive backup is on', hl5_x:'Every change is saved to Drive automatically',
+  support:'Help & support', support_x:'Common questions below — tap to open.',
+  faq1_q:'How do I turn off auto shift?', faq1_a:'Settings → turn off the “Auto shift” toggle; the default shift will be used instead.',
+  faq2_q:'Where is my data stored?', faq2_a:'All data stays on your phone/browser. With Drive backup on, it is also saved to your own Google Drive.',
+  faq3_q:'How do I print or make a bill PDF?', faq3_a:'Open “Bills”, pick the period, then press PDF or Print.',
+  faq4_q:'How do I move data to a new phone?', faq4_a:'Take a Drive backup on the old phone, then sign in with Google on the new phone and press “Restore from Drive”.',
+  faq5_q:'How do I set a PIN lock?', faq5_a:'Settings → turn on “PIN lock” and set a 4-digit PIN.',
+  helper:'Offline helper', helper_x:'Type your question below — you get an answer instantly (no internet).', helper_ph:'Type your question…',
+  hp_backup:'Backup', hp_drive:'Drive', hp_shift:'Shift', hp_bill:'Bills', hp_print:'Print', hp_pin:'PIN', hp_lang:'Language',
+  help_a_backup:'Open “Backup & data” and press “Save backup”. With Drive auto-backup on, this happens by itself.',
+  help_a_shift:'Morning/evening is chosen automatically from the time when you open an entry. Change the shift if needed; turn it off in Settings.',
+  help_a_bill:'Open “Bills”, pick daily/10-day/15-day/monthly, then press PDF, Print or WhatsApp.',
+  help_a_pin:'Settings → turn on “PIN lock” and enter a 4-digit PIN. It will be asked next time you open the app.',
+  help_a_lang:'Settings → “Language”, pick Hindi or English — the whole app switches.',
+  help_a_offline:'This app works fully offline. When the internet returns, changes sync to Drive automatically.',
+  help_a_default:'Sorry, I could not understand that. Tap a chip below, or use “Contact us” for WhatsApp/email.',
+  contact:'Contact us', contact_x:'Any other question — just reach out.', contact_no:'Add your phone number in Settings first',
+  privacy:'Privacy policy', terms:'Terms & conditions',
+  privacy_body:'1) This app stores all your data (customers, entries, payments, expenses) on your own phone/browser.\n2) No data is sent to any server of ours — we do not have a server.\n3) When you sign in with Google, only your name, email and photo are shown in the app.\n4) With Drive backup on, data is saved to your own Google Drive; the app can reach only the file it creates.\n5) There are no ads and your data is never sold.\n6) Pressing “Erase all data” permanently removes your data.',
+  terms_body:'1) This app is for your own use — keeping your dairy business accounts.\n2) Keep taking backups regularly; without one, data can be lost if the phone changes or browser data is cleared.\n3) The app is provided “as-is”.\n4) Please verify amounts, bills and reports before relying on them.\n5) You can export or erase your data at any time.', calc_hint:'Use + − × ÷ for quick maths. Press "=".',
   thank:'Thank you 🙏', bill_title:'Bill', milk_word:'Milk', litres:'litres',
   help_body:'1) Add customers — name, number, rate, default quantity and (optionally) multiple items like cow/buffalo milk.\n2) Daily entry — ➕ one by one, 🧺 bulk, or ⚡ all default entries at once.\n3) Bill — pick daily/10-day/15-day/monthly; PDF, print, WhatsApp/SMS, UPI QR.\n4) Ledger & statement — a customer\u2019s full account.\n5) The Modules tab holds everything else — reports, expenses, stock, reminders, backup, settings.\n6) New modules — Calendar, Top customers, Route summary, Wastage, Cattle register, Calculator, Notes, Search.'
  }
@@ -3056,16 +3168,19 @@ const MODULES=[
   {id:'animals',    ic:'🐄', hi:'पशु रजिस्टर',         en:'Cattle register',   render:modAnimals},
   {id:'calc',       ic:'🧮', hi:'कैलकुलेटर',           en:'Calculator',        render:modCalc},
   {id:'notes',      ic:'📝', hi:'नोट्स',               en:'Notes',             render:modNotes},
-  {id:'search',     ic:'🔍', hi:'खोज',                en:'Search',            render:modSearch},
+  {id:'bills',      ic:'🧾', hi:'बिल बनाएँ',          en:'Create bills',      jump:'bills'},
+  {id:'support',    ic:'🆘', hi:'सहायता',             en:'Help & support',    render:modSupport},
+  {id:'legal',      ic:'📜', hi:'नियम व प्राइवेसी',    en:'Legal & privacy',   render:modLegal},
   {id:'help',       ic:'❓', hi:'मदद',                en:'Help',              render:modHelp}
 ];
 function switchTab(tab){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   $('view-'+tab).classList.add('active');
-  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===(tab==='bills'?'more':tab)));
   $('fab').style.display=(tab==='home'||tab==='entries')?'grid':'none';
   window.scrollTo({top:0,behavior:'instant'});
   if(tab==='home') renderHome();
+  if(tab==='search') renderSearch();
   if(tab==='entries') renderEntries();
   if(tab==='parties') renderParties();
   if(tab==='bills') renderBilling();
@@ -3074,7 +3189,7 @@ function switchTab(tab){
   uiTab=tab; try{ navPush(); }catch(e){}
 }
 function renderHub(){
-  $('moduleTiles').innerHTML=MODULES.map(m=>`<div class="tile" onclick="openModule('${m.id}')"><span class="ti">${m.ic}</span><span class="tt">${esc(LANG==='hi'?m.hi:m.en)}</span><span class="ts">${t('mod_'+m.id)===('mod_'+m.id)?'':''}</span></div>`).join('');
+  $('moduleTiles').innerHTML=MODULES.map(m=>`<div class="tile" onclick="${m.jump?("switchTab('"+m.jump+"')"):("openModule('"+m.id+"')")}"><span class="ti">${m.ic}</span><span class="tt">${esc(LANG==='hi'?m.hi:m.en)}</span></div>`).join('');
 }
 function openModule(id){
   curModule=id; const m=MODULES.find(x=>x.id===id); if(!m) return;
@@ -3144,6 +3259,7 @@ function renderHome(){
         <div class="li-amt"><div class="b due">${money(bal)} ${isSup(p)?t('to_pay'):t('owes')}</div></div>
         ${p.phone?`<button class="btn wa xs" onclick="event.stopPropagation();waRemind('${p.id}')">🔔</button>`:''}</div>`).join('')
     :'<div class="empty"><span class="big">✅</span>'+t('no_dues')+'</div>';
+  renderHighlights(); updateBell();
 }
 function renderChart(){
   const days=[], now=new Date();
@@ -4936,6 +5052,165 @@ function runGlobalSearch(){
   box.innerHTML=out.length?out.join(''):'<div class="empty">'+t('no_data_toast')+'</div>';
 }
 
+/* ================= MODERN UI: onboarding, search, notifications, profile ================= */
+const OB=[{ic:'🥛',t:'ob1_t',x:'ob1_x'},{ic:'⚡',t:'ob2_t',x:'ob2_x'},{ic:'📊',t:'ob3_t',x:'ob3_x'},{ic:'☁️',t:'ob4_t',x:'ob4_x'}];
+let obIdx=0;
+function renderOnboard(){
+  const el=$('onboard'); if(!el) return;
+  const s=OB[obIdx], last=obIdx===OB.length-1;
+  el.innerHTML=`<div class="ob-top"><button class="ob-skip" onclick="onboardDone()">${t('ob_skip')}</button></div>
+    <div class="ob-body"><div class="ob-ic">${s.ic}</div><div class="ob-t">${t(s.t)}</div><div class="ob-x">${t(s.x)}</div></div>
+    <div class="ob-dots">${OB.map((_,i)=>`<span class="ob-dot ${i===obIdx?'on':''}"></span>`).join('')}</div>
+    <button class="btn" onclick="${last?'onboardDone()':'onboardNext()'}">${last?t('ob_start'):t('ob_next')}</button>`;
+}
+function showOnboard(){ obIdx=0; renderOnboard(); $('onboard').classList.add('on'); }
+function onboardNext(){ if(obIdx<OB.length-1){ obIdx++; renderOnboard(); } }
+function onboardDone(){ state.settings.onboarded=true; save(); $('onboard').classList.remove('on'); }
+/* ---- local profile (no Google) ---- */
+function openLocalProfile(){
+  const a=state.account||{};
+  openModal(`<div class="sheet-head"><h2>${t('profile')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>${t('pf_name')}</label><input type="text" id="lp_name" value="${esc(a.name||'')}" /></div>
+    <div class="field"><label>${t('pf_phone')}</label><input type="tel" id="lp_phone" value="${esc(a.phone||'')}" /></div>
+    <button class="btn" onclick="saveLocalProfile()">${t('save')}</button>
+    <div class="hint" style="margin-top:8px">${t('pf_local_note')}</div>`);
+}
+function saveLocalProfile(){
+  const n=$('lp_name').value.trim(), p=$('lp_phone').value.replace(/\D/g,'');
+  if(!n){ toast(t('enter_name')); return; }
+  state.account=Object.assign({},state.account||{},{name:n,phone:p,local:true,at:Date.now()});
+  save(); closeModal(); renderHeaderAvatar(); renderProfileCard(); if(curModule==='account') rerenderModule(); toast(t('pf_saved'));
+}
+function renderProfileCard(){
+  const el=$('profileCard'); if(!el) return;
+  const a=state.account;
+  if(a&&(a.email||a.local)){
+    el.innerHTML=`<div class="list-item" style="padding:0 0 8px;border:none">
+      ${a.picture?`<img class="g-ava" src="${esc(a.picture)}" alt="" onerror="this.style.display='none'"/>`:'<div class="avatar" style="width:52px;height:52px;font-size:24px">👤</div>'}
+      <div class="li-main"><div class="t" style="font-size:17px">${esc(a.name||'—')}</div><div class="s">${esc(a.email||a.phone||'')}</div></div>
+      <button class="btn grey xs" onclick="openLocalProfile()">✏️</button></div>
+      <div class="hint">${esc(shopName())} · ${t('pf_signedin')}</div>`;
+  } else {
+    el.innerHTML=`<div class="list-item" style="padding:0 0 8px;border:none"><div class="avatar" style="width:52px;height:52px;font-size:24px">👤</div>
+      <div class="li-main"><div class="t" style="font-size:17px">${t('pf_guest')}</div><div class="s">${t('pf_guest_x')}</div></div></div>
+      <div class="btn-row"><button class="btn" onclick="openModule('account')">${t('g_signin')}</button>
+      <button class="btn ghost" onclick="openLocalProfile()">${t('pf_local')}</button></div>`;
+  }
+}
+/* ---- search / explore ---- */
+let srchCat='';
+const SRCH_CATS=[['','cat_all'],['party','cat_party'],['entry','cat_entry'],['pay','cat_pay'],['mod','cat_mod']];
+function setSrchCat(k){ srchCat=k; renderSearch(); }
+function matchP(p,q){ return p.name.toLowerCase().includes(q)||(p.phone||'').includes(q)||(p.route||'').toLowerCase().includes(q); }
+function partyRow(p){ return `<div class="list-item" onclick="openBillDetail('${p.id}',rangeFor('month',todayStr()))">${avatarHtml(p)}<div class="li-main"><div class="t">${esc(p.name)}</div><div class="s">${esc(p.phone||p.route||'')}</div></div></div>`; }
+function emptyBox(){ return `<div class="empty"><span class="big">🔍</span>${t('no_res')}</div>`; }
+function renderSearch(){
+  const cats=$('srchCats');
+  if(cats) cats.innerHTML=SRCH_CATS.map(([k,l])=>`<span class="chip ${srchCat===k?'on':''}" onclick="setSrchCat('${k}')">${t(l)}</span>`).join('');
+  const hint=$('srchHint'); if(hint) hint.textContent=t('srch_hint');
+  const box=$('srchResults'); if(!box) return;
+  const q=($('srchInput')?$('srchInput').value:'').trim().toLowerCase();
+  if(srchCat==='mod'){ const list=MODULES.filter(m=>q===''||((LANG==='hi'?m.hi:m.en)||'').toLowerCase().includes(q));
+    box.innerHTML=list.map(m=>`<div class="list-item" onclick="openModule('${m.id}')"><div class="avatar">${m.ic}</div><div class="li-main"><div class="t">${esc(LANG==='hi'?m.hi:m.en)}</div></div></div>`).join('')||emptyBox(); return; }
+  if(q.length<2){ box.innerHTML=`<div class="empty"><span class="big">🔍</span>${t('srch_hint')}</div>`; return; }
+  const out=[];
+  if(!srchCat||srchCat==='party') state.parties.filter(p=>matchP(p,q)).slice(0,15).forEach(p=>out.push(partyRow(p)));
+  if(!srchCat||srchCat==='entry') state.entries.filter(e=>partyName(e.partyId).toLowerCase().includes(q)||e.date.includes(q)).slice(0,15).forEach(e=>out.push(entryRow(e)));
+  if(!srchCat||srchCat==='pay') state.payments.filter(x=>partyName(x.partyId).toLowerCase().includes(q)||x.date.includes(q)).slice(0,10).forEach(x=>out.push(`<div class="list-item"><div class="avatar">💵</div><div class="li-main"><div class="t">${esc(partyName(x.partyId))}</div><div class="s">${fmtDate(x.date)}</div></div><div class="li-amt"><div class="a">${money(x.amount)}</div></div></div>`));
+  box.innerHTML=out.length?out.join(''):emptyBox();
+}
+/* ---- notifications ---- */
+function buildNotifications(){
+  const out=[];
+  const dues=state.parties.filter(p=>!isSup(p)).map(p=>({p,b:partyBalance(p.id)})).filter(x=>x.b>0.5);
+  if(dues.length) out.push({ic:'⏳',t:t('n_dues'),x:dues.length+' '+t('party_lbl')+' · '+money(dues.reduce((s,x)=>s+x.b,0)),go:function(){closeModal();openModule('dues');}});
+  const days=state.settings.autoBackupDays||7, last=state.settings.lastExport||0;
+  if(state.settings.autoBackup && (Date.now()-last)>days*86400000) out.push({ic:'☁️',t:t('n_backup'),x:t('backup_reminder'),go:function(){closeModal();openModule('drive');}});
+  const low=state.items.filter(it=>stockOf(it.id)<0);
+  if(low.length) out.push({ic:'📦',t:t('n_stock'),x:low.length+' '+t('item_lbl'),go:function(){closeModal();openModule('stock');}});
+  const tgt=state.settings.target||0;
+  if(tgt){ const m=monthStr(); const sale=state.entries.filter(e=>e.date.startsWith(m)&&e.kind==='sale').reduce((s,e)=>s+e.amount,0);
+    out.push({ic:'🎯',t:t('n_target'),x:Math.round(sale/tgt*100)+'% — '+money(sale)+' / '+money(tgt),go:function(){closeModal();switchTab('home');}}); }
+  if(state.settings.driveAuto && !driveReady()) out.push({ic:'🔌',t:t('n_drive'),x:t('dr_reconnect'),go:function(){closeModal();openModule('drive');}});
+  return out;
+}
+function updateBell(){ const b=$('bellBadge'); if(!b) return; const n=buildNotifications().length; if(n){ b.textContent=n; b.style.display='grid'; } else b.style.display='none'; }
+function openNotifications(){
+  const list=buildNotifications(); window.__notifList=list;
+  openModal(`<div class="sheet-head"><h2>🔔 ${t('notif')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+    ${list.length?list.map((n,i)=>`<div class="list-item" onclick="__notifGo(${i})"><div class="avatar">${n.ic}</div><div class="li-main"><div class="t">${esc(n.t)}</div><div class="s">${esc(n.x)}</div></div></div>`).join(''):`<div class="empty"><span class="big">✅</span>${t('notif_none')}</div>`}`);
+}
+function __notifGo(i){ const n=(window.__notifList||[])[i]; if(n&&n.go) n.go(); }
+/* ---- home highlights + quick actions ---- */
+let hlIdx=0, hlTimer=null;
+function buildHighlights(){
+  const out=[]; const today=todayStr(), m=monthStr();
+  const tE=state.entries.filter(e=>e.date===today);
+  const q=tE.filter(e=>e.kind==='sale').reduce((s,e)=>s+e.qty,0);
+  const a=tE.filter(e=>e.kind==='sale').reduce((s,e)=>s+e.amount,0);
+  out.push({ic:'🥛',t:t('hl1_t'),x:t('hl1_x').replace('{q}',num(q)).replace('{a}',money(a))});
+  const dues=state.parties.filter(p=>!isSup(p)).reduce((s,p)=>s+Math.max(0,partyBalance(p.id)),0);
+  if(dues>0) out.push({ic:'⏳',t:t('hl2_t'),x:t('hl2_x').replace('{a}',money(dues))});
+  const tgt=state.settings.target||0;
+  if(tgt){ const ms=state.entries.filter(e=>e.date.startsWith(m)&&e.kind==='sale').reduce((s,e)=>s+e.amount,0);
+    out.push({ic:'🎯',t:t('hl3_t'),x:Math.min(100,Math.round(ms/tgt*100))+'% — '+money(ms)}); }
+  if(state.settings.autoShift!==false) out.push({ic:'⏱️',t:t('hl4_t'),x:t('hl4_x')});
+  if(state.settings.autoBackup) out.push({ic:'☁️',t:t('hl5_t'),x:t('hl5_x')});
+  return out;
+}
+function renderHighlights(){
+  const el=$('hlCard'); if(!el) return;
+  const hs=buildHighlights(); if(!hs.length){ el.style.display='none'; return; } el.style.display='block';
+  if(hlIdx>=hs.length) hlIdx=0; const h=hs[hlIdx];
+  el.innerHTML=`<div class="hl-ic">${h.ic}</div><div class="hl-t">${esc(h.t)}</div><div class="hl-x">${esc(h.x)}</div>
+    <div class="hl-dots">${hs.map((_,i)=>`<span class="hl-dot ${i===hlIdx?'on':''}"></span>`).join('')}</div>`;
+  el.onclick=function(){ hlIdx=(hlIdx+1)%hs.length; renderHighlights(); };
+}
+function startHighlightTimer(){ clearInterval(hlTimer); hlTimer=setInterval(function(){ const n=buildHighlights().length||1; hlIdx=(hlIdx+1)%n; renderHighlights(); },5000); }
+function renderQuick(){
+  const el=$('quickActions'); if(!el) return;
+  const qs=[['➕',t('add_entry'),'openEntry()'],['🧺',t('bulk_entry'),'openBulk()'],['🧾',t('qa_bills'),"switchTab('bills')"],['💵',t('qa_pay'),"openModule('payments')"],['📊',t('qa_rep'),"openModule('reports')"],['☁️',t('qa_drive'),"openModule('drive')"],['📅',t('qa_cal'),"openModule('calendar')"],['🆘',t('qa_help'),"openModule('support')"]];
+  el.innerHTML=qs.map(([ic,lb,fn])=>`<button class="qbtn" onclick="${fn}"><span class="qi">${ic}</span><span class="qt">${esc(lb)}</span></button>`).join('');
+}
+/* ---- help & support ---- */
+const HELP_KB=[
+ {k:['backup','बैकअप','drive','ड्राइव'],a:'help_a_backup'},
+ {k:['shift','सुबह','शाम','शिफ्ट','subah','shaam'],a:'help_a_shift'},
+ {k:['bill','बिल','print','प्रिंट','pdf'],a:'help_a_bill'},
+ {k:['pin','पिन','lock','लॉक'],a:'help_a_pin'},
+ {k:['lang','भाषा','language','english','हिंदी'],a:'help_a_lang'},
+ {k:['offline','ऑफ़लाइन','internet','इंटरनेट','net'],a:'help_a_offline'}
+];
+function modSupport(){
+  const faqs=[['faq1_q','faq1_a'],['faq2_q','faq2_a'],['faq3_q','faq3_a'],['faq4_q','faq4_a'],['faq5_q','faq5_a']];
+  return `<div class="card"><h3>🆘 ${t('support')}</h3>
+    <div class="hint" style="margin-bottom:10px">${t('support_x')}</div>
+    <div>${faqs.map(([q,a])=>`<details class="faq"><summary>${esc(t(q))}</summary><p>${esc(t(a))}</p></details>`).join('')}</div></div>
+    <div class="card"><h3>💬 ${t('helper')}</h3>
+    <div class="hint" style="margin-bottom:8px">${t('helper_x')}</div>
+    <div id="helperChat"></div>
+    <div style="display:flex;gap:8px;margin-top:8px"><input type="text" id="helperIn" style="flex:1" placeholder="${t('helper_ph')}" onkeydown="if(event.key==='Enter')askHelper()" /><button class="btn ghost sm" onclick="askHelper()">➤</button></div>
+    <div class="chips" style="margin-top:10px">${['backup','drive','shift','bill','print','pin','lang'].map(k=>`<span class="chip" onclick="askHelper('${k}')">${t('hp_'+k)}</span>`).join('')}</div></div>
+    <div class="card"><h3>📞 ${t('contact')}</h3>
+    <div class="btn-row"><button class="btn wa" onclick="contactWA()">💬 WhatsApp</button><button class="btn ghost" onclick="contactMail()">✉️ Email</button></div>
+    <div class="hint" style="margin-top:8px">${t('contact_x')}</div></div>`;
+}
+function askHelper(preset){
+  const inp=$('helperIn'); const qt=(preset?t('hp_'+preset):(inp?inp.value:'')).trim(); if(!qt) return; if(inp) inp.value='';
+  const box=$('helperChat'); if(!box) return;
+  const low=qt.toLowerCase(); let ans=t('help_a_default');
+  for(const e of HELP_KB){ if(e.k.some(k=>low.includes(k.toLowerCase()))){ ans=t(e.a); break; } }
+  window._chat=(window._chat||[]); window._chat.push({u:qt,a:ans});
+  box.innerHTML=window._chat.slice(-6).map(c=>`<div class="chat-u">${esc(c.u)}</div><div class="chat-b">${esc(c.a)}</div>`).join('');
+}
+function contactWA(){ const ph=((state.settings.business&&state.settings.business.phone)||'').replace(/\D/g,''); if(!ph){ toast(t('contact_no')); return; } window.open('https://wa.me/'+(state.settings.waCode||'91')+ph,'_blank'); }
+function contactMail(){ const e=(state.account&&state.account.email)||''; window.open('mailto:'+e+'?subject=Milk%20Hisaab%20help','_blank'); }
+/* ---- legal ---- */
+function modLegal(){
+  return `<div class="card"><h3>🔒 ${t('privacy')}</h3><div style="font-size:13.5px;line-height:1.7;color:var(--muted);white-space:pre-line">${esc(t('privacy_body'))}</div></div>
+    <div class="card"><h3>📜 ${t('terms')}</h3><div style="font-size:13.5px;line-height:1.7;color:var(--muted);white-space:pre-line">${esc(t('terms_body'))}</div></div>`;
+}
+
 /* ================= DATA CHECK ================= */
 function modDataCheck(){ return `<div class="card"><div class="hint" style="margin-bottom:10px">${t('dc_hint')}</div><div id="dcBox"></div></div>`; }
 function renderDataCheck(){
@@ -4971,12 +5246,13 @@ function applyStatic(){
     'b-remind':'reminders','b-bulkRemind':'bulk_remind','b-addParty':'add_customer','b-bkNow':'backup_now','b-allPdf':'all_pdf','b-allPrint':'print','b-summary':'send','b-shareChart':'send',
     'b-morHome':'morning_entry','b-eveHome':'evening_entry',
     'per-day':'rep_day','per-d10':'rep_tenday','per-d15':'rep_d15','per-month':'rep_month','seg-cust':'customers','seg-sup':'farmers',
-    'b-prevDay':'prev','b-today':'today','b-nextDay':'next'};
+    'b-prevDay':'prev','b-today':'today','b-nextDay':'next','t-search':'tab_search','l-searchAll':'search_all'};
   for(const k in map) if($(k)) $(k).textContent=t(map[k]);
   $('b-addParty').textContent=uiPartyType==='supplier'?t('add_farmer'):t('add_customer');
   if($('partySearch')) $('partySearch').placeholder=t('search_ph');
   if($('entrySearch')) $('entrySearch').placeholder=t('search_ph');
-  renderSettingsBits(); cloudStatus(); renderHub(); renderShiftSeg(); renderHeaderAvatar();
+  if($('srchInput')) $('srchInput').placeholder=t('srch_ph');
+  renderSettingsBits(); cloudStatus(); renderHub(); renderShiftSeg(); renderHeaderAvatar(); renderProfileCard(); renderQuick(); renderHighlights(); updateBell();
 }
 function refreshAll(){ renderHome(); renderEntries(); renderParties(); renderBilling(); if(curModule) rerenderModule(); }
 function init(){
@@ -4990,6 +5266,8 @@ function init(){
   if(state.settings.pin) showLock();
   renderHeaderAvatar(); waitGis(); initOnline(); registerSW();
   tickClock(); setInterval(tickClock,1000); renderNavBtns();
+  if(!state.settings.onboarded) showOnboard();
+  startHighlightTimer();
 }
 init();
 </script>
