@@ -2831,12 +2831,12 @@ const OLD_KEYS=['milk_manager_data_v4','milk_manager_data_v3','milk_manager_data
 const defaultState=()=>({
   parties:[], entries:[], payments:[], expenses:[], items:[], moves:[], holidays:[],
   notes:[], wastage:[], animals:[], loans:[], recurring:[], invoices:[], staff:[], att:[], closes:[],
-  cash:[], health:[], prod:[], feed:[], complaints:[], occasions:[], orders:[], vehicles:[], loyalty:[], insurance:[], breeding:[],
+  cash:[], health:[], prod:[], feed:[], complaints:[], occasions:[], orders:[], vehicles:[], loyalty:[], insurance:[], breeding:[], templates:[], tasks:[],
   settings:{ lang:'hi', defaultRate:50, currency:'₹', defaultShift:'morning', roundOff:false,
     waCode:'91', theme:'green', dark:false, pin:'', target:0, upi:'', upiName:'',
     retention:36, autoBackup:true, autoBackupDays:7, lastBackup:0, customCats:[], driveLink:'',
     driveAuto:false, driveFileId:'', lastDriveBackup:0, autoShift:true, onboarded:false, driveConnected:false, shiftRemind:true, lastRemind:'', billLang:'', billColor:'',
-    biometricLock:false, bioCredId:'', invNext:1, budget:{}, favs:[], recent:[], collapsed:[],
+    biometricLock:false, bioCredId:'', invNext:1, budget:{}, favs:[], recent:[], collapsed:[], bkSchedOn:false, bkSchedTime:'21:00', bkSchedEvery:1, bkSchedTarget:'file', bkSchedLast:0, bkHistory:[],
     business:{ name:'दूध हिसाब', owner:'', phone:'', address:'' } },
   account:null
 });
@@ -3005,7 +3005,13 @@ const T={
   vehicle:'वाहन व ईंधन', ve_hint:'गाड़ी का डीज़ल, सर्विस, मरम्मत — सब एक जगह।', ve_name:'गाड़ी का नाम / नंबर', ve_kind:'प्रकार', ve_diesel:'डीज़ल', ve_service:'सर्विस', ve_repair:'मरम्मत', ve_tyre:'टायर', ve_other:'अन्य', ve_odo:'ओडोमीटर (किमी)', ve_add:'नई एंट्री', ve_month_total:'इस महीने का खर्च',
   loyalty:'लॉयल्टी पॉइंट', ly_hint:'हर ₹100 की बिक्री पर 1 पॉइंट अपने आप जुड़ता है। पॉइंट भुनाकर ग्राहक को छूट दे सकते हैं।', ly_earned:'कमाए', ly_redeemed:'भुनाए', ly_balance:'बचे पॉइंट', ly_redeem:'पॉइंट भुनाएँ', ly_points:'कितने पॉइंट', ly_note_ph:'जैसे: दिवाली छूट', ly_none:'अभी किसी ग्राहक के पॉइंट नहीं बने',
   insurance:'बीमा रिमाइंडर', ins_hint:'गाड़ी, दुकान या पशु का बीमा — नवीनीकरण की तारीख याद रहेगी।', ins_name:'बीमा / पॉलिसी का नाम', ins_premium:'प्रीमियम (₹)', ins_due:'नवीनीकरण तारीख', ins_overdue:'तारीख निकल गई', ins_soon:'जल्द आ रही है', ins_add:'नया बीमा',
-  breeding:'पशु प्रजनन व ब्यांत', br_hint:'गर्भाधान, गर्भ जाँच और ब्यांत की तारीखें — अगली तारीख अपने आप बन जाती है।', br_animal:'पशु (नाम / टैग)', br_kind:'प्रकार', br_ai:'कृत्रिम गर्भाधान', br_preg:'गर्भ जाँच', br_calving:'ब्यांत', br_next:'अगली तारीख', br_add:'नई एंट्री', convert:'यूनिट व रेट कन्वर्टर', cv_hint:'लीटर ↔ किलो और फैट के हिसाब से रकम — तुरंत हिसाब।', cv_liter:'दूध (लीटर)', cv_density:'घनत्व (डिफ़ॉल्ट 1.03)', cv_kg:'वज़न', cv_fat:'फैट', cv_fatrate:'₹ प्रति फैट पॉइंट', cv_qty:'मात्रा (लीटर)', cv_amount:'कुल रकम'
+  breeding:'पशु प्रजनन व ब्यांत', br_hint:'गर्भाधान, गर्भ जाँच और ब्यांत की तारीखें — अगली तारीख अपने आप बन जाती है।', br_animal:'पशु (नाम / टैग)', br_kind:'प्रकार', br_ai:'कृत्रिम गर्भाधान', br_preg:'गर्भ जाँच', br_calving:'ब्यांत', br_next:'अगली तारीख', br_add:'नई एंट्री', convert:'यूनिट व रेट कन्वर्टर', cv_hint:'लीटर ↔ किलो और फैट के हिसाब से रकम — तुरंत हिसाब।', cv_liter:'दूध (लीटर)', cv_density:'घनत्व (डिफ़ॉल्ट 1.03)', cv_kg:'वज़न', cv_fat:'फैट', cv_fatrate:'₹ प्रति फैट पॉइंट', cv_qty:'मात्रा (लीटर)', cv_amount:'कुल रकम',
+  records:'रिकॉर्ड', never:'कभी नहीं', last_backup:'पिछला बैकअप', on:'चालू', off:'बंद',
+  bk_take:'बैकअप लें', bk_sched:'बैकअप शेड्यूल', bk_sched_on:'शेड्यूल चालू', bk_sched_off:'शेड्यूल बंद है', bk_every:'कितने दिन में', bk_time:'समय', bk_target:'कहाँ सेव करें', bk_daily:'रोज़', bk_2day:'हर 2 दिन', bk_3day:'हर 3 दिन', bk_weekly:'हर हफ्ते', bk_t_file:'फ़ोन में फ़ाइल', bk_t_both:'दोनों जगह', bk_next:'अगला बैकअप', bk_run_now:'अभी बैकअप लें', bk_sched_hint:'शेड्यूल चालू रहने पर तय समय पर बैकअप अपने आप हो जाएगा और नोटिफिकेशन मिलेगा (ऐप खुला रहने पर)।', bk_history:'बैकअप इतिहास', bk_done:'बैकअप हो गया ✓', bk_fail:'बैकअप नहीं हो सका', bk_notify_ok:'बैकअप सफल', bk_notify_fail:'बैकअप नहीं हो सका', bk_notif_off:'नोटिफिकेशन की अनुमति नहीं मिली', bk_preview:'बैकअप की जाँच', bk_preview_hint:'इस फ़ाइल में यह डेटा है — बहाल करने से पहले देख लें।', bk_restore_now:'इस बैकअप को बहाल करें', restore_linked:'लिंक्ड फ़ाइल से', bk_auto_slots:'पुराने ऑटो-बैकअप',
+  watemplates:'WhatsApp टेम्पलेट', wt_hint:'बार-बार भेजे जाने वाले मैसेज यहाँ सेव करें — एक टैप में WhatsApp पर भेजें।', wt_name:'नाम', wt_text:'मैसेज', wt_add:'नया टेम्पलेट', wt_send:'WhatsApp', wt_none:'कोई टेम्पलेट नहीं', wt_ph:'जैसे: बकाया रिमाइंडर, ऑफ़र',
+  emi:'EMI / किस्त कैलकुलेटर', emi_hint:'कर्ज़ की मासिक किस्त, कुल ब्याज और कुल भुगतान तुरंत निकालें।', emi_amount:'कर्ज़ की रकम (₹)', emi_rate:'सालाना ब्याज दर (%)', emi_months:'कितने महीने', emi_val:'मासिक किस्त (EMI)', emi_interest:'कुल ब्याज', emi_total:'कुल भुगतान',
+  creditlimit:'ग्राहक क्रेडिट लिमिट', cl_hint:'हर ग्राहक की उधार सीमा तय करें — बकाया सीमा से बढ़ते ही लाल दिखेगा।', cl_limit:'सीमा (₹)', cl_over:'सीमा पार',
+  checklist:'डेली टास्क चेकलिस्ट', ck_hint:'रोज़ के ज़रूरी काम — हर दिन अपने आप रीसेट हो जाते हैं।', ck_ph:'जैसे: सुबह दूध बाँटना', ck_none:'कोई काम नहीं', ck_done:'आज हो गया', ck_todo:'आज बाकी'
  },
  en:{
   tagline:'Milk Manager',
@@ -3169,7 +3175,13 @@ const T={
   vehicle:'Vehicle & fuel', ve_hint:'Diesel, service and repairs for your vehicle — all in one place.', ve_name:'Vehicle name / number', ve_kind:'Type', ve_diesel:'Diesel', ve_service:'Service', ve_repair:'Repair', ve_tyre:'Tyre', ve_other:'Other', ve_odo:'Odometer (km)', ve_add:'New entry', ve_month_total:'This month\u2019s spend',
   loyalty:'Loyalty points', ly_hint:'1 point is added for every ₹100 of sales. Redeem points to give a customer a discount.', ly_earned:'Earned', ly_redeemed:'Redeemed', ly_balance:'Points left', ly_redeem:'Redeem points', ly_points:'How many points', ly_note_ph:'e.g. Diwali discount', ly_none:'No customer has points yet',
   insurance:'Insurance reminders', ins_hint:'Insurance for vehicle, shop or cattle — the renewal date stays in mind.', ins_name:'Insurance / policy name', ins_premium:'Premium (₹)', ins_due:'Renewal date', ins_overdue:'overdue', ins_soon:'due soon', ins_add:'New insurance',
-  breeding:'Cattle breeding & calving', br_hint:'Insemination, pregnancy check and calving dates — the next date is worked out automatically.', br_animal:'Animal (name / tag)', br_kind:'Type', br_ai:'Insemination', br_preg:'Pregnancy check', br_calving:'Calving', br_next:'Next date', br_add:'New entry', convert:'Unit & rate tool', cv_hint:'Litres ↔ kg and fat-based amount — instant calculation.', cv_liter:'Milk (litres)', cv_density:'Density (default 1.03)', cv_kg:'Weight', cv_fat:'Fat', cv_fatrate:'₹ per fat point', cv_qty:'Quantity (litres)', cv_amount:'Total amount'
+  breeding:'Cattle breeding & calving', br_hint:'Insemination, pregnancy check and calving dates — the next date is worked out automatically.', br_animal:'Animal (name / tag)', br_kind:'Type', br_ai:'Insemination', br_preg:'Pregnancy check', br_calving:'Calving', br_next:'Next date', br_add:'New entry', convert:'Unit & rate tool', cv_hint:'Litres ↔ kg and fat-based amount — instant calculation.', cv_liter:'Milk (litres)', cv_density:'Density (default 1.03)', cv_kg:'Weight', cv_fat:'Fat', cv_fatrate:'₹ per fat point', cv_qty:'Quantity (litres)', cv_amount:'Total amount',
+  records:'records', never:'never', last_backup:'Last backup', on:'on', off:'off',
+  bk_take:'Take a backup', bk_sched:'Backup schedule', bk_sched_on:'Schedule on', bk_sched_off:'Schedule is off', bk_every:'Repeat every', bk_time:'Time', bk_target:'Save to', bk_daily:'Daily', bk_2day:'Every 2 days', bk_3day:'Every 3 days', bk_weekly:'Weekly', bk_t_file:'File on phone', bk_t_both:'Both', bk_next:'Next backup', bk_run_now:'Back up now', bk_sched_hint:'With the schedule on, a backup runs automatically at the set time and you get a notification (while the app is open).', bk_history:'Backup history', bk_done:'Backup done ✓', bk_fail:'Backup failed', bk_notify_ok:'Backup successful', bk_notify_fail:'Backup failed', bk_notif_off:'Notification permission not given', bk_preview:'Check this backup', bk_preview_hint:'This file contains the following data — check before restoring.', bk_restore_now:'Restore this backup', restore_linked:'From linked file', bk_auto_slots:'Older auto-backups',
+  watemplates:'WhatsApp templates', wt_hint:'Save messages you send often — send them on WhatsApp in one tap.', wt_name:'Name', wt_text:'Message', wt_add:'New template', wt_send:'WhatsApp', wt_none:'No templates yet', wt_ph:'e.g. Dues reminder, Offer',
+  emi:'EMI / instalment calculator', emi_hint:'Work out the monthly instalment, total interest and total payment instantly.', emi_amount:'Loan amount (₹)', emi_rate:'Annual interest rate (%)', emi_months:'Number of months', emi_val:'Monthly instalment (EMI)', emi_interest:'Total interest', emi_total:'Total payment',
+  creditlimit:'Customer credit limits', cl_hint:'Set a credit limit for each customer — the balance turns red as soon as it crosses the limit.', cl_limit:'Limit (₹)', cl_over:'over limit',
+  checklist:'Daily task checklist', ck_hint:'Your daily must-do tasks — they reset automatically every day.', ck_ph:'e.g. Deliver morning milk', ck_none:'No tasks yet', ck_done:'done today', ck_todo:'pending today'
  }
 };
 let LANG='hi';
@@ -3199,6 +3211,7 @@ function deepDefaults(d){
   s.cash=d.cash||[]; s.health=d.health||[]; s.prod=d.prod||[]; s.feed=d.feed||[];
   s.complaints=d.complaints||[]; s.occasions=d.occasions||[];
   s.orders=d.orders||[]; s.vehicles=d.vehicles||[]; s.loyalty=d.loyalty||[]; s.insurance=d.insurance||[]; s.breeding=d.breeding||[];
+  s.templates=d.templates||[]; s.tasks=d.tasks||[];
   s.parties.forEach(p=>{ if(!p.items) p.items=[]; });
   return s;
 }
@@ -3379,7 +3392,7 @@ const GMAP={bulk:'daily',bulkMonthly:'daily',holiday:'daily',milkcard:'daily',ca
  animals:'farm',wastage:'farm',
  backup:'app',drive:'app',account:'app',settings:'app',perms:'app',ai:'app',datacheck:'app',support:'app',legal:'app',help:'app',
  insights:'report',monthclose:'money',cashbook:'money',routemap:'people',
- ahealth:'farm',aprod:'farm',avacc:'farm',feed:'farm',fat30:'farm',wastpie:'farm',complaints:'people',occasions:'people',supplierorder:'money',vehicle:'money',loyalty:'people',insurance:'app',breeding:'farm'};
+ ahealth:'farm',aprod:'farm',avacc:'farm',feed:'farm',fat30:'farm',wastpie:'farm',complaints:'people',occasions:'people',supplierorder:'money',vehicle:'money',loyalty:'people',insurance:'app',breeding:'farm',watemplates:'app',emi:'money',creditlimit:'people',checklist:'daily'};
 const REL={
   invoices:['bills','bulkbill','statement','payments'],
   bills:['invoices','bulkbill','statement','ledger'],
@@ -3447,7 +3460,12 @@ const REL={
   loyalty:['parties','topcust','reports','dues'],
   insurance:['recurring','expenses','animals','settings'],
   breeding:['animals','ahealth','aprod','feed'],
-  convert:['calc','rate','quality','settings']
+  convert:['calc','rate','quality','settings'],
+  watemplates:['reminders','bulkbill','dues','settings'],
+  emi:['loans','recurring','budget','expenses'],
+  creditlimit:['dues','parties','reminders','loyalty'],
+  checklist:['dayend','delivery','register','notes'],
+  backup:['drive','settings','datacheck','account']
 };
 function relatedRow(id){
   const rel=REL[id]; if(!rel||!rel.length) return '';
@@ -3484,7 +3502,7 @@ const MODULES=[
   {id:'expenses',   ic:'💸', hi:'खर्च',               en:'Expenses',          render:modExpenses, after:renderExpenses},
   {id:'explog',     ic:'📋', hi:'खर्च बहीखाता',       en:'Expense ledger',    render:modExpLog},
   {id:'reminders',  ic:'🔔', hi:'रिमाइंडर',           en:'Reminders',         render:modReminders},
-  {id:'backup',     ic:'☁️', hi:'बैकअप व डेटा',       en:'Backup & data',     render:modBackup,   after:function(){renderDataUsage();cloudStatus();}},
+  {id:'backup',     ic:'☁️', hi:'बैकअप व डेटा',       en:'Backup & data',     render:modBackup,   after:renderBkSchedBits},
   {id:'account',    ic:'🔐', hi:'Google लॉगिन',       en:'Google login',      render:modAccount,  after:renderAccountBits},
   {id:'settings',   ic:'⚙️', hi:'सेटिंग',             en:'Settings',          render:modSettings, after:renderSettingsBits},
   {id:'register',   ic:'🗓️', hi:'डेली रजिस्टर',       en:'Daily register',    render:modRegister, after:renderRegister},
@@ -3533,6 +3551,10 @@ const MODULES=[
   {id:'insurance',  ic:'🛡️', hi:'बीमा रिमाइंडर',       en:'Insurance',         render:modInsurance},
   {id:'breeding',   ic:'🐮', hi:'पशु प्रजनन व ब्यांत',  en:'Breeding & calving',render:modBreeding},
   {id:'convert',    ic:'🔄', hi:'यूनिट व रेट कन्वर्टर', en:'Unit & rate tool',  render:modConvert},
+  {id:'watemplates',ic:'💬', hi:'WhatsApp टेम्पलेट',   en:'WhatsApp templates',render:modWaTemplates},
+  {id:'emi',        ic:'🏦', hi:'EMI / किस्त कैलकुलेटर',en:'EMI calculator',    render:modEmi, after:calcEmi},
+  {id:'creditlimit',ic:'🚦', hi:'ग्राहक क्रेडिट लिमिट', en:'Credit limits',     render:modCreditLimit},
+  {id:'checklist',  ic:'✅', hi:'डेली टास्क चेकलिस्ट',  en:'Daily checklist',   render:modChecklist},
 ];
 function switchTab(tab){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -5067,22 +5089,45 @@ function modReminders(){
       ${p.phone?`<button class="btn wa xs" onclick="waRemind('${p.id}')">🔔</button><button class="btn sms xs" onclick="smsRemind('${p.id}')">✉️</button>`:''}</div>`).join(''):'<div class="empty">✅ '+t('rem_none')+'</div>'}</div>`;
 }
 function modBackup(){
+  const st=state.settings;
+  let bytes=0; try{ bytes=new Blob([JSON.stringify(state)]).size; }catch(e){ bytes=JSON.stringify(state).length; }
+  const kb=bytes/1024; const size=kb>1024?(kb/1024).toFixed(2)+' MB':kb.toFixed(0)+' KB';
+  const rec=state.entries.length+state.payments.length+state.expenses.length+state.parties.length;
+  const hist=(st.bkHistory||[]).slice(0,8);
   return `<div class="card"><h3>${t('backup')}</h3>
+    <div class="bill-line"><span class="k">${t('data_usage')}</span><span class="v">${size} · ${rec} ${t('records')}</span></div>
+    <div class="bill-line"><span class="k">${t('last_backup')}</span><span class="v">${st.lastBackup?fmtDateTime(st.lastBackup):t('never')}</span></div>
+    <div class="bill-line"><span class="k">${t('dr_last')}</span><span class="v">${st.lastDriveBackup?fmtDateTime(st.lastDriveBackup):t('dr_never')}</span></div>
+    <div class="divider"></div><h3 style="font-size:14px">${t('bk_take')}</h3>
     <div class="btn-row" style="margin-bottom:9px"><button class="btn grey sm" style="flex:1" onclick="exportBackup()">${t('save_backup')}</button>
       <button class="btn grey sm" style="flex:1" onclick="document.getElementById('importFile').click()">${t('load_backup')}</button></div>
     <input type="file" id="importFile" accept=".json,application/json" style="display:none" onchange="importBackup(event)" />
-    <button class="btn grey sm" style="width:100%;margin-bottom:9px" onclick="restoreAutoBackup()">${t('restore_auto')}</button>
-    <button class="btn grey sm" style="width:100%;margin-bottom:9px" onclick="exportCSV()">${t('export_csv')}</button>
-    <div class="divider"></div><h3 style="font-size:14px">${t('cloud')}</h3>
-    <button class="btn sm" style="width:100%;margin-bottom:9px" onclick="shareBackup()">☁️ ${t('drive_save')}</button>
+    <div class="btn-row" style="margin-bottom:9px"><button class="btn sm" style="flex:1" onclick="shareBackup()">☁️ ${t('drive_save')}</button>
+      <button class="btn grey sm" style="flex:1" onclick="exportCSV()">${t('export_csv')}</button></div>
     <button class="btn grey sm" style="width:100%;margin-bottom:9px" onclick="linkBackupFile()">${t('link_file')}</button>
     <div class="bill-line"><span class="k">${t('linked_to')}</span><span class="v" id="cloudStatus">—</span></div>
-    <div class="btn-row" style="margin-top:9px"><button class="btn grey sm" style="flex:1" onclick="restoreLinked()">♻️</button><button class="btn grey sm" style="flex:1" onclick="unlinkBackup()">✖️</button></div>
+    <div class="btn-row" style="margin-top:9px"><button class="btn grey sm" style="flex:1" onclick="restoreLinked()">♻️ ${t('restore_linked')}</button><button class="btn grey sm" style="flex:1" onclick="unlinkBackup()">✖️</button></div>
     <div class="hint" style="margin-top:8px">${t('drive_hint')}</div>
-    <div class="bill-line" style="border-top:1px solid var(--line);margin-top:9px;padding-top:9px"><span class="k">${t('data_usage')}</span><span class="v" id="dataUsage">—</span></div>
-    <button class="btn grey sm" style="width:100%;margin:9px 0" onclick="cleanNow()">${t('clean_now')}</button>
+    <div class="divider"></div><h3 style="font-size:14px">${t('bk_sched')}</h3>
+    <div class="sw"><span class="lb">${t('bk_sched_on')}</span><div class="tr ${st.bkSchedOn?'on':''}" id="sw-bksched" onclick="toggleBkSched()"></div></div>
+    <div class="row2"><div class="field"><label>${t('bk_every')}</label><select id="bkEvery" onchange="saveBkSched()"><option value="1">${t('bk_daily')}</option><option value="2">${t('bk_2day')}</option><option value="3">${t('bk_3day')}</option><option value="7">${t('bk_weekly')}</option></select></div>
+    <div class="field"><label>${t('bk_time')}</label><input type="time" id="bkTime" value="${st.bkSchedTime||'21:00'}" onchange="saveBkSched()" /></div></div>
+    <div class="field"><label>${t('bk_target')}</label><select id="bkTarget" onchange="saveBkSched()"><option value="file">${t('bk_t_file')}</option><option value="drive">Google Drive</option><option value="both">${t('bk_t_both')}</option></select></div>
+    <div class="bill-line"><span class="k">${t('bk_next')}</span><span class="v" id="bkNext">${nextBackupText()}</span></div>
+    <div class="btn-row" style="margin:10px 0"><button class="btn ghost sm" style="flex:1" onclick="askNotifPerm()">${t('notif_on')}</button><button class="btn sm" style="flex:1" onclick="runScheduledBackup(true)">${t('bk_run_now')}</button></div>
+    <div class="hint">${t('bk_sched_hint')}</div>
+    ${hist.length?`<div class="divider"></div><h3 style="font-size:14px">${t('bk_history')}</h3>${hist.map(bkHistRow).join('')}`:''}
+    <div class="divider"></div>
+    <button class="btn grey sm" style="width:100%;margin-bottom:9px" onclick="restoreAutoBackup()">${t('restore_auto')}</button>
+    <button class="btn grey sm" style="width:100%;margin-bottom:9px" onclick="openAutoSlots()">${t('bk_auto_slots')}</button>
+    <button class="btn grey sm" style="width:100%;margin-bottom:9px" onclick="cleanNow()">${t('clean_now')}</button>
     <button class="btn danger sm" style="width:100%" onclick="clearAll()">${t('clear_all')}</button>
     <div class="hint" style="margin-top:10px">${t('backup_hint')}</div></div>`;
+}
+function bkHistRow(h){
+  const tg={file:t('bk_t_file'),drive:'Drive',both:t('bk_t_both'),manual:t('bk_run_now')}[h.target]||h.target;
+  return `<div class="list-item"><div class="avatar" style="background:${h.ok?'var(--green-l)':'var(--red-l)'};color:${h.ok?'var(--green-d)':'var(--red)'}">${h.ok?'✅':'⚠️'}</div>
+    <div class="li-main"><div class="t">${tg}</div><div class="s">${fmtDateTime(h.at)}${h.size?' • '+h.size:''}</div></div></div>`;
 }
 /* ================= GOOGLE LOGIN ================= */
 const GOOGLE_CLIENT_ID='825594104011-h02pqq57t6iasr2h2qgnqceu1tbbp7oe.apps.googleusercontent.com';
@@ -5500,11 +5545,11 @@ async function writeBackupToLinked(){
 }
 async function restoreLinked(){ if(!fsHandle){ toast(t('no_link')); return; }
   try{ const f=await fsHandle.getFile(); const txt=await f.text(); applyImported(txt); }catch(e){ toast(t('backup_bad')); } }
-function applyImported(txt){ try{ const d=JSON.parse(txt); if(!d.parties||!d.entries) throw 0; if(!confirm(t('c_load_backup'))) return;
+function applyImported(txt,skip){ try{ const d=JSON.parse(txt); if(!d.parties||!d.entries) throw 0; if(!skip && !confirm(t('c_load_backup'))) return;
     state=deepDefaults(d); save(); applyTheme(); applyStatic(); refreshAll(); rerenderModule(); toast(t('backup_loaded')); }catch(e){ toast(t('backup_bad')); } }
 function exportBackup(){ state.settings.lastExport=Date.now(); try{ localStorage.setItem(STORE_KEY,JSON.stringify(state)); }catch(e){}
   download('milk-backup-'+todayStr()+'.json',JSON.stringify(state,null,2),'application/json'); toast(t('backup_saved')); renderBackupReminder(); cloudStatus(); }
-function importBackup(ev){ const f=ev.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>applyImported(r.result); r.readAsText(f); ev.target.value=''; }
+function importBackup(ev){ const f=ev.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>previewImport(r.result); r.readAsText(f); ev.target.value=''; }
 function exportCSV(){
   if(!state.entries.length){ toast(t('no_data_toast')); return; }
   const head=['Date','Party','Item','Type','Shift','Litres','Fat','Rate','Amount'];
@@ -5531,6 +5576,7 @@ function purgeOld(){ const months=state.settings.retention; if(!months) return 0
   return before-(state.entries.length+state.payments.length+state.expenses.length);
 }
 function takeAutoBackup(){
+  try{ const _prev=JSON.parse(localStorage.getItem('milk_auto_backup_list')||'[]'); const _snap=JSON.parse(JSON.stringify(state)); _prev.unshift({ts:Date.now(),data:_snap}); while(_prev.length>3) _prev.pop(); localStorage.setItem('milk_auto_backup_list',JSON.stringify(_prev)); }catch(e){}
   try{ localStorage.setItem('milk_auto_backup',JSON.stringify({ts:Date.now(),data:state})); }
   catch(e){ try{ const slim=JSON.parse(JSON.stringify(state)); slim.parties.forEach(p=>p.photo=''); localStorage.setItem('milk_auto_backup',JSON.stringify({ts:Date.now(),data:slim})); }catch(e2){ return; } }
   state.settings.lastBackup=Date.now(); try{ localStorage.setItem(STORE_KEY,JSON.stringify(state)); }catch(e){}
@@ -6143,6 +6189,159 @@ function modConvert(){
 }
 function cvLiter(){ const l=parseFloat($('cv_l').value)||0, d=parseFloat($('cv_d').value)||1.03; $('cv_kg').textContent=num(l*d)+' kg'; }
 function cvRate(){ const fat=parseFloat($('cv_fat').value)||0, fr=parseFloat($('cv_fr').value)||0, q=parseFloat($('cv_q').value)||0; $('cv_amt').textContent=money(fat*fr*q); }
+/* ---- 💬 WhatsApp टेम्पलेट ---- */
+function modWaTemplates(){
+  const list=(state.templates||[]);
+  return `<div class="card"><h3>💬 ${t('watemplates')}</h3>
+    <div class="hint" style="margin-bottom:10px">${t('wt_hint')}</div>
+    <button class="btn" style="width:100%;margin-bottom:12px" onclick="openTemplate('')">➕ ${t('wt_add')}</button>
+    <div>${list.length?list.map(templateRow).join(''):'<div class="empty">'+t('wt_none')+'</div>'}</div></div>`;
+}
+function templateRow(m){
+  return `<div class="list-item"><div class="avatar" style="background:var(--blue-l);color:var(--blue)">💬</div>
+    <div class="li-main"><div class="t">${esc(m.name)}</div><div class="s">${esc((m.text||'').slice(0,70))}</div></div>
+    <button class="btn grey xs" onclick="openTemplate('${m.id}')">✏️</button>
+    <button class="btn wa xs" onclick="shareTemplate('${m.id}')">📤</button>
+    <button class="btn danger xs" onclick="delTemplate('${m.id}')">🗑</button></div>`;
+}
+function openTemplate(id){
+  const m=id?(state.templates||[]).find(x=>x.id===id):null;
+  openModal(`<div class="sheet-head"><h2>💬 ${id?t('edit'):t('wt_add')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>${t('wt_name')}</label><input type="text" id="wt_name" value="${m?esc(m.name):''}" placeholder="${t('wt_ph')}" /></div>
+    <div class="field"><label>${t('wt_text')}</label><textarea id="wt_text" rows="5" style="width:100%">${m?esc(m.text):''}</textarea></div>
+    <button class="btn" style="width:100%;margin-top:6px" onclick="saveTemplate('${id||''}')">💾 ${t('save')}</button>`);
+}
+function saveTemplate(id){ const n=$('wt_name').value.trim(), x=$('wt_text').value.trim(); if(!n){ toast(t('enter_name')); return; }
+  state.templates=state.templates||[];
+  if(id){ const m=state.templates.find(y=>y.id===id); if(m){ m.name=n; m.text=x; } }
+  else state.templates.push({id:uid(),name:n,text:x});
+  save(); closeModal(); rerenderModule(); toast(t('saved')); }
+function delTemplate(id){ state.templates=(state.templates||[]).filter(x=>x.id!==id); save(); rerenderModule(); toast(t('deleted')); }
+function shareTemplate(id){ const m=(state.templates||[]).find(x=>x.id===id); if(!m) return; window.open('https://wa.me/?text='+encodeURIComponent(m.text||''),'_blank'); }
+
+/* ---- 🏦 EMI कैलकुलेटर ---- */
+function modEmi(){
+  return `<div class="card"><h3>🏦 ${t('emi')}</h3>
+    <div class="hint" style="margin-bottom:10px">${t('emi_hint')}</div>
+    <div class="field"><label>${t('emi_amount')}</label><input type="number" inputmode="numeric" id="emi_p" value="100000" oninput="calcEmi()" /></div>
+    <div class="row2"><div class="field"><label>${t('emi_rate')}</label><input type="number" step="0.1" inputmode="decimal" id="emi_r" value="12" oninput="calcEmi()" /></div>
+    <div class="field"><label>${t('emi_months')}</label><input type="number" inputmode="numeric" id="emi_n" value="12" oninput="calcEmi()" /></div></div>
+    <div class="bill-line tot" style="border-top:none"><span class="k">${t('emi_val')}</span><span class="v" id="emi_out">₹0</span></div>
+    <div class="bill-line"><span class="k">${t('emi_interest')}</span><span class="v" id="emi_int">₹0</span></div>
+    <div class="bill-line"><span class="k">${t('emi_total')}</span><span class="v" id="emi_tot">₹0</span></div></div>`;
+}
+function calcEmi(){ if(!$('emi_p')) return; const P=parseFloat($('emi_p').value)||0, R=(parseFloat($('emi_r').value)||0)/1200, N=parseInt($('emi_n').value)||0;
+  let emi=0; if(P>0&&N>0){ emi=R>0?(P*R*Math.pow(1+R,N))/(Math.pow(1+R,N)-1):P/N; }
+  const tot=emi*N, int=tot-P;
+  if($('emi_out')) $('emi_out').textContent=money(emi);
+  if($('emi_int')) $('emi_int').textContent=money(int);
+  if($('emi_tot')) $('emi_tot').textContent=money(tot); }
+
+/* ---- 🚦 ग्राहक क्रेडिट लिमिट ---- */
+function modCreditLimit(){
+  const custs=(state.parties||[]).filter(p=>p.type==='customer'&&p.active!==false).slice().sort((a,b)=>a.name.localeCompare(b.name));
+  const over=custs.filter(p=>(p.limit||0)>0 && partyBalance(p.id)>(p.limit||0)).length;
+  return `<div class="card"><h3>🚦 ${t('creditlimit')}${over?' <span class="sub" style="color:var(--red)">'+over+' '+t('cl_over')+'</span>':''}</h3>
+    <div class="hint" style="margin-bottom:10px">${t('cl_hint')}</div>
+    <div>${custs.length?custs.map(clRow).join(''):'<div class="empty">'+t('no_parties')+'</div>'}</div></div>`;
+}
+function clRow(p){
+  const bal=partyBalance(p.id), lim=p.limit||0, over=lim>0&&bal>lim;
+  return `<div class="list-item"><div class="avatar" style="background:${over?'var(--red-l)':'var(--green-l)'};color:${over?'var(--red)':'var(--green-d)'}">${over?'🚦':'✅'}</div>
+    <div class="li-main"><div class="t">${esc(p.name)}</div><div class="s">${t('owes')}: ${money(Math.max(0,bal))}${lim?' • '+t('cl_limit')+': '+money(lim):''}${over?' • '+t('cl_over'):''}</div></div>
+    <input type="number" inputmode="numeric" style="width:96px" value="${lim||''}" placeholder="${t('cl_limit')}" onchange="setCreditLimit('${p.id}',this.value)" /></div>`;
+}
+function setCreditLimit(id,v){ const p=partyById(id); if(!p) return; p.limit=parseFloat(v)||0; save(); rerenderModule(); toast(t('saved')); }
+
+/* ---- ✅ डेली टास्क चेकलिस्ट ---- */
+function modChecklist(){
+  const list=(state.tasks||[]);
+  const done=list.filter(x=>x.doneOn===todayStr()).length;
+  return `<div class="card"><h3>✅ ${t('checklist')}${list.length?' <span class="sub">'+done+'/'+list.length+'</span>':''}</h3>
+    <div class="hint" style="margin-bottom:10px">${t('ck_hint')}</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px"><input type="text" id="ckInput" style="flex:1" placeholder="${t('ck_ph')}" onkeydown="if(event.key==='Enter')addTask()" /><button class="btn ghost sm" onclick="addTask()">➕</button></div>
+    <div>${list.length?list.map(taskRow).join(''):'<div class="empty">'+t('ck_none')+'</div>'}</div></div>`;
+}
+function taskRow(x){ const done=x.doneOn===todayStr();
+  return `<div class="list-item"><div class="avatar" style="background:${done?'var(--green-l)':'var(--amber-l)'};color:${done?'var(--green-d)':'var(--amber)'}" onclick="toggleTask('${x.id}')">${done?'✔️':'⬜'}</div>
+    <div class="li-main" onclick="toggleTask('${x.id}')"><div class="t" style="${done?'text-decoration:line-through;opacity:.6':''}">${esc(x.text)}</div><div class="s">${done?t('ck_done'):t('ck_todo')}</div></div>
+    <button class="btn danger xs" onclick="delTask('${x.id}')">🗑</button></div>`;
+}
+function addTask(){ const el=$('ckInput'); if(!el) return; const v=el.value.trim(); if(!v) return; (state.tasks=state.tasks||[]).push({id:uid(),text:v,doneOn:''}); save(); rerenderModule(); }
+function toggleTask(id){ const x=(state.tasks||[]).find(y=>y.id===id); if(!x) return; x.doneOn=(x.doneOn===todayStr())?'':todayStr(); save(); rerenderModule(); }
+function delTask(id){ state.tasks=(state.tasks||[]).filter(x=>x.id!==id); save(); rerenderModule(); toast(t('deleted')); }
+
+/* ---- 🗓️ backup schedule ---- */
+let bkRunning=false;
+function bkSchedBits(){
+  const st=state.settings;
+  if($('bkEvery')) $('bkEvery').value=String(st.bkSchedEvery||1);
+  if($('bkTime')) $('bkTime').value=st.bkSchedTime||'21:00';
+  if($('bkTarget')) $('bkTarget').value=st.bkSchedTarget||'file';
+  if($('sw-bksched')) $('sw-bksched').classList.toggle('on',!!st.bkSchedOn);
+  if($('bkNext')) $('bkNext').textContent=nextBackupText();
+  try{ renderDataUsage(); cloudStatus(); }catch(e){}
+}
+function renderBkSchedBits(){ bkSchedBits(); }
+function saveBkSched(){ const st=state.settings; if($('bkEvery')) st.bkSchedEvery=parseInt($('bkEvery').value)||1; if($('bkTime')) st.bkSchedTime=$('bkTime').value||'21:00'; if($('bkTarget')) st.bkSchedTarget=$('bkTarget').value||'file'; save(); if($('bkNext')) $('bkNext').textContent=nextBackupText(); }
+function toggleBkSched(){ state.settings.bkSchedOn=!state.settings.bkSchedOn; save(); bkSchedBits(); toast(t('bk_sched')+': '+(state.settings.bkSchedOn?t('on'):t('off'))); if(state.settings.bkSchedOn){ askNotifPerm(); } }
+function nextBackupText(){ const st=state.settings; if(!st.bkSchedOn) return t('bk_sched_off');
+  const every=(st.bkSchedEvery||1); const base=st.bkSchedLast||Date.now();
+  const due=new Date(base+every*86400000);
+  return fmtDate(ymd(due))+' · '+(st.bkSchedTime||'21:00'); }
+function backupDue(){ const st=state.settings; if(!st.bkSchedOn) return false;
+  const parts=(st.bkSchedTime||'21:00').split(':'); const h=parseInt(parts[0])||0, m=parseInt(parts[1])||0;
+  const now=new Date(); const today=new Date(now.getFullYear(),now.getMonth(),now.getDate(),h,m,0,0);
+  const every=(st.bkSchedEvery||1); const last=st.bkSchedLast||0;
+  return now>=today && (now-last)>=every*86400000; }
+function checkBackupSchedule(){ try{ if(backupDue()) runScheduledBackup(false); }catch(e){} }
+function doLocalBackup(){ try{ if(fsHandle) return writeBackupToLinked(); }catch(e){} try{ takeAutoBackup(); return true; }catch(e){ return false; } }
+async function runScheduledBackup(manual){
+  if(bkRunning) return; bkRunning=true;
+  const st=state.settings; const target=st.bkSchedTarget||'file'; let ok=false;
+  try{
+    if(target==='file'||target==='both'){ try{ ok=(await doLocalBackup())||ok; }catch(e){} }
+    if(target==='drive'||target==='both'){ try{ if(driveReady()&&navigator.onLine){ await driveBackupNow(true); ok=true; } }catch(e){} }
+  }catch(e){}
+  st.bkSchedLast=Date.now();
+  let sizeStr=''; try{ const b=new Blob([JSON.stringify(state)]).size; sizeStr=(b/1048576>1?(b/1048576).toFixed(2)+' MB':Math.round(b/1024)+' KB'); }catch(e){}
+  (st.bkHistory=st.bkHistory||[]).unshift({at:Date.now(),target:manual?'manual':target,ok:ok,size:sizeStr});
+  if(st.bkHistory.length>10) st.bkHistory.length=10;
+  save(); notifyBackup(ok); bkRunning=false;
+  if(curModule==='backup') rerenderModule();
+  if(manual) toast(ok?t('bk_done'):t('bk_fail'));
+}
+function notifyBackup(ok){ const msg=ok?t('bk_notify_ok'):t('bk_notify_fail');
+  try{ if(window.Notification && Notification.permission==='granted') new Notification('दूध हिसाब — '+t('backup'),{body:msg, tag:'milk-backup'}); }catch(e){}
+  try{ if(ok) toast('✅ '+msg); else toast('⚠️ '+msg); }catch(e){} }
+function askNotifPerm(){ try{ if(window.Notification){ if(Notification.permission==='granted'){ toast(t('notif_on')); return; } Notification.requestPermission().then(function(p){ toast(p==='granted'?t('notif_on'):t('bk_notif_off')); }); } else toast(t('bk_notif_off')); }catch(e){} }
+/* restore preview + auto slots */
+function previewImport(txt){
+  try{ const d=JSON.parse(txt); if(!d||!d.parties||!d.entries) throw 0;
+    const c={p:(d.parties||[]).length,e:(d.entries||[]).length,pay:(d.payments||[]).length,x:(d.expenses||[]).length};
+    openModal(`<div class="sheet-head"><h2>📄 ${t('bk_preview')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+      <div class="hint" style="margin-bottom:8px">${t('bk_preview_hint')}</div>
+      <div class="bill-line"><span class="k">${t('cat_party')}</span><span class="v">${c.p}</span></div>
+      <div class="bill-line"><span class="k">${t('entry_count')}</span><span class="v">${c.e}</span></div>
+      <div class="bill-line"><span class="k">${t('qa_pay')}</span><span class="v">${c.pay}</span></div>
+      <div class="bill-line"><span class="k">${t('r_exp')}</span><span class="v">${c.x}</span></div>
+      <button class="btn" style="width:100%;margin-top:8px" onclick="confirmImport()">${t('bk_restore_now')}</button>`);
+    window._pendingImport=txt;
+  }catch(e){ toast(t('backup_bad')); }
+}
+function confirmImport(){ const txt=window._pendingImport; window._pendingImport=''; if(!txt) return; closeModal(); applyImported(txt,true); }
+function openAutoSlots(){ let list=[]; try{ list=JSON.parse(localStorage.getItem('milk_auto_backup_list')||'[]'); }catch(e){}
+  const one=localStorage.getItem('milk_auto_backup'); if(!list.length&&one){ try{ const s=JSON.parse(one); list=[{ts:s.ts,data:s.data}]; }catch(e){} }
+  if(!list.length){ toast(t('no_auto')); return; }
+  openModal(`<div class="sheet-head"><h2>♻️ ${t('bk_auto_slots')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+    ${list.map((s,ix)=>`<div class="list-item"><div class="avatar" style="background:var(--green-l);color:var(--green-d)">🕘</div>
+      <div class="li-main"><div class="t">${fmtDateTime(s.ts)}</div><div class="s">${(s.data&&s.data.entries?s.data.entries.length:0)} ${t('entries_count')}</div></div>
+      <button class="btn ghost xs" onclick="restoreSlot(${ix})">♻️</button></div>`).join('')}`);
+}
+function restoreSlot(ix){ let list=[]; try{ list=JSON.parse(localStorage.getItem('milk_auto_backup_list')||'[]'); }catch(e){}
+  const s=list[ix]; if(!s||!s.data){ toast(t('no_auto')); return; }
+  if(!confirm(t('c_restore'))) return; state=deepDefaults(s.data); save(); applyTheme(); applyStatic(); refreshAll(); rerenderModule(); closeModal(); toast(t('restored')); }
+
 
 /* ---- 🔍 Global search ---- */
 function modSearch(){
@@ -7354,6 +7553,7 @@ function init(){
   if(navigator.serviceWorker){ try{ navigator.serviceWorker.addEventListener('message',function(e){ if(e.data&&e.data.type==='drive-sync'){ try{ driveAutoSync(); }catch(_){} } }); }catch(e){} }
   registerPeriodicSync();
   try{ shiftRemindCheck(); setInterval(shiftRemindCheck, 60000); scheduleShiftAlarm(); }catch(e){}
+  try{ checkBackupSchedule(); setInterval(checkBackupSchedule, 60000); }catch(e){}
   try{ initSwipe(); }catch(e){}
 }
 init();
