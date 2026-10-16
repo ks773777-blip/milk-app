@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>दूध हिसाब — UI/UX Blueprint (Wireframe + User Flow)</title>
+<style>
+  :root{
+    --green:#0f7b53; --green-d:#0a5c3e; --green-l:#e7f5ee;
+    --ink:#16241d; --muted:#5f6f67; --line:#dfe6e1; --bg:#f4f7f5; --card:#fff;
+    --amber:#b7791f; --red:#c0392b; --blue:#1d6fb8;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Segoe UI',system-ui,-apple-system,'Noto Sans Devanagari',Roboto,Arial,sans-serif;
+    line-height:1.6;font-size:15.5px}
+  .wrap{max-width:900px;margin:0 auto;padding:0 18px 80px}
+  header.hero{background:linear-gradient(135deg,var(--green),var(--green-d));color:#fff;padding:44px 18px 34px;margin-bottom:26px}
+  header.hero .in{max-width:900px;margin:0 auto}
+  header.hero h1{margin:0 0 8px;font-size:27px;letter-spacing:.2px}
+  header.hero p{margin:0;opacity:.92;font-size:14.5px;max-width:640px}
+  header.hero .tag{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);
+    border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700;margin-bottom:14px}
+  h2{font-size:20px;margin:36px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 8px}
+  p{margin:8px 0}
+  ul{margin:8px 0 8px 4px;padding-left:20px}
+  li{margin:4px 0}
+  .muted{color:var(--muted)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+  .grid{display:grid;gap:12px}
+  @media(min-width:620px){ .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} }
+  code{background:#eef2f0;border-radius:5px;padding:1px 6px;font-family:var(--mono);font-size:13px}
+  .sw{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:13.5px}
+  .dot{width:26px;height:26px;border-radius:8px;flex:none;border:1px solid rgba(0,0,0,.08)}
+  .flow{background:#fff;border:1px dashed var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;font-size:14px}
+  .flow b{color:var(--green-d)}
+  .arrow{color:var(--green);font-weight:800}
+  /* wireframe */
+  .wf{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;margin:12px 0}
+  .wf .bar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--green);color:#fff;
+    border-radius:9px;padding:8px 10px;font-size:11.5px;font-weight:700}
+  .wf .bar .r{display:flex;gap:8px}
+  .wf .pill{background:rgba(255,255,255,.22);border-radius:7px;padding:3px 8px;font-size:10.5px}
+  .wf .search{background:rgba(255,255,255,.22);border-radius:8px;margin-top:7px;padding:6px 10px;font-size:11px}
+  .wf .block{background:#f7faf8;border:1px dashed #cfdad4;border-radius:10px;padding:10px;margin-top:9px;font-size:11.5px;color:var(--muted)}
+  .wf .block b{color:var(--ink);display:block;font-size:12px;margin-bottom:3px}
+  .wf .row{display:grid;gap:8px;margin-top:9px}
+  .wf .c2{grid-template-columns:1fr 1fr}
+  .wf .c4{grid-template-columns:repeat(4,1fr)}
+  .wf .cell{background:#f7faf8;border:1px dashed #cfdad4;border-radius:9px;padding:8px;font-size:10.5px;text-align:center;color:var(--muted)}
+  .wf .nav{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
+  .wf .nav div{background:#eef2f0;border-radius:8px;padding:6px 0;text-align:center;font-size:10px;color:var(--muted)}
+  .wf .nav div.on{background:var(--green-l);color:var(--green-d);font-weight:800}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px;background:#fff;border-radius:12px;overflow:hidden}
+  th,td{border-bottom:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+  th{background:#eef2f0;font-size:12px;font-weight:800}
+  tr:last-child td{border-bottom:none}
+  .badge{display:inline-block;font-size:11px;font-weight:700;border-radius:20px;padding:2px 9px;background:var(--green-l);color:var(--green-d)}
+  .badge.warn{background:#fdf5e6;color:var(--amber)}
+  footer{text-align:center;color:var(--muted);font-size:12.5px;padding:30px 0}
+</style>
+</head>
+<body>
+
+<header class="hero"><div class="in">
+  <span class="tag">UI / UX BLUEPRINT</span>
+  <h1>दूध हिसाब — मॉडर्न UI/UX डिज़ाइन दस्तावेज़</h1>
+  <p>हर स्क्रीन की वायरफ्रेम रूपरेखा, उसके तत्व, और हर बटन दबाने पर क्या होगा (User Flow) — इसी ऐप के हिसाब से।</p>
+</div></header>
+
+<div class="wrap">
+
+<h2>1. डिज़ाइन सिस्टम (Design System)</h2>
+<div class="grid g2">
+  <div class="card">
+    <h3 style="margin-top:0">रंग (Colors)</h3>
+    <div class="sw"><span class="dot" style="background:#0f7b53"></span> Primary हरा <code>#0f7b53</code> — हेडर, मुख्य बटन, चालू टॉगल</div>
+    <div class="sw"><span class="dot" style="background:#0a5c3e"></span> Primary गहरा <code>#0a5c3e</code> — ग्रेडिएंट</div>
+    <div class="sw"><span class="dot" style="background:#e7f5ee"></span> हल्का हरा <code>#e7f5ee</code> — चुना हुआ / बैकग्राउंड</div>
+    <div class="sw"><span class="dot" style="background:#b7791f"></span> Amber <code>#b7791f</code> — चेतावनी, ऑफ़लाइन बैनर</div>
+    <div class="sw"><span class="dot" style="background:#c0392b"></span> Red <code>#c0392b</code> — बकाया, हटाएँ, नुकसान</div>
+    <div class="sw"><span class="dot" style="background:#1d6fb8"></span> Blue <code>#1d6fb8</code> — जानकारी, मुनाफ़ा</div>
+    <p class="muted" style="font-size:13px">थीम बदलने पर Primary बदल जाता है (हरा / नीला / बैंगनी / टील)। डार्क मोड में पूरा पैलेट बदलता है।</p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">टाइप व स्पेसिंग</h3>
+    <ul style="font-size:13.5px">
+      <li>फ़ॉन्ट: Segoe UI / system + <b>Noto Sans Devanagari</b></li>
+      <li>बड़ा शीर्षक <code>20–22px / 800</code></li>
+      <li>कार्ड शीर्षक <code>16px / 700</code></li>
+      <li>सामान्य टेक्स्ट <code>15px</code>, सेकेंडरी <code>13px muted</code></li>
+      <li>रेडियस: कार्ड <code>16px</code>, बटन <code>12px</code>, चिप <code>20px</code></li>
+      <li>स्पेसिंग स्केल: <code>4 · 8 · 12 · 16 · 22</code></li>
+      <li>सेफ़ एरिया (नॉच) का ध्यान: ऊपर/नीचे <code>env(safe-area-inset)</code></li>
+    </ul>
+  </div>
+</div>
+
+<h3>बार-बार इस्तेमाल होने वाले तत्व (Components)</h3>
+<table>
+  <tr><th>तत्व</th><th>कहाँ</th><th>व्यवहार</th></tr>
+  <tr><td><b>Bottom Nav (5)</b></td><td>हर स्क्रीन के नीचे</td><td>होम · खोज · एंट्री · ग्राहक · मॉड्यूल — टैप पर स्क्रीन बदलती है, चुना आइकॉन हरा</td></tr>
+  <tr><td><b>Top Bar</b></td><td>हर स्क्रीन के ऊपर</td><td>लोगो + नाम, 🔔 नोटिफिकेशन (badge), 👤 प्रोफ़ाइल, लाइव घड़ी</td></tr>
+  <tr><td><b>Nav Row</b></td><td>Top Bar के नीचे</td><td>‹ पीछे · 🔍 खोज बार (टैप = खोज टैब) · › आगे</td></tr>
+  <tr><td><b>Card</b></td><td>हर जगह</td><td>सफ़ेद कार्ड, हल्की शैडो, जानकारी को छोटे टुकड़ों में</td></tr>
+  <tr><td><b>Chip</b></td><td>खोज, कैलकुलेटर, मात्रा</td><td>टैप पर चुन लेता है (हरा), दोबारा टैप पर बदलता है</td></tr>
+  <tr><td><b>List Item</b></td><td>सूचियाँ</td><td>Avatar + नाम/विवरण + दाईं ओर रकम/बटन</td></tr>
+  <tr><td><b>Sheet (Popup)</b></td><td>फ़ॉर्म, नोटिफिकेशन</td><td>नीचे से खुलती है, बाहर टैप या ✕ पर बंद</td></tr>
+  <tr><td><b>Toast</b></td><td>हर क्रिया पर</td><td>छोटा संदेश, कुछ में "वापस लाएँ" (Undo)</td></tr>
+  <tr><td><b>Switch (टॉगल)</b></td><td>सेटिंग</td><td>चालू = हरा</td></tr>
+</table>
+
+<h2>2. स्क्रीन-दर-स्क्रीन वायरफ्रेम + User Flow</h2>
+
+<!-- ONBOARDING -->
+<h3>2.1 ऑनबोर्डिंग / वेलकम स्क्रीन</h3>
+<div class="wf">
+  <div class="bar"><span>दूध हिसाब</span><span class="r"><span class="pill">छोड़ें</span></span></div>
+  <div class="block" style="text-align:center"><b>⬜ बड़ा आइकॉन (118×118, हल्का हरा बॉक्स)</b>शीर्षक (22px) · 2 पंक्ति विवरण (14.5px muted)</div>
+  <div class="block" style="text-align:center">● ○ ○ ○  — डॉट्स (चालू डॉट लंबा, हरा)</div>
+  <div class="block" style="text-align:center"><b>[ आगे → ]</b>  पूरा चौड़ा हरा बटन</div>
+</div>
+<p><b>4 स्लाइड:</b></p>
+<ul>
+  <li>🥛 स्वागत — "दूध हिसाब में स्वागत"</li>
+  <li>⚡ एक टैप में एंट्री — ऑटो शिफ्ट + पिछला/अगला</li>
+  <li>📊 स्मार्ट रिपोर्ट — कैलेंडर, टॉप ग्राहक, वेस्टेज, पशु रजिस्टर</li>
+  <li>☁️ सुरक्षित व ऑफ़लाइन — Drive बैकअप</li>
+</ul>
+<div class="flow"><b>User Flow:</b> ऐप पहली बार खुले <span class="arrow">→</span> ऑनबोर्डिंग दिखे <span class="arrow">→</span> "आगे" पर अगली स्लाइड <span class="arrow">→</span> आख़िरी पर "शुरू करें" दबाएँ <span class="arrow">→</span> ऑनबोर्डिंग बंद, होम खुले। कहीं भी "छोड़ें" दबाने पर सीधे होम। दोबारा कभी नहीं दिखेगी (याद रखी जाती है)।</div>
+
+<!-- HOME -->
+<h3>2.2 होम स्क्रीन</h3>
+<div class="wf">
+  <div class="bar"><span>🥛 दूध हिसाब</span><span class="r"><span class="pill">🔔3</span><span class="pill">👤</span><span class="pill">16 अक्तू · 09:15</span></span></div>
+  <div class="search">‹   🔍  होम   ›</div>
+  <div class="block" style="background:#0f7b53;color:#fff;border:none"><b style="color:#fff">हाइलाइट कैरोसेल (हरा ग्रेडिएंट)</b><span style="color:#eaf5ef">आइकॉन · शीर्षक · एक पंक्ति · ●○○○ — टैप पर अगली</span></div>
+  <div class="row c4">
+    <div class="cell">➕<br>नई एंट्री</div><div class="cell">🧺<br>बल्क एंट्री</div><div class="cell">🧾<br>बिल</div><div class="cell">💵<br>भुगतान</div>
+  </div>
+  <div class="row c4">
+    <div class="cell">📊<br>रिपोर्ट</div><div class="cell">☁️<br>बैकअप</div><div class="cell">📅<br>कैलेंडर</div><div class="cell">🆘<br>सहायता</div>
+  </div>
+  <div class="row c2">
+    <div class="cell">आज की बिक्री</div><div class="cell">आज की खरीद</div>
+    <div class="cell">इस माह मुनाफ़ा</div><div class="cell">कुल लेना (बकाया)</div>
+  </div>
+  <div class="block"><b>मासिक लक्ष्य</b>प्रोग्रेस बार + ₹110 / ₹5,000 (2%)</div>
+  <div class="block"><b>पिछले 7 दिन की बिक्री</b>बार चार्ट + 📤 भेजें</div>
+  <div class="block"><b>आज की एंट्री</b>रीसेंट लिस्ट (Avatar · नाम · L · रकम)</div>
+  <div class="nav"><div class="on">🏠 होम</div><div>🔍 खोज</div><div>🥛 एंट्री</div><div>👥 ग्राहक</div><div>👤 मॉड्यूल</div></div>
+</div>
+<div class="flow"><b>User Flow:</b>
+  "➕ नई एंट्री" <span class="arrow">→</span> एंट्री पॉपअप (शिफ्ट अपने आप) <span class="arrow">→</span> सेव <span class="arrow">→</span> होम अपडेट।
+  "🧺 बल्क एंट्री" <span class="arrow">→</span> बल्क स्क्रीन। "🧾 बिल" <span class="arrow">→</span> बिल स्क्रीन।
+  "💵 भुगतान / 📊 रिपोर्ट / ☁️ बैकअप / 📅 कैलेंडर / 🆘 सहायता" <span class="arrow">→</span> उस मॉड्यूल की स्क्रीन।
+  हाइलाइट कार्ड पर टैप <span class="arrow">→</span> अगला सुझाव।
+</div>
+
+<!-- SEARCH -->
+<h3>2.3 खोज / एक्सप्लोर स्क्रीन</h3>
+<div class="wf">
+  <div class="bar"><span>🥛 दूध हिसाब</span><span class="r"><span class="pill">🔔</span><span class="pill">👤</span></span></div>
+  <div class="search">‹   🔍  खोज   ›</div>
+  <div class="block"><b>स्मार्ट सर्च बार</b>[ ग्राहक, एंट्री, रकम, तारीख… ]</div>
+  <div class="block"><b>फ़िल्टर चिप्स</b>[सब] [ग्राहक] [एंट्री] [भुगतान] [मॉड्यूल]</div>
+  <div class="block"><b>नतीजे (लिस्ट)</b>Avatar · नाम · विवरण · दाईं ओर रकम</div>
+  <div class="nav"><div>🏠 होम</div><div class="on">🔍 खोज</div><div>🥛 एंट्री</div><div>👥 ग्राहक</div><div>👤 मॉड्यूल</div></div>
+</div>
+<div class="flow"><b>User Flow:</b> खोज टैब खुले <span class="arrow">→</span> 2 अक्षर लिखें <span class="arrow">→</span> नतीजे तुरंत दिखें। चिप दबाकर सिर्फ़ ग्राहक/एंट्री/भुगतान/मॉड्यूल देखें। किसी ग्राहक पर टैप <span class="arrow">→</span> उसका बिल/खाता। किसी मॉड्यूल पर टैप <span class="arrow">→</span> वह मॉड्यूल खुले।</div>
+
+<!-- ENTRIES -->
+<h3>2.4 एंट्री स्क्रीन (Activity)</h3>
+<div class="wf">
+  <div class="block"><b>तारीख + दिन-नेविगेशन</b>[ 16/10/2026 ]  ·  [◀ पिछला] [आज] [अगला ▶]</div>
+  <div class="block"><b>सर्च + शिफ्ट</b>[ ग्राहक खोजें ]  ·  [सब] [सुबह] [शाम]</div>
+  <div class="block"><b>आज की एंट्री (लिस्ट)</b>हर पंक्ति: Avatar · नाम · सुबह/शाम · L · रकम · 🗑 · कुल जोड़</div>
+  <div class="block" style="text-align:center">[➕] [🧺] [⧉ कॉपी] [⚡ सबकी डिफ़ॉल्ट]</div>
+</div>
+<div class="flow"><b>User Flow:</b> "◀ पिछला / अगला ▶" <span class="arrow">→</span> पिछले/अगले दिन की एंट्री। "आज" <span class="arrow">→</span> आज पर वापस। "➕" <span class="arrow">→</span> पॉपअप में ग्राहक चुनें, शिफ्ट अपने आप, मात्रा चिप/टाइप, रकम दिखे, सेव। पंक्ति पर 🗑 <span class="arrow">→</span> हटे + "वापस लाएँ" टोस्ट।</div>
+
+<!-- ENTRY POPUP -->
+<h3>2.5 एंट्री पॉपअप (नीचे से खुलने वाली शीट)</h3>
+<div class="wf">
+  <div class="block"><b>शीर्षक</b>नई एंट्री ✕</div>
+  <div class="block"><b>ग्राहक</b>[ Ramesh — बिक्री ▼ ]  ·  [◀ पिछला] [अगला ▶]</div>
+  <div class="block"><b>तारीख + शिफ्ट</b>[16/10/2026]  ·  [शाम ▼]  (ऑटो चुना)</div>
+  <div class="block">🕐 अभी 17:35 · शाम — समय के हिसाब से अपने आप चुना</div>
+  <div class="block"><b>झटपट मात्रा</b>[0.5][1][1.5][2][2.5][3][4][5]</div>
+  <div class="row c2"><div class="cell">मात्रा (L)</div><div class="cell">फैट (वैकल्पिक)</div></div>
+  <div class="block"><b>रेट (वैकल्पिक)</b>[ auto ]</div>
+  <div class="block"><b>कुल रकम</b>₹110</div>
+  <div class="block" style="text-align:center">[सेव]</div>
+</div>
+<div class="flow"><b>User Flow:</b> खुलते ही घड़ी के हिसाब से सुबह/शाम चुना जाता है। "◀ पिछला / अगला ▶" <span class="arrow">→</span> अगले ग्राहक पर जाएँ (मात्रा उसकी डिफ़ॉल्ट)। चिप पर टैप <span class="arrow">→</span> मात्रा भर जाए। "सेव" <span class="arrow">→</span> टोस्ट + लिस्ट अपडेट। संपादन में "🗑 हटाएँ" भी।</div>
+
+<!-- PARTIES -->
+<h3>2.6 ग्राहक स्क्रीन</h3>
+<div class="wf">
+  <div class="block"><b>ग्राहक सूची</b>[ग्राहक][किसान] सेगमेंट · खोज · [➕ नया]</div>
+  <div class="block">Avatar · नाम · फ़ोन/रूट · बकाया/रकम</div>
+</div>
+<div class="flow"><b>User Flow:</b> "➕ नया" <span class="arrow">→</span> फ़ॉर्म (नाम, फ़ोन, रेट, डिफ़ॉल्ट मात्रा, रूट)। ग्राहक पर टैप <span class="arrow">→</span> उसका बिल/खाता/स्टेटमेंट।</div>
+
+<!-- BILLS -->
+<h3>2.7 बिल स्क्रीन</h3>
+<div class="wf">
+  <div class="block"><b>अवधि</b>[दैनिक][10-दिन][15-दिन][मासिक] · तारीख</div>
+  <div class="block"><b>सारांश</b>कुल दूध · बिक्री · खरीद · जमा · बकाया</div>
+  <div class="block" style="text-align:center">[📄 PDF] [🖨️ प्रिंट]</div>
+  <div class="block"><b>ग्राहक-वार बिल</b>Avatar · नाम · रकम · WhatsApp/UPI</div>
+</div>
+<div class="flow"><b>User Flow:</b> मॉड्यूल → "बिल बनाएँ" <span class="arrow">→</span> बिल स्क्रीन। अवधि चुनें <span class="arrow">→</span> सारांश बदले। "PDF"/"प्रिंट" <span class="arrow">→</span> डाउनलोड/प्रिंट। ग्राहक पर WhatsApp <span class="arrow">→</span> बिल भेजें; UPI <span class="arrow">→</span> QR दिखे।</div>
+
+<!-- PROFILE -->
+<h3>2.8 प्रोफ़ाइल / मॉड्यूल स्क्रीन</h3>
+<div class="wf">
+  <div class="block"><b>प्रोफ़ाइल कार्ड</b>👤 नाम · ईमेल/फ़ोन · ✏️ बदलें · (या) [Google से साइन इन] [नाम-नंबर से शुरू करें]</div>
+  <div class="block"><b>फ़ंक्शन फोल्डर (टाइल्स)</b>बल्क एंट्री · मिल्क कार्ड · खाता · स्टेटमेंट · भुगतान · बकाया · रिपोर्ट · लाभ-हानि · रेट चार्ट · स्टॉक · खर्च · रिमाइंडर · बैकअप · Google लॉगिन · सेटिंग · डेली रजिस्टर · Drive बैकअप · डेटा जाँच · कैलेंडर · टॉप ग्राहक · रूट सारांश · वेस्टेज · पशु रजिस्टर · कैलकुलेटर · नोट्स · बिल बनाएँ · सहायता · नियम व प्राइवेसी</div>
+  <div class="nav"><div>🏠 होम</div><div>🔍 खोज</div><div>🥛 एंट्री</div><div>👥 ग्राहक</div><div class="on">👤 मॉड्यूल</div></div>
+</div>
+<div class="flow"><b>User Flow:</b> "Google से साइन इन" <span class="arrow">→</span> Google चुनें <span class="arrow">→</span> नाम/फ़ोटो दिखे। "नाम-नंबर से शुरू करें" <span class="arrow">→</span> नाम + नंबर भरें <span class="arrow">→</span> प्रोफ़ाइल सेव (सिर्फ़ इस डिवाइस पर)। किसी टाइल पर टैप <span class="arrow">→</span> वह मॉड्यूल खुले। सेटिंग में भाषा/थीम/डार्क/ऑटो-शिफ्ट/PIN/बैकअप।</div>
+
+<!-- NOTIFICATIONS -->
+<h3>2.9 नोटिफिकेशन (🔔)</h3>
+<div class="wf">
+  <div class="block"><b>शीट: 🔔 सूचनाएँ</b>⏳ बकाया याद दिलाएँ · ☁️ बैकअप ले लें · 📦 स्टॉक कम · 🎯 मासिक लक्ष्य · 🔌 Drive जोड़ें</div>
+</div>
+<div class="flow"><b>User Flow:</b> 🔔 पर टैप <span class="arrow">→</span> सूची खुले (badge में गिनती)। किसी सूचना पर टैप <span class="arrow">→</span> संबंधित स्क्रीन (बकाया / बैकअप / स्टॉक)। सूचनाएँ डेटा से अपने आप बनती हैं। कुछ न हो तो "सब ठीक है!"।</div>
+
+<!-- SUPPORT + LEGAL -->
+<h3>2.10 सहायता और नियम/प्राइवेसी</h3>
+<div class="wf">
+  <div class="block"><b>🆘 सहायता</b>FAQ (खोलने पर जवाब) · 💬 ऑफ़लाइन सहायक (सवाल लिखें/चिप) · 📞 संपर्क (WhatsApp/Email)</div>
+  <div class="block"><b>📜 नियम व प्राइवेसी</b>प्राइवेसी पॉलिसी · नियम व शर्तें (पढ़ने योग्य टेक्स्ट)</div>
+</div>
+<div class="flow"><b>User Flow:</b> मॉड्यूल → "सहायता" <span class="arrow">→</span> FAQ खोलें। सहायक में सवाल लिखें <span class="arrow">→</span> तुरंत जवाब (बिना इंटरनेट)। "WhatsApp" <span class="arrow">→</span> चैट खुले (नंबर सेटिंग से)। मॉड्यूल → "नियम व प्राइवेसी" <span class="arrow">→</span> दोनों पॉलिसी पढ़ें।</div>
+
+<h2>3. कंटेंट राइटिंग व माइक्रोकॉपी</h2>
+<div class="card">
+  <h3 style="margin-top:0">CTA (कॉल टू एक्शन)</h3>
+  <p style="font-size:14px">"आगे", "शुरू करें", "सेव करें", "अभी बैकअप करें", "Drive से जोड़ें", "सबकी डिफ़ॉल्ट एंट्री" — छोटे, सीधे, क्रिया-शब्द।</p>
+  <h3>एरर व सूचना संदेश (विनम्र)</h3>
+  <ul style="font-size:14px">
+    <li>"कम से कम 2 अक्षर लिखें"</li>
+    <li>"मात्रा डालें" · "नाम डालें"</li>
+    <li>"Drive बैकअप नहीं हो सका — दोबारा कोशिश करें"</li>
+    <li>"आप ऑफ़लाइन हैं — डेटा फ़ोन में सेव हो रहा है, नेट आने पर Drive में सिंक होगा"</li>
+    <li>"कोई डेटा नहीं" की जगह ज़्यादा मददगार: "अभी कोई एंट्री नहीं — ➕ से पहली एंट्री जोड़ें"</li>
+  </ul>
+  <h3>खाली स्क्रीन (Empty States)</h3>
+  <ul style="font-size:14px">
+    <li>एंट्री: 📭 "इस दिन कोई एंट्री नहीं"</li>
+    <li>बकाया: ✅ "कोई बकाया नहीं"</li>
+    <li>नोटिफिकेशन: ✅ "कोई सूचना नहीं — सब ठीक है!"</li>
+    <li>खोज: 🔍 "कुछ नहीं मिला"</li>
+  </ul>
+</div>
+
+<h2>4. लीगल व प्राइवेसी (संक्षेप)</h2>
+<div class="grid g2">
+  <div class="card"><h3 style="margin-top:0">🔒 प्राइवेसी पॉलिसी</h3>
+    <ul style="font-size:13.5px">
+      <li>सारा डेटा आपके ही फ़ोन/ब्राउज़र में — कोई हमारा सर्वर नहीं</li>
+      <li>Google साइन-इन पर सिर्फ़ नाम, ईमेल, फ़ोटो</li>
+      <li>Drive बैकअप आपकी खुद की Drive में; ऐप सिर्फ़ अपनी बनाई फ़ाइल पढ़े</li>
+      <li>कोई विज्ञापन नहीं, डेटा किसी को नहीं बेचा जाता</li>
+      <li>"सारा डेटा मिटाएँ" = हमेशा के लिए हटा</li>
+    </ul>
+  </div>
+  <div class="card"><h3 style="margin-top:0">📜 नियम व शर्तें</h3>
+    <ul style="font-size:13.5px">
+      <li>ऐप आपके अपने इस्तेमाल के लिए</li>
+      <li>बैकअप नियमित लेते रहें</li>
+      <li>ऐप "जैसा है" (as-is)</li>
+      <li>रकम/बिल/रिपोर्ट अपनी जाँच के बाद भरोसे लायक</li>
+      <li>डेटा कभी भी निर्यात या मिटा सकते हैं</li>
+    </ul>
+  </div>
+</div>
+
+<h2>5. ऑनलाइन + ऑफ़लाइन</h2>
+<div class="card">
+  <p>ऐप <b>PWA</b> है — सर्विस वर्कर के साथ। एक बार खुलने के बाद बिना इंटरनेट भी पूरा चलता है। ऑफ़लाइन होने पर ऊपर पीला बैनर दिखता है; नेट आते ही बदलाव अपने आप Drive में सिंक होते हैं। होम स्क्रीन पर "Install" करके ऐप की तरह इस्तेमाल करें।</p>
+</div>
+
+<h2>6. आगे क्या जोड़ा जा सकता है (Roadmap)</h2>
+<div class="card">
+  <ul style="font-size:14px">
+    <li><span class="badge">जल्दी</span> बिल/इनवॉइस नंबर, स्टाफ अटेंडेंस, महीने-दर-महीने तुलना रिपोर्ट</li>
+    <li><span class="badge">मध्यम</span> Maps (पता/रूट मैप), बिल स्कैन (OCR)</li>
+    <li><span class="badge warn">बाहरी सेटअप</span> Apple ID लॉगिन (Apple Developer चाहिए), फ़ोन OTP लॉगिन (SMS सेवा चाहिए), AI सहायक (Gemini API key), Push नोटिफिकेशन (Firebase)</li>
+  </ul>
+</div>
+
+<footer>दूध हिसाब — UI/UX Blueprint · मॉडर्न लेआउट, वायरफ्रेम व User Flow</footer>
+</div>
+</body>
+</html>
