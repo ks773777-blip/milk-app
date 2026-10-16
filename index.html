@@ -1,13 +1,230 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#0f7b53" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <title>दूध हिसाब — Milk Manager</title>
-<meta http-equiv="refresh" content="0; url=milk-app.html">
-<script>location.replace('milk-app.html');</script>
+<script>window.onGisLoad=function(){window.__gisReady=true;try{if(window.waitGis)waitGis();}catch(e){}};</script>
+<script src="https://accounts.google.com/gsi/client" async defer onload="window.onGisLoad()"></script>
+<link rel="manifest" href="manifest.webmanifest" />
+<meta name="apple-mobile-web-app-title" content="दूध हिसाब" />
+<style>
+<link rel="stylesheet" href="./styles.css" />
+</style>
+  <script type="module" crossorigin src="./assets/index-GDFQE27L.js"></script>
 </head>
-<body style="font-family:system-ui;padding:24px">
-<p><a href="milk-app.html">Milk Manager खोलें →</a></p>
+<body>
+<div class="netbar" id="netBar"></div>
+
+<div class="lock" id="lock">
+  <div class="big">🥛</div>
+  <h2 id="lockTitle">PIN डालें</h2>
+  <div class="dots" id="lockDots"></div>
+  <div class="pad" id="lockPad"></div>
+</div>
+
+<div class="lock" id="bioLock">
+  <div class="bioic">🔒</div>
+  <h2 id="bioTitle">फिंगरप्रिंट से खोलें</h2>
+  <div class="hint" id="bioSub" style="text-align:center;max-width:280px;color:rgba(255,255,255,.85)"></div>
+  <button class="lbtn" onclick="bioUnlock()" id="bioBtn">🔒</button>
+  <button class="lbtn ghost" onclick="bioUsePin()" id="bioPinBtn"></button>
+</div>
+
+<header class="top">
+  <div class="top-row">
+    <div class="brand">
+      <div class="logo">🥛</div>
+      <div><h1 id="appTitle">दूध हिसाब</h1><small id="appSub">Milk Manager</small></div>
+    </div>
+    <div class="top-right">
+      <button class="bell" id="bellBtn" onclick="openNotifications()" aria-label="Notifications">🔔<span class="bellbadge" id="bellBadge" style="display:none"></span></button>
+      <button class="acct" id="acctBtn" onclick="openModule('account')" aria-label="Account"><span id="acctIco">👤</span><img id="acctImg" alt="" style="display:none"/></button>
+      <div><div class="top-date" id="topDate"></div><div class="clock" id="topClock">--:--:--</div></div>
+    </div>
+  </div>
+  <div class="navrow">
+    <button class="navbtn" id="navBack" onclick="navBack()">‹</button>
+    <button class="topsearch" onclick="switchTab('search')"><span class="si">🔍</span><span class="navlbl" id="navLbl"></span></button>
+    <button class="navbtn" id="navFwd" onclick="navForward()">›</button>
+  </div>
+</header>
+
+<main>
+  <!-- HOME -->
+  <section class="view active" id="view-home">
+    <div class="card sync-card" id="syncCard"></div>
+    <div class="hero" id="heroCard">
+      <div class="h-top">
+        <div>
+          <div class="h-sub" id="heroDate"></div>
+          <div class="h-big" id="heroBig">₹0</div>
+          <div class="h-sub" id="heroLbl"></div>
+        </div>
+        <div style="font-size:28px">🥛</div>
+      </div>
+      <div class="h-split">
+        <div class="h-cell"><span id="heroMorL"></span><b id="heroMor">0 L</b></div>
+        <div class="h-cell"><span id="heroEveL"></span><b id="heroEve">0 L</b></div>
+        <div class="h-cell"><span id="heroDueL"></span><b id="heroDue">₹0</b></div>
+      </div>
+    </div>
+    <div class="card hlcard" id="hlCard"></div>
+    <div class="quick" id="quickActions"></div>
+    <div class="stats">
+      <div class="stat green"><div class="ico">🥛</div><div class="lbl" id="l-todaySale"></div><div class="val" id="s-todaySale">0</div></div>
+      <div class="stat amber"><div class="ico">🚚</div><div class="lbl" id="l-todayPurchase"></div><div class="val" id="s-todayPurchase">0</div></div>
+      <div class="stat blue"><div class="ico">📈</div><div class="lbl" id="l-monthProfit"></div><div class="val" id="s-monthProfit">₹0</div></div>
+      <div class="stat red"><div class="ico">⏳</div><div class="lbl" id="l-receivable"></div><div class="val" id="s-receivable">₹0</div></div>
+    </div>
+    <div class="card" id="shiftCard"></div>
+    <div class="card" id="lowStockCard" style="display:none"><h3 id="l-lowStock"></h3><div id="lowStockList"></div></div>
+    <div class="card" id="targetCard" style="display:none">
+      <h3 id="l-targetProgress"></h3>
+      <div style="height:14px;background:var(--soft);border-radius:8px;overflow:hidden;margin-bottom:6px"><div id="targetBar" style="height:100%;width:0;background:var(--green);transition:width .4s"></div></div>
+      <div class="hint" id="targetTxt"></div>
+    </div>
+    <div class="card" id="bkRemindCard" style="display:none;border:1.5px solid var(--amber)">
+      <h3 id="l-bkRemind"></h3><div class="hint" id="bkRemindTxt" style="margin-bottom:10px"></div>
+      <button class="btn" onclick="exportBackup()" id="b-bkNow">⬇️</button>
+    </div>
+    <div class="card">
+      <h3><span id="l-chart"></span><span class="right"><button class="btn grey xs" onclick="shareChart()" id="b-shareChart">📤</button></span></h3>
+      <div class="chart" id="chart7"></div>
+    </div>
+    <div class="card">
+      <h3><span id="l-todayEntries"></span> <span class="sub" id="homeDateLbl"></span><button class="btn grey xs" style="margin-left:auto" onclick="shareTodaySummary()" id="b-summary">📤</button></h3>
+      <div class="btn-row" style="margin-bottom:6px">
+        <button class="btn" onclick="openEntry()" id="b-addEntryHome">➕</button>
+        <button class="btn ghost" onclick="openBulk()" id="b-bulkHome">🧺</button>
+        <button class="btn ghost" onclick="autoDefaultEntries()" id="b-autoHome">⚡</button>
+      </div>
+      <div class="btn-row" style="margin-bottom:6px">
+        <button class="btn ghost" onclick="openEntryShift('morning')" id="b-morHome">🌅</button>
+        <button class="btn ghost" onclick="openEntryShift('evening')" id="b-eveHome">🌙</button>
+      </div>
+      <div id="homeRecent" style="margin-top:6px"></div>
+    </div>
+    <div class="card">
+      <h3><span id="l-todayCust"></span><span class="right"><button class="btn grey xs" onclick="openBulkRemind()" id="b-bulkRemind">📢</button><button class="btn wa xs" onclick="openReminders()" id="b-remind">🔔</button></span></h3>
+      <div id="todayCustList"></div>
+    </div>
+    <div class="card"><h3 id="l-partyDues"></h3><div id="homeDues"></div></div>
+  </section>
+
+  <!-- SEARCH -->
+  <section class="view" id="view-search">
+    <div class="card">
+      <h3 id="l-searchAll"></h3>
+      <div class="field" style="margin:0"><input type="text" id="srchInput" placeholder="" oninput="renderSearch()" /></div>
+      <div class="chips" id="srchCats" style="margin-top:10px"></div>
+      <div class="hint" id="srchHint" style="margin-top:8px"></div>
+    </div>
+    <div class="card"><div id="srchResults"></div></div>
+  </section>
+
+  <!-- ENTRIES -->
+  <section class="view" id="view-entries">
+    <div class="card">
+      <h3 id="l-pickDate"></h3>
+      <div class="field" style="margin:0"><input type="date" id="entryDate" onchange="renderEntries()" /></div>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn grey sm" onclick="shiftDay(-1)">◀ <span id="b-prevDay"></span></button>
+        <button class="btn ghost sm" onclick="jumpToday()" id="b-today"></button>
+        <button class="btn grey sm" onclick="shiftDay(1)"><span id="b-nextDay"></span> ▶</button>
+        <button class="btn grey sm" onclick="repeatLast()" title="पिछली एंट्री दोहराएँ">🔁</button>
+      </div>
+      <div class="field" style="margin:10px 0 0"><input type="text" id="entrySearch" placeholder="" oninput="renderEntries()" /></div>
+      <div class="seg" style="margin:10px 0 0"><button id="shf-all" class="on" onclick="setShift('')"></button><button id="shf-m" onclick="setShift('morning')"></button><button id="shf-e" onclick="setShift('evening')"></button></div>
+    </div>
+    <div class="card">
+      <h3 id="l-milkEntries"></h3>
+      <div id="entriesList"></div>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn ghost" onclick="openEntry()" id="b-addEntry">➕</button>
+        <button class="btn ghost" onclick="openBulk()" id="b-bulk">🧺</button>
+        <button class="btn ghost" onclick="copyPrevDay()" id="b-copyPrev">⧉</button>
+        <button class="btn ghost" onclick="autoDefaultEntries()" id="b-autoEntry">⚡</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CUSTOMERS -->
+  <section class="view" id="view-parties">
+    <div class="card">
+      <h3 id="l-partyList"></h3>
+      <div class="seg">
+        <button id="seg-cust" class="on" onclick="setPartyType('customer')"></button>
+        <button id="seg-sup" onclick="setPartyType('supplier')"></button>
+      </div>
+      <div class="field" style="margin-bottom:8px"><input type="text" id="partySearch" placeholder="" oninput="renderParties()" /></div>
+      <div class="chips" id="routeChips" style="margin-bottom:8px"></div>
+      <div id="partiesList"></div>
+      <button class="btn ghost" style="margin-top:12px" id="b-addParty" onclick="openParty()">➕</button>
+    </div>
+  </section>
+
+  <!-- BILLS -->
+  <section class="view" id="view-bills">
+    <div class="card">
+      <h3 id="l-billing"></h3>
+      <div class="seg wrap">
+        <button onclick="setBillPeriod('day')" id="per-day"></button>
+        <button onclick="setBillPeriod('d10')" id="per-d10"></button>
+        <button onclick="setBillPeriod('d15')" id="per-d15"></button>
+        <button onclick="setBillPeriod('month')" id="per-month"></button>
+      </div>
+      <div class="field" style="margin:0"><label id="l-anchor"></label><input type="date" id="billAnchor" onchange="renderBilling()" /></div>
+      <div class="hint" id="billPeriodLbl" style="margin-top:8px"></div>
+    </div>
+    <div class="card">
+      <h3 id="l-periodSummary"></h3>
+      <div class="bill-box">
+        <div class="bill-line"><span class="k" id="l-totalMilk2"></span><span class="v" id="bs-qty">0 L</span></div>
+        <div class="bill-line"><span class="k" id="l-billSale"></span><span class="v" id="bs-sale">₹0</span></div>
+        <div class="bill-line"><span class="k" id="l-billPurch"></span><span class="v" id="bs-purch">₹0</span></div>
+        <div class="bill-line"><span class="k" id="l-paidPeriod"></span><span class="v" id="bs-paid">₹0</span></div>
+        <div class="bill-line tot"><span class="k" id="l-duePeriod"></span><span class="v" id="bs-due">₹0</span></div>
+      </div>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn wa" onclick="switchTab('more');openModule('bulkbill')" id="b-bulkBill">📤</button>
+        <button class="btn grey" onclick="downloadAllBillsPdf()" id="b-allPdf">📄 PDF</button>
+        <button class="btn grey" onclick="printAllStatements()" id="b-allPrint">🖨️</button>
+      </div>
+    </div>
+    <div class="card"><h3 id="l-partyBills"></h3><div id="billingList"></div></div>
+  </section>
+
+  <!-- MODULE HUB -->
+  <section class="view" id="view-more">
+    <div class="card" id="profileCard"></div>
+    <div class="card"><h3 id="l-modules"></h3><div class="hint" id="l-modHint" style="margin-bottom:10px"></div><div class="hub-searchwrap"><input type="text" id="hubSearch" oninput="renderHub()" /></div><div class="hub-chips" id="hubChips"></div><div id="moduleTiles"></div></div>
+  </section>
+
+  <!-- MODULE PAGE -->
+  <section class="view" id="view-module">
+    <div class="modbar"><button class="btn grey sm" onclick="closeModule()">←</button><h3 id="moduleTitle"></h3></div>
+    <div id="moduleBody"></div>
+  </section>
+</main>
+
+<button class="fab" id="fab" onclick="openEntry()">＋</button>
+
+<nav class="tabs">
+  <button data-tab="home" class="on" onclick="switchTab('home')"><span class="ic">🏠</span><span class="tl" id="t-home"></span></button>
+  <button data-tab="search" onclick="switchTab('search')"><span class="ic">🔍</span><span class="tl" id="t-search"></span></button>
+  <button data-tab="entries" onclick="switchTab('entries')"><span class="ic">🥛</span><span class="tl" id="t-entries"></span></button>
+  <button data-tab="parties" onclick="switchTab('parties')"><span class="ic">👥</span><span class="tl" id="t-parties"></span></button>
+  <button data-tab="more" onclick="switchTab('more')"><span class="ic">👤</span><span class="tl" id="t-more"></span></button>
+</nav>
+
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+<div class="onboard" id="onboard"></div>
+
 </body>
 </html>
