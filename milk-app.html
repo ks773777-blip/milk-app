@@ -245,6 +245,37 @@
   .modbar{display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:20;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:10px 12px;margin-bottom:12px}
   .modbar h3{margin:0;font-size:16px}
   @media (min-width:560px){ .stats{grid-template-columns:repeat(4,1fr)} .tiles{grid-template-columns:repeat(3,1fr)} }
+  /* ---- v13 look & feel ---- */
+  :root{ --shadow:0 1px 2px rgba(16,40,30,.05), 0 8px 20px rgba(16,40,30,.07); --radius:18px; }
+  html[data-dark="1"]{ --shadow:0 1px 2px rgba(0,0,0,.35), 0 10px 24px rgba(0,0,0,.38); }
+  .card{border:1px solid var(--line)}
+  .card h3:before{content:'';width:4px;height:15px;border-radius:3px;background:var(--green);flex:none}
+  nav.tabs button{position:relative;transition:color .15s}
+  nav.tabs button .ic{transition:transform .15s}
+  nav.tabs button.on .ic{transform:translateY(-1px)}
+  nav.tabs button.on:before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:32px;height:3px;border-radius:0 0 5px 5px;background:var(--green)}
+  .tiles{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}
+  .tile{align-items:center;text-align:center;gap:6px;padding:13px 7px;transition:transform .12s}
+  .tile .ti{font-size:26px}
+  .tile .tt{font-size:12.5px;line-height:1.25}
+  .tile:active{transform:scale(.96)}
+  .hub-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+  .hub-chips::-webkit-scrollbar{display:none}
+  .hub-chips .hchip{flex:none;background:var(--soft);color:var(--ink);border-radius:20px;padding:7px 13px;font-size:12.5px;font-weight:700;white-space:nowrap}
+  .hub-chips .hchip:active{background:var(--green-l);color:var(--green-d)}
+  .hub-searchwrap{position:sticky;top:0;z-index:15;background:var(--bg);padding:2px 0 8px}
+  .hero{background:linear-gradient(135deg,var(--green),var(--green-d));color:#fff;border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+  .hero .h-top{display:flex;justify-content:space-between;align-items:flex-start}
+  .hero .h-big{font-size:28px;font-weight:800;letter-spacing:.3px;margin-top:2px}
+  .hero .h-sub{font-size:12.5px;opacity:.92}
+  .hero .h-split{display:flex;gap:9px;margin-top:14px}
+  .hero .h-cell{flex:1;background:rgba(255,255,255,.16);border-radius:12px;padding:8px 10px}
+  .hero .h-cell span{font-size:11.5px;opacity:.92;display:block}
+  .hero .h-cell b{font-size:14.5px;font-weight:800}
+  .srch-group{font-size:12px;font-weight:800;color:var(--muted);margin:14px 0 6px;letter-spacing:.3px}
+  .stat{border:1px solid var(--line)}
+  .list-item{border:1px solid var(--line)}
+
 </style>
 </head>
 <body>
@@ -287,6 +318,21 @@
 <main>
   <!-- HOME -->
   <section class="view active" id="view-home">
+    <div class="hero" id="heroCard">
+      <div class="h-top">
+        <div>
+          <div class="h-sub" id="heroDate"></div>
+          <div class="h-big" id="heroBig">₹0</div>
+          <div class="h-sub" id="heroLbl"></div>
+        </div>
+        <div style="font-size:28px">🥛</div>
+      </div>
+      <div class="h-split">
+        <div class="h-cell"><span id="heroMorL"></span><b id="heroMor">0 L</b></div>
+        <div class="h-cell"><span id="heroEveL"></span><b id="heroEve">0 L</b></div>
+        <div class="h-cell"><span id="heroDueL"></span><b id="heroDue">₹0</b></div>
+      </div>
+    </div>
     <div class="card hlcard" id="hlCard"></div>
     <div class="quick" id="quickActions"></div>
     <div class="stats">
@@ -415,7 +461,7 @@
   <!-- MODULE HUB -->
   <section class="view" id="view-more">
     <div class="card" id="profileCard"></div>
-    <div class="card"><h3 id="l-modules"></h3><div class="hint" id="l-modHint" style="margin-bottom:12px"></div><input type="text" id="hubSearch" oninput="renderHub()" style="margin-bottom:6px" /><div id="moduleTiles"></div></div>
+    <div class="card"><h3 id="l-modules"></h3><div class="hint" id="l-modHint" style="margin-bottom:10px"></div><div class="hub-searchwrap"><input type="text" id="hubSearch" oninput="renderHub()" /></div><div class="hub-chips" id="hubChips"></div><div id="moduleTiles"></div></div>
   </section>
 
   <!-- MODULE PAGE -->
@@ -2874,6 +2920,7 @@ const T={
   pick_contact:'📞 संपर्क से', contact_done:'संपर्क से भरा गया', contact_na:'संपर्क नहीं मिला',
   favs:'⭐ मेरे पसंदीदा', recent:'🕘 हाल में खोले', fav_on:'⭐ पसंदीदा में जोड़ा', fav_off:'पसंदीदा से हटाया',
   hub_hint:'किसी भी मॉड्यूल पर देर तक दबाकर उसे ⭐ पसंदीदा बनाएँ। फ़ोल्डर के नाम पर टैप करके फ़ोल्डर छोटा/बड़ा करें।',
+  hero_today:'आज की बिक्री', hero_due:'कुल बकाया', recent_srch:'हाल की खोज',
   ai:'AI सहायक', ai_hint:'अपने दूध-व्यापार के बारे में सवाल पूछें — जवाब आपके असली डेटा के हिसाब से मिलेगा।', ai_ph:'सवाल लिखें…', ai_send:'पूछें', ai_nokey:'पहले सेटिंग में AI key डालें', ai_offline:'इसके लिए इंटरनेट चाहिए', ai_fail:'जवाब नहीं मिला — key या इंटरनेट जाँचें',
   ai_key:'AI API key (सिर्फ़ इस फ़ोन में सेव होगी)', ai_key_hint:'key आपके फ़ोन में ही रहती है — ऐप की फ़ाइल या GitHub में कभी नहीं जाती।', ai_key_saved:'AI key सेव हो गई', ai_key_clear:'AI key हटाएँ',
   ai_q1:'इस महीने का हिसाब बताओ', ai_q2:'सबसे ज़्यादा बकाया किसका है?', ai_q3:'मुनाफ़ा कैसे बढ़ाऊँ?', ai_q4:'आज का सारांश दो',
@@ -3009,6 +3056,7 @@ const T={
   pick_contact:'📞 From contacts', contact_done:'Filled from contacts', contact_na:'No contact selected',
   favs:'⭐ My favourites', recent:'🕘 Recently opened', fav_on:'⭐ Added to favourites', fav_off:'Removed from favourites',
   hub_hint:'Long-press any module to mark it ⭐ favourite. Tap a folder name to collapse or expand it.',
+  hero_today:'Today\u2019s sale', hero_due:'Total dues', recent_srch:'Recent searches',
   ai:'AI assistant', ai_hint:'Ask anything about your dairy business — answers use your real data.', ai_ph:'Type a question…', ai_send:'Ask', ai_nokey:'Add the AI key in Settings first', ai_offline:'This needs internet', ai_fail:'No answer — check the key or your internet',
   ai_key:'AI API key (saved on this phone only)', ai_key_hint:'The key stays on your phone — it is never written into the app file or GitHub.', ai_key_saved:'AI key saved', ai_key_clear:'Remove AI key',
   ai_q1:'How is this month going?', ai_q2:'Who owes me the most?', ai_q3:'How can I increase profit?', ai_q4:'Give me today\u2019s summary',
@@ -3383,12 +3431,16 @@ function renderHub(){
   if(!q && rec.length){
     out+='<div class="hub-group"><div class="hub-head"><span>'+t('recent')+'</span><span class="hcnt">'+rec.length+'</span><span class="hcaret"></span></div><div class="tiles">'+rec.map(hubTile).join('')+'</div></div>';
   }
+  if($('hubChips')) $('hubChips').innerHTML=GROUPS.map(function(g){
+    const n=MODULES.filter(function(m){ return (GMAP[m.id]||'app')===g.id; }).length;
+    return '<button class="hchip" onclick="hubJump(\''+g.id+'\')">'+g.ic+' '+esc(LANG==='hi'?g.hi:g.en)+' · '+n+'</button>';
+  }).join('');
   GROUPS.forEach(function(g){
     const all=MODULES.filter(function(m){ return (GMAP[m.id]||'app')===g.id; });
     const items=all.filter(hit);
     if(!items.length) return;
     const folded=(state.settings.collapsed||[]).indexOf(g.id)>=0 && !q;
-    out+='<div class="hub-group'+(folded?' folded':'')+'">'+hubHead(g,all.length,folded)+'<div class="tiles">'+items.map(hubTile).join('')+'</div></div>';
+    out+='<div class="hub-group'+(folded?' folded':'')+'" id="g-'+g.id+'">'+hubHead(g,all.length,folded)+'<div class="tiles">'+items.map(hubTile).join('')+'</div></div>';
   });
   $('moduleTiles').innerHTML=out||('<div class="empty">'+t('no_data')+'</div>');
   bindHubTiles();
@@ -3426,6 +3478,12 @@ function toggleGroup(gid){
   const i=c.indexOf(gid);
   if(i>=0) c.splice(i,1); else c.push(gid);
   save(); renderHub();
+}
+function hubJump(gid){
+  const c=state.settings.collapsed||(state.settings.collapsed=[]);
+  const i=c.indexOf(gid);
+  if(i>=0){ c.splice(i,1); save(); renderHub(); }
+  setTimeout(function(){ const el=document.getElementById('g-'+gid); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); }, 70);
 }
 function openModule(id){
   curModule=id; const m=MODULES.find(x=>x.id===id); if(!m) return;
@@ -3479,6 +3537,19 @@ function renderHome(){
   $('s-monthProfit').textContent=money(mS-mP-mX-mW);
   $('s-receivable').textContent=money(state.parties.filter(p=>!isSup(p)).reduce((s,p)=>s+Math.max(0,partyBalance(p.id)),0));
   $('homeDateLbl').textContent=fmtDate(today);
+  try{
+    if($('heroDate')) $('heroDate').textContent=fmtDate(today);
+    if($('heroBig')) $('heroBig').textContent=money(sale.reduce((s,e)=>s+e.amount,0));
+    if($('heroLbl')) $('heroLbl').textContent=t('hero_today');
+    const hM=state.entries.filter(e=>e.date===today&&e.kind==='sale'&&e.shift==='morning');
+    const hE=state.entries.filter(e=>e.date===today&&e.kind==='sale'&&e.shift==='evening');
+    if($('heroMorL')) $('heroMorL').textContent='🌅 '+t('morning');
+    if($('heroEveL')) $('heroEveL').textContent='🌙 '+t('evening');
+    if($('heroDueL')) $('heroDueL').textContent=t('hero_due');
+    if($('heroMor')) $('heroMor').textContent=num(hM.reduce((s,e)=>s+e.qty,0))+' L · '+money(hM.reduce((s,e)=>s+e.amount,0));
+    if($('heroEve')) $('heroEve').textContent=num(hE.reduce((s,e)=>s+e.qty,0))+' L · '+money(hE.reduce((s,e)=>s+e.amount,0));
+    if($('heroDue')) $('heroDue').textContent=money(state.parties.filter(p=>!isSup(p)).reduce((s,p)=>s+Math.max(0,partyBalance(p.id)),0));
+  }catch(e){}
   renderChart(); renderLowStock(); renderTarget();
   const recent=tE.slice().sort((a,b)=>b.id.localeCompare(a.id));
   $('homeRecent').innerHTML=recent.length?recent.map(entryRow).join(''):'<div class="empty"><span class="big">🥛</span>'+t('no_entries_today')+'</div>';
@@ -5358,15 +5429,35 @@ function renderSearch(){
   const hint=$('srchHint'); if(hint) hint.textContent=t('srch_hint');
   const box=$('srchResults'); if(!box) return;
   const q=($('srchInput')?$('srchInput').value:'').trim().toLowerCase();
-  if(srchCat==='mod'){ const list=MODULES.filter(m=>q===''||((LANG==='hi'?m.hi:m.en)||'').toLowerCase().includes(q));
-    box.innerHTML=list.map(m=>`<div class="list-item" onclick="openModule('${m.id}')"><div class="avatar">${m.ic}</div><div class="li-main"><div class="t">${esc(LANG==='hi'?m.hi:m.en)}</div></div></div>`).join('')||emptyBox(); return; }
-  if(q.length<2){ box.innerHTML=`<div class="empty"><span class="big">🔍</span>${t('srch_hint')}</div>`; return; }
-  const out=[];
-  if(!srchCat||srchCat==='party') state.parties.filter(p=>matchP(p,q)).slice(0,15).forEach(p=>out.push(partyRow(p)));
-  if(!srchCat||srchCat==='entry') state.entries.filter(e=>partyName(e.partyId).toLowerCase().includes(q)||e.date.includes(q)).slice(0,15).forEach(e=>out.push(entryRow(e)));
-  if(!srchCat||srchCat==='pay') state.payments.filter(x=>partyName(x.partyId).toLowerCase().includes(q)||x.date.includes(q)).slice(0,10).forEach(x=>out.push(`<div class="list-item"><div class="avatar">💵</div><div class="li-main"><div class="t">${esc(partyName(x.partyId))}</div><div class="s">${fmtDate(x.date)}</div></div><div class="li-amt"><div class="a">${money(x.amount)}</div></div></div>`));
-  box.innerHTML=out.length?out.join(''):emptyBox();
+  if(srchCat==='mod'){
+    let html='';
+    GROUPS.forEach(function(g){
+      const list=MODULES.filter(function(m){ return (GMAP[m.id]||'app')===g.id && (q==='' || ((LANG==='hi'?m.hi:m.en)||'').toLowerCase().includes(q)); });
+      if(!list.length) return;
+      html+='<div class="srch-group">'+g.ic+' '+esc(LANG==='hi'?g.hi:g.en)+' · '+list.length+'</div>'+list.map(m=>`<div class="list-item" onclick="openModule('${m.id}')"><div class="avatar">${m.ic}</div><div class="li-main"><div class="t">${esc(LANG==='hi'?m.hi:m.en)}</div></div></div>`).join('');
+    });
+    box.innerHTML=html||emptyBox(); return;
+  }
+  if(q.length<2){
+    let html='';
+    const rec=(state.settings.srchRecent||[]);
+    if(rec.length) html+='<div class="srch-group">🕘 '+t('recent_srch')+'</div>'+rec.map(r=>`<div class="list-item" onclick="srchUse('${esc(r)}')"><div class="avatar">🔍</div><div class="li-main"><div class="t">${esc(r)}</div></div><div class="li-amt"><div class="a">↗</div></div></div>`).join('');
+    const favs=(state.settings.favs||[]).map(id=>MODULES.find(m=>m.id===id)).filter(Boolean).slice(0,6);
+    if(favs.length) html+='<div class="srch-group">⭐ '+t('favs')+'</div>'+favs.map(m=>`<div class="list-item" onclick="openModule('${m.id}')"><div class="avatar">${m.ic}</div><div class="li-main"><div class="t">${esc(LANG==='hi'?m.hi:m.en)}</div></div></div>`).join('');
+    box.innerHTML=html||`<div class="empty"><span class="big">🔍</span>${t('srch_hint')}</div>`;
+    return;
+  }
+  try{ const r=state.settings.srchRecent||(state.settings.srchRecent=[]); if(r[0]!==q){ r.unshift(q); if(r.length>6) r.length=6; save(); } }catch(e){}
+  let html='';
+  if(!srchCat||srchCat==='party'){ const l=state.parties.filter(p=>matchP(p,q)).slice(0,15);
+    if(l.length) html+='<div class="srch-group">👥 '+t('cat_party')+' · '+l.length+'</div>'+l.map(partyRow).join(''); }
+  if(!srchCat||srchCat==='entry'){ const l=state.entries.filter(e=>partyName(e.partyId).toLowerCase().includes(q)||e.date.includes(q)).slice(0,15);
+    if(l.length) html+='<div class="srch-group">🥛 '+t('cat_entry')+' · '+l.length+'</div>'+l.map(entryRow).join(''); }
+  if(!srchCat||srchCat==='pay'){ const l=state.payments.filter(x=>partyName(x.partyId).toLowerCase().includes(q)||x.date.includes(q)).slice(0,10);
+    if(l.length) html+='<div class="srch-group">💵 '+t('cat_pay')+' · '+l.length+'</div>'+l.map(x=>`<div class="list-item"><div class="avatar">💵</div><div class="li-main"><div class="t">${esc(partyName(x.partyId))}</div><div class="s">${fmtDate(x.date)}</div></div><div class="li-amt"><div class="a">${money(x.amount)}</div></div></div>`).join(''); }
+  box.innerHTML=html||emptyBox();
 }
+function srchUse(q){ const i=$('srchInput'); if(i){ i.value=q; renderSearch(); } }
 /* ---- notifications ---- */
 function buildNotifications(){
   const out=[];
