@@ -3240,6 +3240,16 @@ function debouncedRenderSearch(){ clearTimeout(_srchT); _srchT=setTimeout(render
 function debouncedRenderEntries(){ clearTimeout(_entT); _entT=setTimeout(renderEntries,160); }
 function debouncedRenderParties(){ clearTimeout(_ptyT); _ptyT=setTimeout(renderParties,160); }
 function debouncedGlobalSearch(){ clearTimeout(_gT); _gT=setTimeout(runGlobalSearch,160); }
+/* open external links (WhatsApp / dial / SMS / mail / maps / UPI) via the native app when available,
+   so deep links like whatsapp:// are handed to the OS instead of failing inside the WebView */
+function openExternal(url){
+  if(!url) return;
+  try{ if(window.MilkNative && typeof window.MilkNative.openUrl==='function'){ window.MilkNative.openUrl(url); return true; } }catch(e){}
+  try{ const w=window.open(url,'_blank'); if(w) return true; }catch(e){}
+  try{ location.href=url; return true; }catch(e){}
+  return false;
+}
+function isNativeApp(){ try{ return !!(window.MilkNative); }catch(e){ return false; } }
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -4432,7 +4442,7 @@ function billWhatsApp(id){
   const txt=billText(id,billRange());
   const code=(state.settings.waCode||'91').replace(/\D/g,''), ph=(p.phone||'').replace(/\D/g,'');
   const full=ph.startsWith(code)?ph:code+ph;
-  try{ window.open('https://wa.me/'+full+'?text='+encodeURIComponent(txt),'_blank'); }catch(e){}
+  try{ openExternal('https://wa.me/'+full+'?text='+encodeURIComponent(txt)); }catch(e){}
 }
 /* ---------- generic record edit/delete (har jagah) ---------- */
 const REC_DEF={
@@ -4499,7 +4509,7 @@ function remMsg(p){ return t('reminder_msg').replace('{name}',p.name).replace('{
 function dial(p){ const code=(state.settings.waCode||'').replace(/\D/g,''); let ph=(p.phone||'').replace(/\D/g,''); if(code&&!ph.startsWith(code)) ph=code+ph; return ph; }
 function waLink(p){ const ph=dial(p); if(!p.phone) return null; return 'https://wa.me/'+ph+'?text='+encodeURIComponent(remMsg(p)); }
 function smsLink(p){ if(!p.phone) return null; return 'sms:'+dial(p)+'?body='+encodeURIComponent(remMsg(p)); }
-function waRemind(id){ const p=partyById(id); if(!p||!p.phone){ toast(t('no_phone')); return; } window.open(waLink(p),'_blank'); }
+function waRemind(id){ const p=partyById(id); if(!p||!p.phone){ toast(t('no_phone')); return; } openExternal(waLink(p)); }
 function smsRemind(id){ const p=partyById(id); if(!p||!p.phone){ toast(t('no_phone')); return; } window.location.href=smsLink(p); }
 function openReminders(){
   const dues=state.parties.map(p=>({p,bal:partyBalance(p.id)})).filter(x=>x.bal>0.5).sort((a,b)=>b.bal-a.bal);
@@ -4623,7 +4633,7 @@ function callParty(id){ const p=partyById(id); if(!p||!p.phone){ toast(t('no_pho
 function waParty(id){ const p=partyById(id); if(!p||!p.phone){ toast(t('no_phone')); return; }
   const code=(state.settings.waCode||'91').replace(/\D/g,''); const ph=(p.phone||'').replace(/\D/g,'');
   const full=ph.startsWith(code)?ph:code+ph;
-  try{ window.open('https://wa.me/'+full,'_blank'); }catch(e){} }
+  try{ openExternal('https://wa.me/'+full); }catch(e){} }
 function delHoliday(id){ if(!confirm(t('c_holiday'))) return; state.holidays=state.holidays.filter(h=>h.id!==id); save(); rerenderModule(); toast(t('deleted')); }
 function modMilkCard(){
   const month=monthStr();
@@ -5059,7 +5069,7 @@ function budgetAlertSend(){
   if(!over.length){ toast(t('budget_ok')); return; }
   const msg=shopName()+' — '+fmtMonth(m)+'\n'+t('budget_over')+'\n'+over.join('\n');
   const ph=(state.settings.bizPhone||'').replace(/\D/g,'');
-  if(ph){ try{ window.open('https://wa.me/'+((state.settings.waCode||'91')+ph)+'?text='+encodeURIComponent(msg),'_blank'); return; }catch(e){} }
+  if(ph){ try{ openExternal('https://wa.me/'+((state.settings.waCode||'91')+ph)+'?text='+encodeURIComponent(msg)); return; }catch(e){} }
   try{ window.location.href='sms:?body='+encodeURIComponent(msg); }catch(e){}
 }
 function viewPhoto(id){ const x=state.expenses.find(e=>e.id===id); if(!x||!x.photo) return;
@@ -5791,7 +5801,7 @@ async function driveRestoreLatest(){
     const txt=await res.text(); applyImported(txt);
   }catch(e){ toast(t('dr_fail')); }
 }
-function driveOpenFile(){ if(state.settings.driveFileId) window.open('https://drive.google.com/file/d/'+state.settings.driveFileId+'/view','_blank'); else toast(t('dr_none')); }
+function driveOpenFile(){ if(state.settings.driveFileId) openExternal('https://drive.google.com/file/d/'+state.settings.driveFileId+'/view'); else toast(t('dr_none')); }
 /* ---- online / offline + PWA ---- */
 function updateOnlineStatus(){
   const bar=$('netBar'); if(!bar) return;
@@ -6217,7 +6227,7 @@ function saveTemplate(id){ const n=$('wt_name').value.trim(), x=$('wt_text').val
   else state.templates.push({id:uid(),name:n,text:x});
   save(); closeModal(); rerenderModule(); toast(t('saved')); }
 function delTemplate(id){ state.templates=(state.templates||[]).filter(x=>x.id!==id); save(); rerenderModule(); toast(t('deleted')); }
-function shareTemplate(id){ const m=(state.templates||[]).find(x=>x.id===id); if(!m) return; window.open('https://wa.me/?text='+encodeURIComponent(m.text||''),'_blank'); }
+function shareTemplate(id){ const m=(state.templates||[]).find(x=>x.id===id); if(!m) return; openExternal('https://wa.me/?text='+encodeURIComponent(m.text||'')); }
 
 /* ---- 🏦 EMI कैलकुलेटर ---- */
 function modEmi(){
@@ -6532,8 +6542,8 @@ function askHelper(preset){
   window._chat=(window._chat||[]); window._chat.push({u:qt,a:ans});
   box.innerHTML=window._chat.slice(-6).map(c=>`<div class="chat-u">${esc(c.u)}</div><div class="chat-b">${esc(c.a)}</div>`).join('');
 }
-function contactWA(){ const ph=((state.settings.business&&state.settings.business.phone)||'').replace(/\D/g,''); if(!ph){ toast(t('contact_no')); return; } window.open('https://wa.me/'+(state.settings.waCode||'91')+ph,'_blank'); }
-function contactMail(){ const e=(state.account&&state.account.email)||''; window.open('mailto:'+e+'?subject=Milk%20Hisaab%20help','_blank'); }
+function contactWA(){ const ph=((state.settings.business&&state.settings.business.phone)||'').replace(/\D/g,''); if(!ph){ toast(t('contact_no')); return; } openExternal('https://wa.me/'+(state.settings.waCode||'91')+ph); }
+function contactMail(){ const e=(state.account&&state.account.email)||''; openExternal('mailto:'+e+'?subject=Milk%20Hisaab%20help'); }
 /* ---- legal ---- */
 function modLegal(){
   return `<div class="card"><h3>🔒 ${t('privacy')}</h3><div style="font-size:13.5px;line-height:1.7;color:var(--muted);white-space:pre-line">${esc(t('privacy_body'))}</div></div>
@@ -6618,7 +6628,7 @@ function renderBillQueue(){
       <button class="btn" onclick="bqNext()">${q.i>=q.ps.length-1?t('done_all'):t('next')}</button></div>`);
 }
 function bqCur(){ return window._bq.ps[window._bq.i]; }
-function bqSendWa(){ const p=bqCur(); window.open('https://wa.me/'+dial(p)+'?text='+encodeURIComponent(billText(p.id,window._bq.r)),'_blank'); }
+function bqSendWa(){ const p=bqCur(); openExternal('https://wa.me/'+dial(p)+'?text='+encodeURIComponent(billText(p.id,window._bq.r))); }
 function bqPdf(){ const p=bqCur(), r=window._bq.r; printBillR(p.id,r); }
 function bqNext(){ const q=window._bq; if(q.i>=q.ps.length-1){ closeModal(); toast(t('bb_done')); return; } q.i++; renderBillQueue(); }
 function bqPrev(){ const q=window._bq; if(q.i>0){ q.i--; renderBillQueue(); } }
