@@ -208,6 +208,8 @@
   .lock{position:fixed;inset:0;z-index:200;background:linear-gradient(160deg,var(--green),var(--green-d));display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff;gap:14px;padding:24px}
   .lock.on{display:flex}
   #lock,#bioLock{z-index:240}
+  .hub-head{font-size:13px;font-weight:800;color:var(--green-d);margin:16px 0 8px;letter-spacing:.2px}
+  .hub-group:first-child .hub-head{margin-top:0}
   .lock .big{font-size:52px}
   .lock h2{font-size:19px;font-weight:700}
   .lock .dots{display:flex;gap:12px;margin:6px 0}
@@ -401,7 +403,7 @@
   <!-- MODULE HUB -->
   <section class="view" id="view-more">
     <div class="card" id="profileCard"></div>
-    <div class="card"><h3 id="l-modules"></h3><div class="hint" id="l-modHint" style="margin-bottom:12px"></div><div class="tiles" id="moduleTiles"></div></div>
+    <div class="card"><h3 id="l-modules"></h3><div class="hint" id="l-modHint" style="margin-bottom:12px"></div><input type="text" id="hubSearch" oninput="renderHub()" style="margin-bottom:6px" /><div id="moduleTiles"></div></div>
   </section>
 
   <!-- MODULE PAGE -->
@@ -2853,6 +2855,11 @@ const T={
   staff:'स्टाफ व मजदूरी', wage:'मासिक मजदूरी', attendance:'हाज़िरी', att_hint:'महीने की हाज़िरी भरें, फिर “मजदूरी दें” दबाएँ।', att_tap:'तारीख पर टैप करें: ✔ हाज़िर, ✕ नहीं', pay_wages:'इस महीने मजदूरी दें',
   trend:'वार्षिक ट्रेंड', last12:'पिछले 12 महीने', dayend:'दिन-अंत सारांश', dayend_cust:'ग्राहकों की एंट्री',
   pay_lbl:'भुगतान', exp_lbl:'खर्च', budget:'मासिक बजट', budget_hint:'हर श्रेणी का मासिक बजट तय करें — खर्च उससे बढ़ते ही लाल दिखेगा।', budget_set:'बजट सेट करें',
+  related:'यह भी देखें', hub_search:'फ़ोल्डर खोजें…',
+  perms:'परमिशन (अनुमतियाँ)', perms_hint:'ऐप को मोबाइल की सभी ज़रूरी अनुमतियाँ देने के लिए नीचे का बटन दबाएँ।', perms_ask:'सभी परमिशन दें', perms_asked:'परमिशन माँगी जा रही हैं…', perms_web:'यह सुविधा सिर्फ़ मोबाइल ऐप (APK) में है', perm_granted:'दी गई', perm_todo:'नहीं दी',
+  perm_cam:'कैमरा (फ़ोटो)', perm_store:'स्टोरेज (फ़ाइल)', perm_loc:'लोकेशन (GPS)', perm_contact:'संपर्क', perm_mic:'माइक्रोफ़ोन', perm_notif:'नोटिफिकेशन', perm_phone:'कॉल', perm_vib:'वाइब्रेशन',
+  my_location:'मेरी दुकान की लोकेशन', get_loc:'लोकेशन लें', loc_done:'लोकेशन सेव हो गई', loc_na:'लोकेशन नहीं मिली', loc_map:'नक्शे में देखें', loc_hint:'अभी कोई लोकेशन सेव नहीं है।',
+  pick_contact:'📞 संपर्क से', contact_done:'संपर्क से भरा गया', contact_na:'संपर्क नहीं मिला',
   hl1_t:'आज का हिसाब', hl1_x:'{q} लीटर · {a}', hl2_t:'बकाया', hl2_x:'ग्राहकों से {a} लेना है', hl3_t:'इस महीने का लक्ष्य', hl4_t:'ऑटो शिफ्ट चालू', hl4_x:'एंट्री खोलते ही सुबह/शाम अपने आप चुनी जाएगी', hl5_t:'Drive बैकअप चालू', hl5_x:'हर बदलाव अपने आप Drive में सेव होगा',
   support:'सहायता', support_x:'आम सवाल नीचे दिए हैं — खोलकर पढ़ें।',
   faq1_q:'ऑटो शिफ्ट कैसे बंद करें?', faq1_a:'सेटिंग → “ऑटो शिफ्ट” टॉगल बंद कर दें; फिर डिफ़ॉल्ट शिफ्ट इस्तेमाल होगी।',
@@ -2976,6 +2983,11 @@ const T={
   staff:'Staff & wages', wage:'Monthly wage', attendance:'Attendance', att_hint:'Mark attendance for the month, then press “Pay wages”.', att_tap:'Tap a date: ✔ present, ✕ absent', pay_wages:'Pay this month\u2019s wages',
   trend:'Yearly trend', last12:'Last 12 months', dayend:'Day-end summary', dayend_cust:'customers entered',
   pay_lbl:'Payments', exp_lbl:'Expenses', budget:'Monthly budget', budget_hint:'Set a monthly budget per category — overspending shows in red.', budget_set:'Set budget',
+  related:'See also', hub_search:'Search folders…',
+  perms:'Permissions', perms_hint:'Tap the button below to grant all the mobile permissions the app needs.', perms_ask:'Grant all permissions', perms_asked:'Asking for permissions…', perms_web:'This works only in the mobile app (APK)', perm_granted:'Granted', perm_todo:'Not granted',
+  perm_cam:'Camera (photos)', perm_store:'Storage (files)', perm_loc:'Location (GPS)', perm_contact:'Contacts', perm_mic:'Microphone', perm_notif:'Notifications', perm_phone:'Phone calls', perm_vib:'Vibration',
+  my_location:'My shop location', get_loc:'Get location', loc_done:'Location saved', loc_na:'Could not get location', loc_map:'View on map', loc_hint:'No location saved yet.',
+  pick_contact:'📞 From contacts', contact_done:'Filled from contacts', contact_na:'No contact selected',
   hl1_t:'Today\u2019s numbers', hl1_x:'{q} litres · {a}', hl2_t:'Dues', hl2_x:'{a} to collect from customers', hl3_t:'This month\u2019s target', hl4_t:'Auto shift is on', hl4_x:'Morning/evening will be picked automatically when you open an entry', hl5_t:'Drive backup is on', hl5_x:'Every change is saved to Drive automatically',
   support:'Help & support', support_x:'Common questions below — tap to open.',
   faq1_q:'How do I turn off auto shift?', faq1_a:'Settings → turn off the “Auto shift” toggle; the default shift will be used instead.',
@@ -3182,6 +3194,75 @@ function buildLockPad(){
 /* ---------------- nav + modules ---------------- */
 let uiPartyType='customer', uiRoute='', billPeriod='month', repType='month', curModule='';
 let uiTab='home', navStack=[], navPos=-1, navSilent=false;
+const GROUPS=[
+  {id:'daily', ic:'🌅', hi:'रोज़ का काम',    en:'Daily work'},
+  {id:'money', ic:'💰', hi:'पैसा व खर्च',    en:'Money & expenses'},
+  {id:'people',ic:'👥', hi:'ग्राहक व स्टाफ', en:'People'},
+  {id:'report',ic:'📊', hi:'रिपोर्ट व बिल',  en:'Reports & bills'},
+  {id:'farm',  ic:'🐄', hi:'पशु व उत्पादन',  en:'Farm'},
+  {id:'app',   ic:'⚙️', hi:'ऐप व सेटिंग',    en:'App & settings'}
+];
+const GMAP={bulk:'daily',bulkMonthly:'daily',holiday:'daily',milkcard:'daily',calendar:'daily',register:'daily',delivery:'daily',dayend:'daily',stock:'daily',notes:'daily',calc:'daily',
+ payments:'money',dues:'money',expenses:'money',explog:'money',rate:'money',loans:'money',recurring:'money',budget:'money',pnl:'money',
+ parties:'people',routes:'people',topcust:'people',inactive:'people',staff:'people',reminders:'people',
+ reports:'report',compare:'report',trend:'report',statement:'report',ledger:'report',invoices:'report',bills:'report',bulkbill:'report',quality:'report',
+ animals:'farm',wastage:'farm',
+ backup:'app',drive:'app',account:'app',settings:'app',perms:'app',datacheck:'app',support:'app',legal:'app',help:'app'};
+const REL={
+  invoices:['bills','bulkbill','statement','payments'],
+  bills:['invoices','bulkbill','statement','ledger'],
+  bulkbill:['bills','reminders','dues','invoices'],
+  statement:['ledger','bills','payments'],
+  ledger:['statement','payments','dues'],
+  payments:['dues','ledger','statement'],
+  dues:['reminders','payments','bulkbill'],
+  reminders:['dues','bulkbill','inactive'],
+  staff:['payments','expenses','budget','attendance'],
+  trend:['reports','compare','pnl','dayend'],
+  compare:['trend','pnl','reports','budget'],
+  dayend:['register','delivery','wastage','trend'],
+  budget:['expenses','explog','recurring','pnl'],
+  expenses:['explog','budget','recurring','pnl'],
+  recurring:['expenses','budget','staff'],
+  loans:['payments','dues','expenses'],
+  quality:['rate','reports','animals','wastage'],
+  wastage:['quality','dayend','reports','pnl'],
+  animals:['quality','stock','wastage'],
+  delivery:['routes','register','dayend'],
+  routes:['delivery','parties','topcust'],
+  topcust:['reports','parties','dues'],
+  inactive:['parties','reminders','topcust'],
+  calendar:['register','holiday','dayend'],
+  register:['calendar','dayend','delivery'],
+  stock:['expenses','animals','dayend'],
+  reports:['trend','compare','pnl','topcust'],
+  pnl:['reports','compare','budget','expenses'],
+  settings:['backup','drive','perms','legal'],
+  backup:['drive','settings','datacheck'],
+  drive:['backup','settings','datacheck'],
+  perms:['settings','account','drive'],
+  support:['help','legal','settings'],
+  legal:['support','settings','perms']
+};
+function relatedRow(id){
+  const rel=REL[id]; if(!rel||!rel.length) return '';
+  const chips=rel.map(function(r){ const m=MODULES.find(function(x){return x.id===r;}); if(!m) return '';
+    return `<button class="chip" onclick="${m.jump?("switchTab('"+m.jump+"')"):("openModule('"+m.id+"')")}">${m.ic} ${esc(LANG==='hi'?m.hi:m.en)}</button>`; }).join('');
+  if(!chips) return '';
+  return `<div class="card"><h3>🔗 ${t('related')}</h3><div class="chips">${chips}</div></div>`;
+}
+/* ---- hardware back button bridge ---- */
+function appCanBack(){ try{ return $('modalBg').classList.contains('on') || curModule!=='' || navPos>0 || uiTab!=='home'; }catch(e){ return false; } }
+function updateBackState(){ try{ if(window.MilkNative && window.MilkNative.setBackAvailable) window.MilkNative.setBackAvailable(appCanBack()); }catch(e){} }
+function __appBack(){
+  try{
+    if($('modalBg').classList.contains('on')){ closeModal(); updateBackState(); return true; }
+    if(navPos>0){ navBack(); updateBackState(); return true; }
+    if(curModule){ closeModule(); updateBackState(); return true; }
+    if(uiTab!=='home'){ switchTab('home'); updateBackState(); return true; }
+  }catch(e){}
+  return false;
+}
 const MODULES=[
   {id:'bulk',       ic:'🧺', hi:'बल्क एंट्री',        en:'Bulk entry',        render:modBulk},
   {id:'bulkMonthly',ic:'🗓️', hi:'बल्क मासिक एंट्री',  en:'Bulk monthly entry',render:modBulkMonthly},
@@ -3226,7 +3307,8 @@ const MODULES=[
   {id:'budget',     ic:'💰', hi:'मासिक बजट',          en:'Monthly budget',    render:modBudget,   after:renderBudget},
   {id:'support',    ic:'🆘', hi:'सहायता',             en:'Help & support',    render:modSupport},
   {id:'legal',      ic:'📜', hi:'नियम व प्राइवेसी',    en:'Legal & privacy',   render:modLegal},
-  {id:'help',       ic:'❓', hi:'मदद',                en:'Help',              render:modHelp}
+  {id:'help',       ic:'❓', hi:'मदद',                en:'Help',              render:modHelp},
+  {id:'perms',      ic:'🔐', hi:'परमिशन (अनुमतियाँ)',  en:'Permissions',       render:modPerms,    after:renderPerms}
 ];
 function switchTab(tab){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -3241,15 +3323,25 @@ function switchTab(tab){
   if(tab==='bills') renderBilling();
   if(tab==='more') renderHub();
   if(tab==='module'){ document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab==='more')); $('fab').style.display='none'; }
-  uiTab=tab; try{ navPush(); }catch(e){}
+  uiTab=tab; try{ navPush(); }catch(e){} try{ updateBackState(); }catch(e){}
 }
 function renderHub(){
-  $('moduleTiles').innerHTML=MODULES.map(m=>`<div class="tile" onclick="${m.jump?("switchTab('"+m.jump+"')"):("openModule('"+m.id+"')")}"><span class="ti">${m.ic}</span><span class="tt">${esc(LANG==='hi'?m.hi:m.en)}</span></div>`).join('');
+  if($('hubSearch')) $('hubSearch').placeholder=t('hub_search');
+  const q=(($('hubSearch')&&$('hubSearch').value)||'').trim().toLowerCase();
+  const hit=function(m){ if(!q) return true; return ((LANG==='hi'?m.hi:m.en)+' '+(LANG==='hi'?m.en:m.hi)).toLowerCase().indexOf(q)>=0; };
+  const tile=function(m){ return `<div class="tile" onclick="${m.jump?("switchTab('"+m.jump+"')"):("openModule('"+m.id+"')")}"><span class="ti">${m.ic}</span><span class="tt">${esc(LANG==='hi'?m.hi:m.en)}</span></div>`; };
+  let out='';
+  GROUPS.forEach(function(g){
+    const items=MODULES.filter(function(m){ return (GMAP[m.id]||'app')===g.id && hit(m); });
+    if(!items.length) return;
+    out+='<div class="hub-group"><div class="hub-head">'+g.ic+' '+esc(LANG==='hi'?g.hi:g.en)+'</div><div class="tiles">'+items.map(tile).join('')+'</div></div>';
+  });
+  $('moduleTiles').innerHTML=out||('<div class="empty">'+t('no_data')+'</div>');
 }
 function openModule(id){
   curModule=id; const m=MODULES.find(x=>x.id===id); if(!m) return;
   $('moduleTitle').textContent=m.ic+' '+(LANG==='hi'?m.hi:m.en);
-  $('moduleBody').innerHTML=m.render();
+  $('moduleBody').innerHTML=m.render()+relatedRow(id);
   if(m.after){ try{ m.after(); }catch(e){} }
   switchTab('module');
 }
@@ -3279,8 +3371,8 @@ function entryNav(dir){ const sel=$('f_party'); if(!sel) return; const list=stat
 function shiftDay(dir){ const el=$('entryDate'); if(!el) return; const d=new Date((el.value||todayStr())+'T00:00:00'); d.setDate(d.getDate()+dir); el.value=ymd(d); renderEntries(); }
 function jumpToday(){ const el=$('entryDate'); if(el){ el.value=todayStr(); renderEntries(); } }
 function rerenderModule(){ if(curModule) { const m=MODULES.find(x=>x.id===curModule); if(m) $('moduleBody').innerHTML=m.render(); } }
-function openModal(html){ $('sheet').innerHTML='<div class="handle"></div>'+html; $('modalBg').classList.add('on'); }
-function closeModal(){ $('modalBg').classList.remove('on'); }
+function openModal(html){ $('sheet').innerHTML='<div class="handle"></div>'+html; $('modalBg').classList.add('on'); updateBackState(); }
+function closeModal(){ $('modalBg').classList.remove('on'); updateBackState(); }
 
 /* ================= HOME ================= */
 function renderHome(){
@@ -3558,6 +3650,7 @@ function openParty(id){
       <div id="photoBox">${edit?avatarHtml(edit,'lg'):'<div class="avatar lg">?</div>'}</div>
       <div class="btn-row" style="width:100%">
         <button class="btn grey sm" style="flex:1" onclick="pickPhoto()" id="b-photo">${edit&&edit.photo?t('link_file'):t('add_item_lbl')}</button>
+        <button class="btn grey sm" style="flex:1" onclick="pickContactJs()" id="b-contact">${t('pick_contact')}</button>
       </div>
     </div>
     <div class="field"><label>${t('name')}</label><input type="text" id="c_name" value="${edit?esc(edit.name):''}" placeholder="${t('name_ph')}" /></div>
@@ -4569,6 +4662,8 @@ function modSettings(){
     <div class="field"><label>${t('owner')}</label><input type="text" id="setOwner" /></div>
     <div class="field"><label>${t('biz_phone')}</label><input type="tel" id="setPhone" /></div>
     <div class="field"><label>${t('biz_addr')}</label><input type="text" id="setAddr" /></div>
+    <div class="sw"><span class="lb">📍 ${t('my_location')}</span><button class="btn grey xs" onclick="getLocation()">${t('get_loc')}</button></div>
+    <div class="hint" id="locInfo" style="margin-top:-4px"></div>
     <div class="row2"><div class="field"><label>${t('currency')}</label><input type="text" id="setCurrency" maxlength="3" /></div>
       <div class="field"><label>${t('def_rate')}</label><input type="number" step="0.01" inputmode="decimal" id="setDefRate" /></div></div>
     <div class="row2"><div class="field"><label>${t('def_shift')}</label><select id="setDefShift"><option value="morning" id="o-mor"></option><option value="evening" id="o-eve"></option></select></div>
@@ -4597,6 +4692,7 @@ function renderSettingsBits(){
   if($('sw-round')) $('sw-round').classList.toggle('on',!!state.settings.roundOff);
   if($('sw-pin')) $('sw-pin').classList.toggle('on',!!state.settings.pin);
   if($('sw-bio')) $('sw-bio').classList.toggle('on',!!state.settings.biometricLock);
+  try{ renderLocInfo(); }catch(e){}
   if($('sw-ab')) $('sw-ab').classList.toggle('on',!!state.settings.autoBackup);
   if($('themeBox')){ const themes=[['green','theme_green','#0f7b53'],['blue','theme_blue','#1d6fb8'],['purple','theme_purple','#7b3fb0'],['teal','theme_teal','#0c7b7b']];
     $('themeBox').innerHTML=themes.map(([k,lbl,c])=>`<button class="theme-dot ${state.settings.theme===k?'on':''}" style="background:${c}" onclick="setTheme('${k}')"></button>`).join(''); }
@@ -4646,6 +4742,7 @@ async function idbDel(k){ const db=await idbOpen(); return new Promise((res)=>{ 
 async function loadHandle(){ try{ fsHandle=(await idbGet('backupFile'))||null; }catch(e){ fsHandle=null; } cloudStatus(); }
 function cloudStatus(){ const el=$('cloudStatus'); if(!el) return; el.textContent=fsHandle?((fsHandle.name||'file')+(state.settings.lastExport?' · '+fmtDate(ymd(new Date(state.settings.lastExport))):'')):t('no_link'); }
 function download(name,content,type){
+  try{ if(window.MilkNative&&window.MilkNative.saveText){ window.MilkNative.saveText(name, (typeof content==='string')?content:JSON.stringify(content)); toast(t('saved')); return; } }catch(e){}
   const blob=new Blob([content],{type:type||'text/plain;charset=utf-8'});
   const url=URL.createObjectURL(blob), a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click();
   setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},100);
@@ -5834,6 +5931,63 @@ function saveBudget(){
   const b={};
   CATS.forEach(function(c){ const el=$('bg_'+c); const v=el?parseFloat(el.value)||0:0; if(v>0) b[c]=v; });
   state.settings.budget=b; save(); closeModal(); rerenderModule(); try{ renderBudget(); }catch(e){} toast(t('saved'));
+}
+
+/* ---- 🔐 Permissions + 📍 location ---- */
+function modPerms(){
+  return `<div class="card"><h3>🔐 ${t('perms')}</h3>
+    <div class="hint" style="margin-bottom:10px">${t('perms_hint')}</div>
+    <div id="pmBox"></div>
+    <button class="btn" style="width:100%;margin-top:12px" onclick="askPerms()">${t('perms_ask')}</button></div>`;
+}
+function renderPerms(){
+  const box=$('pmBox'); if(!box) return;
+  const list=[['CAMERA','📷','perm_cam'],['STORAGE','🗂️','perm_store'],['LOCATION','📍','perm_loc'],['CONTACTS','👤','perm_contact'],['MICROPHONE','🎤','perm_mic'],['NOTIFICATIONS','🔔','perm_notif'],['PHONE','📞','perm_phone'],['VIBRATE','📳','perm_vib']];
+  let st={};
+  try{ if(window.MilkNative&&window.MilkNative.permStatus){ st=JSON.parse(window.MilkNative.permStatus()||'{}'); } }catch(e){}
+  box.innerHTML=list.map(function(x){ const ok=!!st[x[0]];
+    return `<div class="sw"><span class="lb">${x[1]} ${t(x[2])}</span><span style="font-size:12px;font-weight:700;color:${ok?'var(--green)':'var(--muted)'}">${ok?t('perm_granted'):t('perm_todo')}</span></div>`;
+  }).join('');
+}
+function askPerms(){
+  try{
+    if(window.MilkNative&&window.MilkNative.requestPermissions){ window.MilkNative.requestPermissions(); toast(t('perms_asked')); setTimeout(renderPerms,1600); }
+    else { toast(t('perms_web')); }
+  }catch(e){ toast(t('perms_web')); }
+}
+function getLocation(){
+  if(!navigator.geolocation){ toast(t('loc_na')); return; }
+  try{
+    navigator.geolocation.getCurrentPosition(function(pos){
+      state.settings.shopLoc={lat:pos.coords.latitude,lng:pos.coords.longitude};
+      save(); renderLocInfo(); toast(t('loc_done'));
+    }, function(){ toast(t('loc_na')); }, {enableHighAccuracy:true, timeout:12000, maximumAge:60000});
+  }catch(e){ toast(t('loc_na')); }
+}
+function renderLocInfo(){
+  const el=$('locInfo'); if(!el) return; const l=state.settings.shopLoc;
+  el.innerHTML=l?('<a href="https://maps.google.com/?q='+l.lat+','+l.lng+'" target="_blank">📍 '+t('loc_map')+' ('+(+l.lat).toFixed(4)+', '+(+l.lng).toFixed(4)+')</a>'):t('loc_hint');
+}
+
+/* ---- native bridges: contacts, perms, dial ---- */
+function pickContactJs(){
+  try{
+    if(window.MilkNative&&window.MilkNative.pickContact){ window.MilkNative.pickContact(); return; }
+    toast(t('perms_web'));
+  }catch(e){ toast(t('perms_web')); }
+}
+function __contactPicked(name,phone){
+  try{
+    if($('c_name') && (!($('c_name').value) || $('c_name').value.trim()==='') ) $('c_name').value=name||'';
+    if($('c_phone') && phone) $('c_phone').value=String(phone).replace(/\s+/g,'');
+    if(name||phone) toast(t('contact_done')); else toast(t('contact_na'));
+  }catch(e){}
+}
+function __permsDone(){ try{ renderPerms(); toast(t('perm_granted')); }catch(e){} }
+function dialParty(id){
+  const p=partyById(id); if(!p||!p.phone){ toast(t('no_phone')); return; }
+  try{ if(window.MilkNative&&window.MilkNative.dial){ window.MilkNative.dial(p.phone); return; } }catch(e){}
+  try{ window.location.href='tel:'+p.phone; }catch(e){}
 }
 
 /* ================= DATA CHECK ================= */
