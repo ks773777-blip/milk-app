@@ -2741,12 +2741,12 @@ const OLD_KEYS=['milk_manager_data_v4','milk_manager_data_v3','milk_manager_data
 
 const defaultState=()=>({
   parties:[], entries:[], payments:[], expenses:[], items:[], moves:[], holidays:[],
-  notes:[], wastage:[], animals:[], loans:[], recurring:[],
+  notes:[], wastage:[], animals:[], loans:[], recurring:[], invoices:[], staff:[], att:[],
   settings:{ lang:'hi', defaultRate:50, currency:'₹', defaultShift:'morning', roundOff:false,
     waCode:'91', theme:'green', dark:false, pin:'', target:0, upi:'', upiName:'',
     retention:12, autoBackup:true, autoBackupDays:7, lastBackup:0, customCats:[], driveLink:'',
     driveAuto:false, driveFileId:'', lastDriveBackup:0, autoShift:true, onboarded:false, driveConnected:false,
-    biometricLock:false, bioCredId:'',
+    biometricLock:false, bioCredId:'', invNext:1, budget:{},
     business:{ name:'दूध हिसाब', owner:'', phone:'', address:'' } },
   account:null
 });
@@ -2849,6 +2849,10 @@ const T={
   recurring:'आवर्ती खर्च', rec_hint:'हर महीने दोहराने वाले खर्च (किराया, सैलरी, बिजली…) — एक टैप में इस महीने जोड़ें।', rec_run:'इस महीने के खर्च जोड़ें', rec_already:'पहले ही जोड़े जा चुके हैं',
   amount:'रकम', note:'नोट', category:'श्रेणी',
   bio:'फिंगरप्रिंट लॉक (बायोमेट्रिक)', bio_hint:'चालू करने पर ऐप खोलते ही फिंगरप्रिंट माँगा जाएगा।', bio_on:'फिंगरप्रिंट लॉक चालू', bio_off:'फिंगरप्रिंट लॉक बंद', bio_na:'इस डिवाइस पर फिंगरप्रिंट उपलब्ध नहीं', bio_title:'फिंगरप्रिंट से खोलें', bio_sub:'ऐप खोलने के लिए अपनी उंगली सेंसर पर लगाएँ', bio_open:'फिंगरप्रिंट लगाएँ', bio_use_pin:'PIN से खोलें', bio_fail:'फिंगरप्रिंट मेल नहीं खाया',
+  invoices:'इनवॉइस / बिल नंबर', inv_next:'अगला नंबर', inv_new:'नया इनवॉइस', inv_hint:'रकम खाली छोड़ें तो उस महीने का कुल अपने आप आ जाएगा।', inv_saved:'इनवॉइस सेव',
+  staff:'स्टाफ व मजदूरी', wage:'मासिक मजदूरी', attendance:'हाज़िरी', att_hint:'महीने की हाज़िरी भरें, फिर “मजदूरी दें” दबाएँ।', att_tap:'तारीख पर टैप करें: ✔ हाज़िर, ✕ नहीं', pay_wages:'इस महीने मजदूरी दें',
+  trend:'वार्षिक ट्रेंड', last12:'पिछले 12 महीने', dayend:'दिन-अंत सारांश', dayend_cust:'ग्राहकों की एंट्री',
+  pay_lbl:'भुगतान', exp_lbl:'खर्च', budget:'मासिक बजट', budget_hint:'हर श्रेणी का मासिक बजट तय करें — खर्च उससे बढ़ते ही लाल दिखेगा।', budget_set:'बजट सेट करें',
   hl1_t:'आज का हिसाब', hl1_x:'{q} लीटर · {a}', hl2_t:'बकाया', hl2_x:'ग्राहकों से {a} लेना है', hl3_t:'इस महीने का लक्ष्य', hl4_t:'ऑटो शिफ्ट चालू', hl4_x:'एंट्री खोलते ही सुबह/शाम अपने आप चुनी जाएगी', hl5_t:'Drive बैकअप चालू', hl5_x:'हर बदलाव अपने आप Drive में सेव होगा',
   support:'सहायता', support_x:'आम सवाल नीचे दिए हैं — खोलकर पढ़ें।',
   faq1_q:'ऑटो शिफ्ट कैसे बंद करें?', faq1_a:'सेटिंग → “ऑटो शिफ्ट” टॉगल बंद कर दें; फिर डिफ़ॉल्ट शिफ्ट इस्तेमाल होगी।',
@@ -2968,6 +2972,10 @@ const T={
   recurring:'Recurring expenses', rec_hint:'Expenses that repeat monthly (rent, salary, electricity…) — add them for this month in one tap.', rec_run:'Add this month\u2019s expenses', rec_already:'Already added',
   amount:'Amount', note:'Note', category:'Category',
   bio:'Fingerprint lock (biometric)', bio_hint:'When on, the app asks for your fingerprint as soon as it opens.', bio_on:'Fingerprint lock on', bio_off:'Fingerprint lock off', bio_na:'Fingerprint not available on this device', bio_title:'Unlock with fingerprint', bio_sub:'Touch the sensor to open the app', bio_open:'Touch fingerprint', bio_use_pin:'Use PIN', bio_fail:'Fingerprint did not match',
+  invoices:'Invoices / bill numbers', inv_next:'Next number', inv_new:'New invoice', inv_hint:'Leave the amount blank to auto-fill that month\u2019s total.', inv_saved:'Invoice saved',
+  staff:'Staff & wages', wage:'Monthly wage', attendance:'Attendance', att_hint:'Mark attendance for the month, then press “Pay wages”.', att_tap:'Tap a date: ✔ present, ✕ absent', pay_wages:'Pay this month\u2019s wages',
+  trend:'Yearly trend', last12:'Last 12 months', dayend:'Day-end summary', dayend_cust:'customers entered',
+  pay_lbl:'Payments', exp_lbl:'Expenses', budget:'Monthly budget', budget_hint:'Set a monthly budget per category — overspending shows in red.', budget_set:'Set budget',
   hl1_t:'Today\u2019s numbers', hl1_x:'{q} litres · {a}', hl2_t:'Dues', hl2_x:'{a} to collect from customers', hl3_t:'This month\u2019s target', hl4_t:'Auto shift is on', hl4_x:'Morning/evening will be picked automatically when you open an entry', hl5_t:'Drive backup is on', hl5_x:'Every change is saved to Drive automatically',
   support:'Help & support', support_x:'Common questions below — tap to open.',
   faq1_q:'How do I turn off auto shift?', faq1_a:'Settings → turn off the “Auto shift” toggle; the default shift will be used instead.',
@@ -3015,6 +3023,7 @@ function deepDefaults(d){
   if(d.settings&&d.settings.appName&&!s.settings.business.name) s.settings.business.name=d.settings.appName;
   s.account=d.account||null;
   s.notes=d.notes||[]; s.wastage=d.wastage||[]; s.animals=d.animals||[]; s.loans=d.loans||[]; s.recurring=d.recurring||[];
+  s.invoices=d.invoices||[]; s.staff=d.staff||[]; s.att=d.att||[];
   s.parties.forEach(p=>{ if(!p.items) p.items=[]; });
   return s;
 }
@@ -3030,6 +3039,7 @@ function migrate(o){
   s.expenses=o.expenses||[]; s.items=o.items||[]; s.moves=o.moves||[]; s.holidays=o.holidays||[];
   s.account=o.account||null;
   s.notes=o.notes||[]; s.wastage=o.wastage||[]; s.animals=o.animals||[]; s.loans=o.loans||[]; s.recurring=o.recurring||[];
+  s.invoices=o.invoices||[]; s.staff=o.staff||[]; s.att=o.att||[];
   return s;
 }
 function save(){ rebuildIndex(); try{ localStorage.setItem(STORE_KEY,JSON.stringify(state)); }catch(e){ toast('⚠️ Storage full'); } try{ scheduleAutoDriveBackup(); }catch(e){} }
@@ -3209,6 +3219,11 @@ const MODULES=[
   {id:'inactive',   ic:'😴', hi:'निष्क्रिय ग्राहक',    en:'Inactive customers',render:modInactive, after:renderInactive},
   {id:'loans',      ic:'💳', hi:'उधार / कर्ज़',        en:'Loans / credit',    render:modLoans},
   {id:'recurring',  ic:'🔁', hi:'आवर्ती खर्च',         en:'Recurring expenses',render:modRecurring},
+  {id:'invoices',   ic:'🧾', hi:'इनवॉइस नंबर',        en:'Invoices',          render:modInvoices},
+  {id:'staff',      ic:'👷', hi:'स्टाफ व मजदूरी',     en:'Staff & wages',     render:modStaff},
+  {id:'trend',      ic:'📈', hi:'वार्षिक ट्रेंड',      en:'Yearly trend',      render:modTrend,    after:renderTrend},
+  {id:'dayend',     ic:'🌙', hi:'दिन-अंत सारांश',     en:'Day-end summary',   render:modDayEnd,   after:renderDayEnd},
+  {id:'budget',     ic:'💰', hi:'मासिक बजट',          en:'Monthly budget',    render:modBudget,   after:renderBudget},
   {id:'support',    ic:'🆘', hi:'सहायता',             en:'Help & support',    render:modSupport},
   {id:'legal',      ic:'📜', hi:'नियम व प्राइवेसी',    en:'Legal & privacy',   render:modLegal},
   {id:'help',       ic:'❓', hi:'मदद',                en:'Help',              render:modHelp}
@@ -5598,6 +5613,228 @@ function bioUnlock(){
 }
 function __bioOk(){ hideBioLock(); }
 function __bioFail(){ toast(t('bio_fail')); }
+
+/* ================= POWER MODULES ================= */
+/* ---- 🧾 Invoices / bill numbers ---- */
+function nextInvNo(){ return state.settings.invNext||1; }
+function modInvoices(){
+  const list=(state.invoices||[]).slice().sort((a,b)=>b.no-a.no);
+  return `<div class="card"><h3>🧾 ${t('invoices')}</h3>
+    <div class="bill-line"><span class="k">${t('inv_next')}</span><span class="v">#${nextInvNo()}</span></div>
+    <div class="btn-row" style="margin-top:10px"><button class="btn" onclick="openInvoice()">➕ ${t('inv_new')}</button></div>
+    <div class="divider"></div>
+    <div>${list.length?list.map(invRow).join(''):'<div class="empty">'+t('no_data')+'</div>'}</div></div>`;
+}
+function invRow(v){
+  const p=partyById(v.partyId);
+  return `<div class="list-item"><div class="avatar">🧾</div>
+    <div class="li-main"><div class="t">#${v.no} · ${esc(p?p.name:'—')}</div><div class="s">${fmtDate(v.date)} · ${esc(v.label||'')}</div></div>
+    <div class="li-amt"><div class="a">${money(v.amount)}</div></div>
+    <button class="btn grey xs" onclick="shareInvoice('${v.id}')">📤</button>
+    <button class="btn danger xs" onclick="delInvoice('${v.id}')">🗑</button></div>`;
+}
+function openInvoice(){
+  if(!state.parties.length){ toast(t('add_party_first')); return; }
+  const opts=state.parties.filter(p=>p.type==='customer').map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('');
+  openModal(`<div class="sheet-head"><h2>${t('inv_new')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>${t('party_lbl')}</label><select id="iv_party" onchange="calcInvoiceAmt()">${opts}</select></div>
+    <div class="row2"><div class="field"><label>${t('rep_month')}</label><input type="month" id="iv_month" value="${monthStr()}" onchange="calcInvoiceAmt()" /></div>
+    <div class="field"><label>${t('amount')}</label><input type="number" id="iv_amt" placeholder="auto" /></div></div>
+    <div class="field"><label>${t('note')}</label><input type="text" id="iv_note" /></div>
+    <div class="hint" style="margin-bottom:8px">${t('inv_hint')}</div>
+    <button class="btn" onclick="saveInvoice()">${t('save')}</button>`);
+  calcInvoiceAmt();
+}
+function invAutoAmt(){
+  const pid=$('iv_party')?$('iv_party').value:''; const m=($('iv_month')&&$('iv_month').value)||monthStr();
+  return state.entries.filter(e=>e.partyId===pid&&e.kind==='sale'&&e.date.startsWith(m)).reduce((s,e)=>s+e.amount,0);
+}
+function calcInvoiceAmt(){ const el=$('iv_amt'); if(el && !el.value) el.placeholder=String(Math.round(invAutoAmt())); }
+function saveInvoice(){
+  const pid=$('iv_party').value, m=($('iv_month').value)||monthStr();
+  const amt=parseFloat($('iv_amt').value)||Math.round(invAutoAmt());
+  if(amt<=0){ toast(t('enter_amount')); return; }
+  const no=nextInvNo();
+  state.invoices=state.invoices||[];
+  state.invoices.push({id:uid(),no:no,date:todayStr(),partyId:pid,amount:amt,label:fmtMonth(m),note:$('iv_note').value.trim()});
+  state.settings.invNext=no+1;
+  save(); closeModal(); rerenderModule(); toast(t('inv_saved')+' #'+no);
+}
+function delInvoice(id){ state.invoices=(state.invoices||[]).filter(v=>v.id!==id); save(); rerenderModule(); toast(t('deleted')); }
+function shareInvoice(id){
+  const v=(state.invoices||[]).find(x=>x.id===id); if(!v) return;
+  const p=partyById(v.partyId);
+  const txt='🧾 '+shopName()+'\n'+t('bill_title')+' #'+v.no+'\n'+((p&&p.name)||'')+'\n'+v.label+'\n────────────\n'+t('total_bill')+': '+money(v.amount)+'\n────────────\n'+t('thank');
+  if(navigator.share){ navigator.share({title:t('bill_title'),text:txt}).catch(function(){}); }
+  else { if(navigator.clipboard) navigator.clipboard.writeText(txt).catch(function(){}); toast(t('copied')); }
+}
+/* ---- 👷 Staff & wages ---- */
+function modStaff(){
+  const list=(state.staff||[]).filter(s=>s.active!==false);
+  return `<div class="card"><h3>👷 ${t('staff')}</h3>
+    <button class="btn" style="width:100%;margin-bottom:10px" onclick="openStaff('')">➕ ${t('add')}</button>
+    <div>${(state.staff||[]).length?state.staff.map(staffRow).join(''):'<div class="empty">'+t('no_data')+'</div>'}</div>
+    ${list.length?`<div class="divider"></div><div class="hint" style="margin-bottom:8px">${t('att_hint')}</div>
+      <div class="btn-row"><button class="btn grey" onclick="openAttendance()">🗓️ ${t('attendance')}</button>
+      <button class="btn grey" onclick="payWages()">💰 ${t('pay_wages')}</button></div>`:''}</div>`;
+}
+function staffRow(s){
+  const m=monthStr(); const days=(state.att||[]).filter(a=>a.staffId===s.id&&a.date.startsWith(m)&&a.p).length;
+  return `<div class="list-item"><div class="avatar">👷</div>
+    <div class="li-main"><div class="t">${esc(s.name)}</div><div class="s">${esc(s.phone||'')} • ${t('attendance')}: ${days} • ${money(s.wage)}</div></div>
+    <button class="btn grey xs" onclick="openStaff('${s.id}')">✏️</button>
+    <button class="btn danger xs" onclick="delStaff('${s.id}')">🗑</button></div>`;
+}
+function openStaff(id){
+  const s=id?(state.staff||[]).find(x=>x.id===id):null;
+  openModal(`<div class="sheet-head"><h2>${t('staff')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>${t('enter_name')}</label><input type="text" id="st_name" value="${s?esc(s.name):''}" /></div>
+    <div class="row2"><div class="field"><label>${t('biz_phone')}</label><input type="tel" id="st_phone" value="${s?esc(s.phone||''):''}" /></div>
+    <div class="field"><label>${t('wage')}</label><input type="number" id="st_wage" value="${s?s.wage:''}" /></div></div>
+    <button class="btn" onclick="saveStaff('${id||''}')">${t('save')}</button>`);
+}
+function saveStaff(id){
+  const n=$('st_name').value.trim(); if(!n){ toast(t('enter_name')); return; }
+  const obj={name:n,phone:$('st_phone').value.trim(),wage:parseFloat($('st_wage').value)||0,active:true};
+  state.staff=state.staff||[];
+  if(id){ const s=state.staff.find(x=>x.id===id); if(s) Object.assign(s,obj); } else state.staff.push(Object.assign({id:uid()},obj));
+  save(); closeModal(); rerenderModule(); toast(t('saved'));
+}
+function delStaff(id){ state.staff=(state.staff||[]).filter(s=>s.id!==id); state.att=(state.att||[]).filter(a=>a.staffId!==id); save(); rerenderModule(); toast(t('deleted')); }
+function openAttendance(){
+  const m=monthStr(); const A={};
+  (state.att||[]).forEach(a=>{ if(a.date.startsWith(m)) A[a.staffId+'|'+a.date]=a.p?1:0; });
+  window._att=A; window._attMonth=m; renderAtt();
+}
+function renderAtt(){
+  const m=window._attMonth||monthStr(), A=window._att||{};
+  const yy=+m.slice(0,4), mm=+m.slice(5,7), days=lastDay(yy,mm);
+  const list=(state.staff||[]).filter(s=>s.active!==false);
+  openModal(`<div class="sheet-head"><h2>${t('attendance')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+    <div class="hint" style="margin-bottom:8px">${fmtMonth(m)} — ${t('att_tap')}</div>
+    <div style="overflow:auto;max-height:50vh"><table style="font-size:12px"><thead><tr><th></th>${Array.from({length:days},(_,i)=>`<th>${i+1}</th>`).join('')}</tr></thead><tbody>
+    ${list.map(s=>`<tr><td style="white-space:nowrap;font-weight:700">${esc(s.name)}</td>${Array.from({length:days},(_,i)=>{ const d=m+'-'+String(i+1).padStart(2,'0'); const v=A[s.id+'|'+d]; return `<td onclick="toggleAtt('${s.id}','${d}')" style="text-align:center;cursor:pointer;background:${v===1?'var(--green-l)':v===0?'var(--red-l)':''}">${v===1?'✔':v===0?'✕':''}</td>`; }).join('')}</tr>`).join('')}
+    </tbody></table></div>
+    <button class="btn" style="margin-top:12px" onclick="saveAtt()">${t('save')}</button>`);
+}
+function toggleAtt(sid,d){ const A=window._att||(window._att={}); const k=sid+'|'+d; A[k]=(A[k]===1)?0:1; renderAtt(); }
+function saveAtt(){
+  const m=window._attMonth||monthStr(), A=window._att||{};
+  state.att=(state.att||[]).filter(a=>!a.date.startsWith(m));
+  Object.keys(A).forEach(k=>{ const parts=k.split('|'); state.att.push({staffId:parts[0],date:parts[1],p:A[k]?1:0}); });
+  save(); closeModal(); rerenderModule(); toast(t('saved'));
+}
+function payWages(){
+  const m=monthStr(); const yy=+m.slice(0,4), mm=+m.slice(5,7); const lastD=lastDay(yy,mm);
+  let n=0;
+  (state.staff||[]).filter(s=>s.active!==false).forEach(s=>{
+    const days=(state.att||[]).filter(a=>a.staffId===s.id&&a.date.startsWith(m)&&a.p).length;
+    if(!days) return;
+    const per=Math.round((s.wage||0)/26*days);
+    const note=s.name+' ('+days+')';
+    if(state.expenses.some(x=>x.date.startsWith(m)&&x.cat==='labour'&&x.note===note)) return;
+    state.expenses.push({id:uid(),date:m+'-'+String(lastD).padStart(2,'0'),amount:per,cat:'labour',note:note}); n++;
+  });
+  save(); refreshAll(); rerenderModule(); toast(n?(n+' '+t('saved')):t('rec_already'));
+}
+/* ---- 📈 Yearly trend ---- */
+function modTrend(){ return `<div class="card"><h3>📈 ${t('trend')}</h3><div id="trBox"></div></div>`; }
+function renderTrend(){
+  const box=$('trBox'); if(!box) return;
+  const now=new Date(); const months=[];
+  for(let i=11;i>=0;i--){ const d=new Date(now.getFullYear(),now.getMonth()-i,1); months.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')); }
+  const sales=months.map(m=>state.entries.filter(e=>e.date.startsWith(m)&&e.kind==='sale').reduce((s,e)=>s+e.amount,0));
+  const nets=months.map(m=>monthStats(m).net);
+  const max=Math.max(1,...sales,...nets);
+  const W=900,H=460,pad=40,base=H-70,bw=(W-pad*2)/12*0.62,gap=(W-pad*2)/12;
+  const c=document.createElement('canvas'); c.width=W; c.height=H; const g=c.getContext('2d');
+  g.fillStyle='#fff'; g.fillRect(0,0,W,H);
+  g.strokeStyle='#e6ece8'; g.lineWidth=1;
+  for(let i=1;i<=4;i++){ const y=base-(300/4)*i; g.beginPath(); g.moveTo(pad,y); g.lineTo(W-pad,y); g.stroke(); }
+  months.forEach(function(m,i){
+    const x=pad+i*gap+(gap-bw)/2;
+    const h=Math.max(4,Math.round(sales[i]/max*300));
+    g.fillStyle='#0f7b53'; g.fillRect(x,base-h,bw*0.55,h);
+    const h2=Math.max(0,Math.round(Math.max(0,nets[i])/max*300));
+    g.fillStyle='#b7791f'; g.fillRect(x+bw*0.55,base-h2,bw*0.45,h2);
+    g.fillStyle='#666'; g.font='13px Arial'; g.textAlign='center';
+    g.fillText(MONTHS[LANG][(+m.slice(5,7))-1].slice(0,3),x+bw/2,base+18);
+  });
+  g.strokeStyle='#bbb'; g.beginPath(); g.moveTo(pad,base); g.lineTo(W-pad,base); g.stroke();
+  box.innerHTML='<img alt="" src="'+c.toDataURL('image/png')+'" style="width:100%;border-radius:12px" />'
+    +`<div class="hint" style="margin-top:8px">🟩 ${t('c_sale')} · 🟨 ${t('net_profit')} — ${t('last12')}</div>`;
+}
+/* ---- 🌙 Day-end summary ---- */
+function modDayEnd(){
+  return `<div class="card"><h3>🌙 ${t('dayend')}</h3>
+    <div class="field" style="margin:0 0 10px"><label>${t('date')}</label><input type="date" id="deDate" value="${todayStr()}" onchange="renderDayEnd()" /></div>
+    <div id="deBox"></div>
+    <div class="btn-row" style="margin-top:12px"><button class="btn" onclick="shareDayEnd()">📤 ${t('send')}</button></div></div>`;
+}
+function dayEndData(date){
+  const e=state.entries.filter(x=>x.date===date);
+  const sale=e.filter(x=>x.kind==='sale'), pur=e.filter(x=>x.kind==='purchase');
+  const m=sale.filter(x=>x.shift==='morning'), v=sale.filter(x=>x.shift==='evening');
+  const qty=sale.reduce((s,x)=>s+x.qty,0), amt=sale.reduce((s,x)=>s+x.amount,0);
+  const purch=pur.reduce((s,x)=>s+x.amount,0);
+  const pays=state.payments.filter(x=>x.date===date).reduce((s,x)=>s+x.amount,0);
+  const exp=state.expenses.filter(x=>x.date===date).reduce((s,x)=>s+x.amount,0);
+  const wast=state.wastage.filter(x=>x.date===date).reduce((s,x)=>s+(x.value||0),0);
+  const cust={}; sale.forEach(x=>cust[x.partyId]=1);
+  const defCust=state.parties.filter(p=>p.type==='customer'&&p.active!==false&&(p.defaultQty>0)).length;
+  return {date,e,sale,pur,m,v,qty,amt,purch,pays,exp,wast,cust:Object.keys(cust).length,defCust,net:amt-purch-exp-wast};
+}
+function renderDayEnd(){
+  const box=$('deBox'); if(!box) return; const d=dayEndData(($('deDate')&&$('deDate').value)||todayStr());
+  box.innerHTML=`<div class="bill-line"><span class="k">🌅 ${t('morning')}</span><span class="v">${num(d.m.reduce((s,x)=>s+x.qty,0))} L • ${money(d.m.reduce((s,x)=>s+x.amount,0))}</span></div>
+    <div class="bill-line"><span class="k">🌙 ${t('evening')}</span><span class="v">${num(d.v.reduce((s,x)=>s+x.qty,0))} L • ${money(d.v.reduce((s,x)=>s+x.amount,0))}</span></div>
+    <div class="bill-line tot"><span class="k">${t('c_sale')}</span><span class="v">${num(d.qty)} L • ${money(d.amt)}</span></div>
+    <div class="bill-line"><span class="k">${t('c_purch')}</span><span class="v">${money(d.purch)}</span></div>
+    <div class="bill-line"><span class="k">💵 ${t('pay_lbl')}</span><span class="v">${money(d.pays)}</span></div>
+    <div class="bill-line"><span class="k">💸 ${t('exp_lbl')}</span><span class="v">- ${money(d.exp)}</span></div>
+    <div class="bill-line"><span class="k">📉 ${t('wastage')}</span><span class="v">- ${money(d.wast)}</span></div>
+    <div class="bill-line tot"><span class="k">${t('net_profit')}</span><span class="v" style="color:${d.net>=0?'var(--green)':'var(--red)'}">${money(d.net)}</span></div>
+    <div class="hint" style="margin-top:8px">${d.cust} / ${d.defCust} ${t('party_lbl')} — ${t('dayend_cust')}</div>`;
+}
+function shareDayEnd(){
+  const d=dayEndData(($('deDate')&&$('deDate').value)||todayStr());
+  const txt='🥛 '+shopName()+'\n'+t('dayend')+' — '+fmtDate(d.date)+'\n────────────\n'
+    +'🌅 '+t('morning')+': '+num(d.m.reduce((s,x)=>s+x.qty,0))+' L • '+money(d.m.reduce((s,x)=>s+x.amount,0))+'\n'
+    +'🌙 '+t('evening')+': '+num(d.v.reduce((s,x)=>s+x.qty,0))+' L • '+money(d.v.reduce((s,x)=>s+x.amount,0))+'\n'
+    +t('c_sale')+': '+num(d.qty)+' L • '+money(d.amt)+'\n'
+    +'💵 '+t('pay_lbl')+': '+money(d.pays)+'\n💸 '+t('exp_lbl')+': '+money(d.exp)+'\n'
+    +'────────────\n'+t('net_profit')+': '+money(d.net);
+  if(navigator.share){ navigator.share({title:t('dayend'),text:txt}).catch(function(){}); }
+  else { if(navigator.clipboard) navigator.clipboard.writeText(txt).catch(function(){}); toast(t('copied')); }
+}
+/* ---- 💰 Monthly budget ---- */
+function modBudget(){ return `<div class="card"><h3>💰 ${t('budget')}</h3><div class="hint" style="margin-bottom:10px">${t('budget_hint')}</div><div id="bdBox"></div></div>`; }
+function renderBudget(){
+  const box=$('bdBox'); if(!box) return;
+  const m=monthStr(); const b=state.settings.budget||{};
+  const cats=CATS.concat((state.settings.customCats||[]).map(c=>c.id));
+  const act={}; state.expenses.filter(x=>x.date.startsWith(m)).forEach(x=>{ act[x.cat]=(act[x.cat]||0)+x.amount; });
+  const rows=cats.map(c=>({c:c,label:catLabel(c),budget:b[c]||0,actual:act[c]||0})).filter(r=>r.budget>0||r.actual>0);
+  const tb=rows.reduce((s,r)=>s+r.budget,0), ta=rows.reduce((s,r)=>s+r.actual,0);
+  box.innerHTML=(rows.length?rows.map(function(r){
+    const pc=r.budget?Math.min(100,Math.round(r.actual/r.budget*100)):100;
+    const over=r.budget&&r.actual>r.budget;
+    return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:13.5px"><b>${esc(r.label)}</b><span style="color:${over?'var(--red)':'var(--muted)'}">${money(r.actual)}${r.budget?(' / '+money(r.budget)):''}</span></div><div style="height:8px;background:var(--soft);border-radius:6px;overflow:hidden;margin-top:4px"><div style="height:100%;width:${pc}%;background:${over?'var(--red)':'var(--green)'}"></div></div></div>`;
+  }).join(''):'<div class="empty">'+t('no_data')+'</div>')
+  +`<div class="divider"></div><div class="bill-line tot"><span class="k">${t('total')}</span><span class="v">${money(ta)} / ${money(tb)}</span></div>
+    <button class="btn ghost" style="width:100%;margin-top:12px" onclick="openBudget()">✏️ ${t('budget_set')}</button>`;
+}
+function openBudget(){
+  const b=state.settings.budget||{};
+  openModal(`<div class="sheet-head"><h2>${t('budget')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+    ${CATS.map(c=>`<div class="field"><label>${catLabel(c)}</label><input type="number" id="bg_${c}" value="${b[c]||''}" placeholder="0" /></div>`).join('')}
+    <button class="btn" onclick="saveBudget()">${t('save')}</button>`);
+}
+function saveBudget(){
+  const b={};
+  CATS.forEach(function(c){ const el=$('bg_'+c); const v=el?parseFloat(el.value)||0:0; if(v>0) b[c]=v; });
+  state.settings.budget=b; save(); closeModal(); rerenderModule(); try{ renderBudget(); }catch(e){} toast(t('saved'));
+}
 
 /* ================= DATA CHECK ================= */
 function modDataCheck(){ return `<div class="card"><div class="hint" style="margin-bottom:10px">${t('dc_hint')}</div><div id="dcBox"></div></div>`; }
