@@ -210,6 +210,12 @@
   #lock,#bioLock{z-index:240}
   .hub-head{font-size:13px;font-weight:800;color:var(--green-d);margin:16px 0 8px;letter-spacing:.2px}
   .hub-group:first-child .hub-head{margin-top:0}
+  .ins{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;margin-bottom:8px;font-size:13.5px;background:var(--soft)}
+  .ins.warn{background:#fdf3e7;color:#8a5a12}
+  .ins.ok{background:var(--green-l);color:var(--green-d)}
+  .ins .ii{font-weight:800;white-space:nowrap}
+  .ai-row{display:flex;gap:8px;margin-top:8px}
+  .ai-row input{flex:1}
   .lock .big{font-size:52px}
   .lock h2{font-size:19px;font-weight:700}
   .lock .dots{display:flex;gap:12px;margin:6px 0}
@@ -2743,7 +2749,7 @@ const OLD_KEYS=['milk_manager_data_v4','milk_manager_data_v3','milk_manager_data
 
 const defaultState=()=>({
   parties:[], entries:[], payments:[], expenses:[], items:[], moves:[], holidays:[],
-  notes:[], wastage:[], animals:[], loans:[], recurring:[], invoices:[], staff:[], att:[],
+  notes:[], wastage:[], animals:[], loans:[], recurring:[], invoices:[], staff:[], att:[], closes:[],
   settings:{ lang:'hi', defaultRate:50, currency:'₹', defaultShift:'morning', roundOff:false,
     waCode:'91', theme:'green', dark:false, pin:'', target:0, upi:'', upiName:'',
     retention:12, autoBackup:true, autoBackupDays:7, lastBackup:0, customCats:[], driveLink:'',
@@ -2860,6 +2866,11 @@ const T={
   perm_cam:'कैमरा (फ़ोटो)', perm_store:'स्टोरेज (फ़ाइल)', perm_loc:'लोकेशन (GPS)', perm_contact:'संपर्क', perm_mic:'माइक्रोफ़ोन', perm_notif:'नोटिफिकेशन', perm_phone:'कॉल', perm_vib:'वाइब्रेशन',
   my_location:'मेरी दुकान की लोकेशन', get_loc:'लोकेशन लें', loc_done:'लोकेशन सेव हो गई', loc_na:'लोकेशन नहीं मिली', loc_map:'नक्शे में देखें', loc_hint:'अभी कोई लोकेशन सेव नहीं है।',
   pick_contact:'📞 संपर्क से', contact_done:'संपर्क से भरा गया', contact_na:'संपर्क नहीं मिला',
+  ai:'AI सहायक', ai_hint:'अपने दूध-व्यापार के बारे में सवाल पूछें — जवाब आपके असली डेटा के हिसाब से मिलेगा।', ai_ph:'सवाल लिखें…', ai_send:'पूछें', ai_nokey:'पहले सेटिंग में AI key डालें', ai_offline:'इसके लिए इंटरनेट चाहिए', ai_fail:'जवाब नहीं मिला — key या इंटरनेट जाँचें',
+  ai_key:'AI API key (सिर्फ़ इस फ़ोन में सेव होगी)', ai_key_hint:'key आपके फ़ोन में ही रहती है — ऐप की फ़ाइल या GitHub में कभी नहीं जाती।', ai_key_saved:'AI key सेव हो गई', ai_key_clear:'AI key हटाएँ',
+  ai_q1:'इस महीने का हिसाब बताओ', ai_q2:'सबसे ज़्यादा बकाया किसका है?', ai_q3:'मुनाफ़ा कैसे बढ़ाऊँ?', ai_q4:'आज का सारांश दो',
+  insights:'स्मार्ट इनसाइट्स', ins_margin:'मुनाफ़ा दर', ins_margin_low:'थोड़ा कम है — खर्च या रेट देखें', ins_margin_ok:'ठीक है', ins_dues:'बकाया वसूली', ins_vs_prev:'पिछले महीने से',
+  mclose:'महीना बंद (हिसाब बंद)', mclose_do:'इस महीने का हिसाब बंद करें', mclose_hint:'बंद करने पर उस महीने का कुल और बकाया सुरक्षित रिकॉर्ड में सेव हो जाता है।', mclose_open:'अभी बंद नहीं हुआ', mclose_done:'बंद हो चुका', mclose_saved:'महीना बंद हो गया',
   hl1_t:'आज का हिसाब', hl1_x:'{q} लीटर · {a}', hl2_t:'बकाया', hl2_x:'ग्राहकों से {a} लेना है', hl3_t:'इस महीने का लक्ष्य', hl4_t:'ऑटो शिफ्ट चालू', hl4_x:'एंट्री खोलते ही सुबह/शाम अपने आप चुनी जाएगी', hl5_t:'Drive बैकअप चालू', hl5_x:'हर बदलाव अपने आप Drive में सेव होगा',
   support:'सहायता', support_x:'आम सवाल नीचे दिए हैं — खोलकर पढ़ें।',
   faq1_q:'ऑटो शिफ्ट कैसे बंद करें?', faq1_a:'सेटिंग → “ऑटो शिफ्ट” टॉगल बंद कर दें; फिर डिफ़ॉल्ट शिफ्ट इस्तेमाल होगी।',
@@ -2988,6 +2999,11 @@ const T={
   perm_cam:'Camera (photos)', perm_store:'Storage (files)', perm_loc:'Location (GPS)', perm_contact:'Contacts', perm_mic:'Microphone', perm_notif:'Notifications', perm_phone:'Phone calls', perm_vib:'Vibration',
   my_location:'My shop location', get_loc:'Get location', loc_done:'Location saved', loc_na:'Could not get location', loc_map:'View on map', loc_hint:'No location saved yet.',
   pick_contact:'📞 From contacts', contact_done:'Filled from contacts', contact_na:'No contact selected',
+  ai:'AI assistant', ai_hint:'Ask anything about your dairy business — answers use your real data.', ai_ph:'Type a question…', ai_send:'Ask', ai_nokey:'Add the AI key in Settings first', ai_offline:'This needs internet', ai_fail:'No answer — check the key or your internet',
+  ai_key:'AI API key (saved on this phone only)', ai_key_hint:'The key stays on your phone — it is never written into the app file or GitHub.', ai_key_saved:'AI key saved', ai_key_clear:'Remove AI key',
+  ai_q1:'How is this month going?', ai_q2:'Who owes me the most?', ai_q3:'How can I increase profit?', ai_q4:'Give me today\u2019s summary',
+  insights:'Smart insights', ins_margin:'Profit margin', ins_margin_low:'a bit low — check costs or rates', ins_margin_ok:'healthy', ins_dues:'Dues to collect', ins_vs_prev:'vs last month',
+  mclose:'Month close', mclose_do:'Close this month\u2019s books', mclose_hint:'Closing saves that month\u2019s totals and outstanding balances as a safe record.', mclose_open:'Not closed yet', mclose_done:'Closed', mclose_saved:'Month closed',
   hl1_t:'Today\u2019s numbers', hl1_x:'{q} litres · {a}', hl2_t:'Dues', hl2_x:'{a} to collect from customers', hl3_t:'This month\u2019s target', hl4_t:'Auto shift is on', hl4_x:'Morning/evening will be picked automatically when you open an entry', hl5_t:'Drive backup is on', hl5_x:'Every change is saved to Drive automatically',
   support:'Help & support', support_x:'Common questions below — tap to open.',
   faq1_q:'How do I turn off auto shift?', faq1_a:'Settings → turn off the “Auto shift” toggle; the default shift will be used instead.',
@@ -3035,7 +3051,7 @@ function deepDefaults(d){
   if(d.settings&&d.settings.appName&&!s.settings.business.name) s.settings.business.name=d.settings.appName;
   s.account=d.account||null;
   s.notes=d.notes||[]; s.wastage=d.wastage||[]; s.animals=d.animals||[]; s.loans=d.loans||[]; s.recurring=d.recurring||[];
-  s.invoices=d.invoices||[]; s.staff=d.staff||[]; s.att=d.att||[];
+  s.invoices=d.invoices||[]; s.staff=d.staff||[]; s.att=d.att||[]; s.closes=d.closes||[];
   s.parties.forEach(p=>{ if(!p.items) p.items=[]; });
   return s;
 }
@@ -3051,7 +3067,7 @@ function migrate(o){
   s.expenses=o.expenses||[]; s.items=o.items||[]; s.moves=o.moves||[]; s.holidays=o.holidays||[];
   s.account=o.account||null;
   s.notes=o.notes||[]; s.wastage=o.wastage||[]; s.animals=o.animals||[]; s.loans=o.loans||[]; s.recurring=o.recurring||[];
-  s.invoices=o.invoices||[]; s.staff=o.staff||[]; s.att=o.att||[];
+  s.invoices=o.invoices||[]; s.staff=o.staff||[]; s.att=o.att||[]; s.closes=o.closes||[];
   return s;
 }
 function save(){ rebuildIndex(); try{ localStorage.setItem(STORE_KEY,JSON.stringify(state)); }catch(e){ toast('⚠️ Storage full'); } try{ scheduleAutoDriveBackup(); }catch(e){} }
@@ -3207,7 +3223,8 @@ const GMAP={bulk:'daily',bulkMonthly:'daily',holiday:'daily',milkcard:'daily',ca
  parties:'people',routes:'people',topcust:'people',inactive:'people',staff:'people',reminders:'people',
  reports:'report',compare:'report',trend:'report',statement:'report',ledger:'report',invoices:'report',bills:'report',bulkbill:'report',quality:'report',
  animals:'farm',wastage:'farm',
- backup:'app',drive:'app',account:'app',settings:'app',perms:'app',datacheck:'app',support:'app',legal:'app',help:'app'};
+ backup:'app',drive:'app',account:'app',settings:'app',perms:'app',ai:'app',datacheck:'app',support:'app',legal:'app',help:'app',
+ insights:'report',monthclose:'money'};
 const REL={
   invoices:['bills','bulkbill','statement','payments'],
   bills:['invoices','bulkbill','statement','ledger'],
@@ -3242,7 +3259,12 @@ const REL={
   drive:['backup','settings','datacheck'],
   perms:['settings','account','drive'],
   support:['help','legal','settings'],
-  legal:['support','settings','perms']
+  legal:['support','settings','perms'],
+  ai:['insights','reports','dayend','trend'],
+  insights:['reports','trend','compare','budget','ai'],
+  monthclose:['reports','compare','dues','pnl'],
+  reports:['trend','compare','pnl','topcust','insights'],
+  settings:['backup','drive','perms','ai','legal']
 };
 function relatedRow(id){
   const rel=REL[id]; if(!rel||!rel.length) return '';
@@ -3308,7 +3330,10 @@ const MODULES=[
   {id:'support',    ic:'🆘', hi:'सहायता',             en:'Help & support',    render:modSupport},
   {id:'legal',      ic:'📜', hi:'नियम व प्राइवेसी',    en:'Legal & privacy',   render:modLegal},
   {id:'help',       ic:'❓', hi:'मदद',                en:'Help',              render:modHelp},
-  {id:'perms',      ic:'🔐', hi:'परमिशन (अनुमतियाँ)',  en:'Permissions',       render:modPerms,    after:renderPerms}
+  {id:'perms',      ic:'🔐', hi:'परमिशन (अनुमतियाँ)',  en:'Permissions',       render:modPerms,    after:renderPerms},
+  {id:'ai',         ic:'🤖', hi:'AI सहायक',           en:'AI assistant',      render:modAI},
+  {id:'insights',   ic:'🔎', hi:'स्मार्ट इनसाइट्स',    en:'Smart insights',    render:modInsights, after:renderInsights},
+  {id:'monthclose', ic:'📅', hi:'महीना बंद (हिसाब)',  en:'Month close',       render:modMonthClose,after:renderMonthClose},
 ];
 function switchTab(tab){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -4663,6 +4688,8 @@ function modSettings(){
     <div class="field"><label>${t('biz_phone')}</label><input type="tel" id="setPhone" /></div>
     <div class="field"><label>${t('biz_addr')}</label><input type="text" id="setAddr" /></div>
     <div class="sw"><span class="lb">📍 ${t('my_location')}</span><button class="btn grey xs" onclick="getLocation()">${t('get_loc')}</button></div>
+    <div class="field" style="margin-top:12px"><label>🤖 ${t('ai_key')}</label><input type="password" id="setAiKey" placeholder="…" /><div class="hint">${t('ai_key_hint')}</div></div>
+    <div class="btn-row" style="margin-bottom:8px"><button class="btn grey sm" style="flex:1" onclick="saveAiKey()">${t('save')}</button><button class="btn grey sm" style="flex:1" onclick="clearAiKey()">${t('ai_key_clear')}</button></div>
     <div class="hint" id="locInfo" style="margin-top:-4px"></div>
     <div class="row2"><div class="field"><label>${t('currency')}</label><input type="text" id="setCurrency" maxlength="3" /></div>
       <div class="field"><label>${t('def_rate')}</label><input type="number" step="0.01" inputmode="decimal" id="setDefRate" /></div></div>
@@ -4693,6 +4720,7 @@ function renderSettingsBits(){
   if($('sw-pin')) $('sw-pin').classList.toggle('on',!!state.settings.pin);
   if($('sw-bio')) $('sw-bio').classList.toggle('on',!!state.settings.biometricLock);
   try{ renderLocInfo(); }catch(e){}
+  try{ if($('setAiKey')) $('setAiKey').value=getAiKey(); }catch(e){}
   if($('sw-ab')) $('sw-ab').classList.toggle('on',!!state.settings.autoBackup);
   if($('themeBox')){ const themes=[['green','theme_green','#0f7b53'],['blue','theme_blue','#1d6fb8'],['purple','theme_purple','#7b3fb0'],['teal','theme_teal','#0c7b7b']];
     $('themeBox').innerHTML=themes.map(([k,lbl,c])=>`<button class="theme-dot ${state.settings.theme===k?'on':''}" style="background:${c}" onclick="setTheme('${k}')"></button>`).join(''); }
@@ -5988,6 +6016,111 @@ function dialParty(id){
   const p=partyById(id); if(!p||!p.phone){ toast(t('no_phone')); return; }
   try{ if(window.MilkNative&&window.MilkNative.dial){ window.MilkNative.dial(p.phone); return; } }catch(e){}
   try{ window.location.href='tel:'+p.phone; }catch(e){}
+}
+
+/* ================= AI ASSISTANT + INSIGHTS + MONTH CLOSE ================= */
+function getAiKey(){ try{ return localStorage.getItem('milk_ai_key')||''; }catch(e){ return ''; } }
+function saveAiKey(){ try{ const v=($('setAiKey')&&$('setAiKey').value||'').trim(); localStorage.setItem('milk_ai_key',v); toast(v?t('ai_key_saved'):t('ai_key_clear')); }catch(e){} }
+function clearAiKey(){ try{ localStorage.removeItem('milk_ai_key'); if($('setAiKey')) $('setAiKey').value=''; toast(t('ai_key_clear')); }catch(e){} }
+function modAI(){
+  const key=getAiKey();
+  return `<div class="card"><h3>🤖 ${t('ai')}</h3>
+    <div class="hint" style="margin-bottom:10px">${t('ai_hint')}</div>
+    <div id="aiChat"></div>
+    <div class="chips" style="margin-top:8px">
+      <button class="chip" onclick="aiQuick(this)">${t('ai_q1')}</button>
+      <button class="chip" onclick="aiQuick(this)">${t('ai_q2')}</button>
+      <button class="chip" onclick="aiQuick(this)">${t('ai_q3')}</button>
+      <button class="chip" onclick="aiQuick(this)">${t('ai_q4')}</button>
+    </div>
+    <div class="ai-row"><input type="text" id="aiInput" placeholder="${t('ai_ph')}" onkeydown="if(event.key==='Enter')aiSend()" /><button class="btn" style="width:auto" onclick="aiSend()">${t('ai_send')}</button></div>
+    <div class="hint" style="margin-top:8px">${key?'✅ '+t('ai_key')+' ✓':'⚠️ '+t('ai_nokey')}</div></div>`;
+}
+function aiContext(){
+  const m=monthStr(), t0=todayStr();
+  const st=monthStats(m);
+  const td=state.entries.filter(e=>e.date===t0&&e.kind==='sale');
+  const dues=state.parties.filter(p=>p.type==='customer').map(p=>({n:p.name,b:Math.round(partyBalance(p.id))})).filter(x=>x.b>0).sort((a,b)=>b.b-a.b).slice(0,6);
+  const cust=state.parties.filter(p=>p.type==='customer').length;
+  const sup=state.parties.filter(p=>p.type==='supplier').length;
+  const w=state.wastage.filter(x=>x.date.startsWith(m)).reduce((s,x)=>s+(x.value||0),0);
+  return 'दुकान का नाम: '+shopName()
+    +'\nआज ('+fmtDate(t0)+'): '+num(td.reduce((s,e)=>s+e.qty,0))+' लीटर बिक्री, ₹'+Math.round(td.reduce((s,e)=>s+e.amount,0))
+    +'\nइस महीने ('+fmtMonth(m)+'): बिक्री ₹'+Math.round(st.sale)+', खरीद ₹'+Math.round(st.purch)+', खर्च ₹'+Math.round(st.exp)+', बर्बादी ₹'+Math.round(w)+', शुद्ध मुनाफ़ा ₹'+Math.round(st.net)
+    +'\nग्राहक: '+cust+', किसान/सप्लायर: '+sup
+    +'\nसबसे ज़्यादा बकाया: '+(dues.map(d=>d.n+' ₹'+d.b).join(' | ')||'कोई बकाया नहीं');
+}
+function aiQuick(btn){ const q=btn?btn.textContent:''; if($('aiInput')) $('aiInput').value=q; askAI(q); }
+function aiSend(){ const q=($('aiInput')&&$('aiInput').value||'').trim(); if(!q){ return; } if($('aiInput')) $('aiInput').value=''; askAI(q); }
+function askAI(q){
+  const box=$('aiChat'); if(!box) return;
+  const key=getAiKey();
+  box.innerHTML+='<div class="chat-u">'+esc(q)+'</div>';
+  if(!key){ box.innerHTML+='<div class="chat-b">'+esc(t('ai_nokey'))+'</div>'; return; }
+  if(!navigator.onLine){ box.innerHTML+='<div class="chat-b">'+esc(t('ai_offline'))+'</div>'; return; }
+  const id='aiw'+Date.now(); box.innerHTML+='<div class="chat-b" id="'+id+'">…</div>';
+  const url='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+encodeURIComponent(key);
+  const prompt='तुम एक दूध-डेयरी व्यापार के सहायक हो। नीचे दुकान का असली डेटा दिया है। बहुत छोटा, सरल, सटीक और सीधा जवाब हिंदी में दो (सिर्फ़ 3-5 पंक्तियाँ)।\n\n'+aiContext()+'\n\nसवाल: '+q;
+  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.4,maxOutputTokens:500}})})
+   .then(function(r){ return r.json(); })
+   .then(function(j){
+     let txt='';
+     try{ txt=j.candidates[0].content.parts[0].text; }catch(e){ txt=(j.error&&j.error.message)||t('ai_fail'); }
+     const w=$(id); if(w) w.textContent=txt;
+   })
+   .catch(function(){ const w=$(id); if(w) w.textContent=t('ai_fail'); });
+}
+function modInsights(){ return `<div class="card"><h3>🔎 ${t('insights')}</h3><div id="insBox"></div></div>`; }
+function renderInsights(){
+  const box=$('insBox'); if(!box) return;
+  const now=new Date(); const p2=n=>String(n).padStart(2,'0');
+  const m=now.getFullYear()+'-'+p2(now.getMonth()+1);
+  const pd=new Date(now.getFullYear(),now.getMonth()-1,1); const pm=pd.getFullYear()+'-'+p2(pd.getMonth()+1);
+  const st=monthStats(m), ps=monthStats(pm);
+  const out=[];
+  if(st.sale>0){ const mg=Math.round(st.net/st.sale*100);
+    out.push([mg<12?'warn':'ok','💰 '+t('ins_margin'), mg+'% — '+(mg<12?t('ins_margin_low'):t('ins_margin_ok'))]); }
+  const dues=state.parties.filter(p=>p.type==='customer').map(p=>({p:p,b:partyBalance(p.id)})).filter(x=>x.b>500).sort((a,b)=>b.b-a.b);
+  if(dues.length) out.push(['warn','⏳ '+t('ins_dues'), dues.length+' '+t('party_lbl')+' · '+money(dues.reduce((s,x)=>s+x.b,0))+' — '+esc(dues[0].p.name)]);
+  const w=state.wastage.filter(x=>x.date.startsWith(m)).reduce((s,x)=>s+(x.value||0),0);
+  if(w>0&&st.sale>0) out.push([(w/st.sale>0.03)?'warn':'ok','📉 '+t('wastage'), money(w)+' ('+Math.round(w/st.sale*100)+'%)']);
+  if(ps.sale>0){ const d=Math.round((st.sale-ps.sale)/ps.sale*100);
+    out.push([d>=0?'ok':'warn','📈 '+t('c_sale'), (d>=0?'+':'')+d+'% '+t('ins_vs_prev')]); }
+  const cut=new Date(); cut.setDate(cut.getDate()-7); const cs=ymd(cut);
+  const last={}; state.entries.forEach(e=>{ if(!last[e.partyId]||e.date>last[e.partyId]) last[e.partyId]=e.date; });
+  const inact=state.parties.filter(p=>p.type==='customer'&&p.active!==false&&(!last[p.id]||last[p.id]<cs));
+  if(inact.length) out.push(['warn','😴 '+t('inactive'), inact.length+' — '+esc(inact.slice(0,3).map(p=>p.name).join(', '))]);
+  const low=state.items.filter(i=>(i.stock||0)<=(i.lowAt||0)).length;
+  if(low) out.push(['warn','📦 '+t('stock'), low+' '+t('items_lbl')]);
+  box.innerHTML=out.length?out.map(function(o){ return '<div class="ins '+o[0]+'"><span class="ii">'+o[1]+'</span><div>'+o[2]+'</div></div>'; }).join(''):'<div class="empty">'+t('no_data')+'</div>';
+}
+function modMonthClose(){
+  return `<div class="card"><h3>📅 ${t('mclose')}</h3>
+    <div class="field" style="margin:0 0 10px"><label>${t('rep_month')}</label><input type="month" id="mcMonth" value="${monthStr()}" onchange="renderMonthClose()" /></div>
+    <div id="mcBox"></div>
+    <button class="btn" style="width:100%;margin-top:12px" onclick="doMonthClose()">${t('mclose_do')}</button>
+    <div class="hint" style="margin-top:8px">${t('mclose_hint')}</div></div>`;
+}
+function renderMonthClose(){
+  const box=$('mcBox'); if(!box) return;
+  const m=($('mcMonth')&&$('mcMonth').value)||monthStr();
+  const st=monthStats(m);
+  const done=(state.closes||[]).find(c=>c.month===m);
+  box.innerHTML='<div class="bill-line"><span class="k">'+t('c_sale')+'</span><span class="v">'+money(st.sale)+'</span></div>'
+    +'<div class="bill-line"><span class="k">'+t('c_purch')+'</span><span class="v">'+money(st.purch)+'</span></div>'
+    +'<div class="bill-line"><span class="k">'+t('c_exp')+'</span><span class="v">'+money(st.exp)+'</span></div>'
+    +'<div class="bill-line"><span class="k">'+t('wastage')+'</span><span class="v">'+money(st.wast)+'</span></div>'
+    +'<div class="bill-line tot"><span class="k">'+t('net_profit')+'</span><span class="v">'+money(st.net)+'</span></div>'
+    +'<div class="hint" style="margin-top:8px">'+(done?('✅ '+t('mclose_done')+' — '+fmtDate(ymd(new Date(done.at)))):t('mclose_open'))+'</div>';
+}
+function doMonthClose(){
+  const m=($('mcMonth')&&$('mcMonth').value)||monthStr();
+  const st=monthStats(m);
+  const dues=state.parties.map(function(p){ return {id:p.id,b:Math.round(partyBalance(p.id)*100)/100}; }).filter(function(x){ return Math.abs(x.b)>0.5; });
+  state.closes=state.closes||[];
+  state.closes=state.closes.filter(function(c){ return c.month!==m; });
+  state.closes.push({month:m,at:Date.now(),totals:st,dues:dues});
+  save(); renderMonthClose(); toast(t('mclose_saved'));
 }
 
 /* ================= DATA CHECK ================= */
