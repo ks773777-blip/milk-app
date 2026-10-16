@@ -2831,7 +2831,7 @@ const OLD_KEYS=['milk_manager_data_v4','milk_manager_data_v3','milk_manager_data
 const defaultState=()=>({
   parties:[], entries:[], payments:[], expenses:[], items:[], moves:[], holidays:[],
   notes:[], wastage:[], animals:[], loans:[], recurring:[], invoices:[], staff:[], att:[], closes:[],
-  cash:[], health:[], prod:[], feed:[],
+  cash:[], health:[], prod:[], feed:[], complaints:[], occasions:[],
   settings:{ lang:'hi', defaultRate:50, currency:'₹', defaultShift:'morning', roundOff:false,
     waCode:'91', theme:'green', dark:false, pin:'', target:0, upi:'', upiName:'',
     retention:36, autoBackup:true, autoBackupDays:7, lastBackup:0, customCats:[], driveLink:'',
@@ -2998,7 +2998,9 @@ const T={
   privacy_body:'1) यह ऐप आपका सारा डेटा (ग्राहक, एंट्री, भुगतान, खर्च) आपके ही फ़ोन/ब्राउज़र में सेव करता है।\n2) कोई भी डेटा हमारे किसी सर्वर पर नहीं भेजा जाता — हमारा कोई सर्वर ही नहीं है।\n3) Google से साइन इन करने पर सिर्फ़ आपका नाम, ईमेल और फ़ोटो ऐप में दिखता है।\n4) Drive बैकअप चालू करने पर डेटा आपकी खुद की Google Drive में सेव होता है; ऐप सिर्फ़ अपनी बनाई फ़ाइल तक पहुँच रखती है।\n5) ऐप में कोई विज्ञापन नहीं है और डेटा किसी को नहीं बेचा जाता।\n6) “सारा डेटा मिटाएँ” दबाने पर आपका सारा डेटा हमेशा के लिए हट जाता है।',
   terms_body:'1) यह ऐप आपके अपने इस्तेमाल के लिए है — दूध के धंधे का हिसाब रखने हेतु।\n2) बैकअप समय-समय पर लेते रहें; फ़ोन बदलने या ब्राउज़र डेटा मिटने पर बिना बैकअप डेटा चला जा सकता है।\n3) ऐप “जैसा है” (as-is) दिया गया है।\n4) रकम, बिल और रिपोर्ट अपनी जाँच के बाद ही भरोसे लायक मानें।\n5) आप अपना डेटा कभी भी निर्यात या मिटा सकते हैं।', calc_hint:'+ − × ÷ से तुरंत हिसाब। "=" दबाएँ।',
   thank:'धन्यवाद 🙏', bill_title:'बिल', milk_word:'दूध', litres:'लीटर', statement_word:'स्टेटमेंट',
-  help_body:'1) ग्राहक जोड़ें — नाम, नंबर, रेट, डिफ़ॉल्ट मात्रा और (चाहें तो) कई आइटम जैसे गाय/भैंस का दूध।\n2) रोज़ की एंट्री — ➕ से एक-एक, 🧺 से बल्क, या ⚡ से सबकी डिफ़ॉल्ट एंट्री एक साथ।\n3) बिल — दैनिक/10-दिन/15-दिन/मासिक चुनें; PDF, प्रिंट, WhatsApp/SMS, UPI QR।\n4) खाता (Ledger) व स्टेटमेंट — ग्राहक का पूरा हिसाब।\n5) मॉड्यूल टैब में बाकी सब कुछ — रिपोर्ट, खर्च, स्टॉक, रिमाइंडर, बैकअप, सेटिंग।\n6) नए मॉड्यूल — कैलेंडर, टॉप ग्राहक, रूट सारांश, वेस्टेज, पशु रजिस्टर, कैलकुलेटर, नोट्स, खोज।'
+  help_body:'1) ग्राहक जोड़ें — नाम, नंबर, रेट, डिफ़ॉल्ट मात्रा और (चाहें तो) कई आइटम जैसे गाय/भैंस का दूध।\n2) रोज़ की एंट्री — ➕ से एक-एक, 🧺 से बल्क, या ⚡ से सबकी डिफ़ॉल्ट एंट्री एक साथ।\n3) बिल — दैनिक/10-दिन/15-दिन/मासिक चुनें; PDF, प्रिंट, WhatsApp/SMS, UPI QR।\n4) खाता (Ledger) व स्टेटमेंट — ग्राहक का पूरा हिसाब।\n5) मॉड्यूल टैब में बाकी सब कुछ — रिपोर्ट, खर्च, स्टॉक, रिमाइंडर, बैकअप, सेटिंग।\n6) नए मॉड्यूल — कैलेंडर, टॉप ग्राहक, रूट सारांश, वेस्टेज, पशु रजिस्टर, कैलकुलेटर, नोट्स, खोज।',
+  complaints:'शिकायत बुक', cmp_ph:'नई शिकायत लिखें…', cmp_open:'खुली', cmp_done:'हल हो गई',
+  occasions:'त्योहार व जन्मदिन', occ_hint:'ग्राहकों के जन्मदिन व त्योहार याद रखें — जो पास आ रहे हैं वे ऊपर दिखेंगे।', occ_name_ph:'नाम / त्योहार', occ_today:'आज', occ_days:'दिन', occ_in:'में'
  },
  en:{
   tagline:'Milk Manager',
@@ -3155,7 +3157,9 @@ const T={
   privacy_body:'1) This app stores all your data (customers, entries, payments, expenses) on your own phone/browser.\n2) No data is sent to any server of ours — we do not have a server.\n3) When you sign in with Google, only your name, email and photo are shown in the app.\n4) With Drive backup on, data is saved to your own Google Drive; the app can reach only the file it creates.\n5) There are no ads and your data is never sold.\n6) Pressing “Erase all data” permanently removes your data.',
   terms_body:'1) This app is for your own use — keeping your dairy business accounts.\n2) Keep taking backups regularly; without one, data can be lost if the phone changes or browser data is cleared.\n3) The app is provided “as-is”.\n4) Please verify amounts, bills and reports before relying on them.\n5) You can export or erase your data at any time.', calc_hint:'Use + − × ÷ for quick maths. Press "=".',
   thank:'Thank you 🙏', bill_title:'Bill', milk_word:'Milk', litres:'litres',
-  help_body:'1) Add customers — name, number, rate, default quantity and (optionally) multiple items like cow/buffalo milk.\n2) Daily entry — ➕ one by one, 🧺 bulk, or ⚡ all default entries at once.\n3) Bill — pick daily/10-day/15-day/monthly; PDF, print, WhatsApp/SMS, UPI QR.\n4) Ledger & statement — a customer\u2019s full account.\n5) The Modules tab holds everything else — reports, expenses, stock, reminders, backup, settings.\n6) New modules — Calendar, Top customers, Route summary, Wastage, Cattle register, Calculator, Notes, Search.'
+  help_body:'1) Add customers — name, number, rate, default quantity and (optionally) multiple items like cow/buffalo milk.\n2) Daily entry — ➕ one by one, 🧺 bulk, or ⚡ all default entries at once.\n3) Bill — pick daily/10-day/15-day/monthly; PDF, print, WhatsApp/SMS, UPI QR.\n4) Ledger & statement — a customer\u2019s full account.\n5) The Modules tab holds everything else — reports, expenses, stock, reminders, backup, settings.\n6) New modules — Calendar, Top customers, Route summary, Wastage, Cattle register, Calculator, Notes, Search.',
+  complaints:'Complaints book', cmp_ph:'Write a new complaint…', cmp_open:'open', cmp_done:'resolved',
+  occasions:'Occasions & birthdays', occ_hint:'Remember customers’ birthdays & festivals — the upcoming ones appear on top.', occ_name_ph:'Name / festival', occ_today:'today', occ_days:'days', occ_in:'in'
  }
 };
 let LANG='hi';
@@ -3183,6 +3187,7 @@ function deepDefaults(d){
   s.notes=d.notes||[]; s.wastage=d.wastage||[]; s.animals=d.animals||[]; s.loans=d.loans||[]; s.recurring=d.recurring||[];
   s.invoices=d.invoices||[]; s.staff=d.staff||[]; s.att=d.att||[]; s.closes=d.closes||[];
   s.cash=d.cash||[]; s.health=d.health||[]; s.prod=d.prod||[]; s.feed=d.feed||[];
+  s.complaints=d.complaints||[]; s.occasions=d.occasions||[];
   s.parties.forEach(p=>{ if(!p.items) p.items=[]; });
   return s;
 }
@@ -3357,7 +3362,7 @@ const GMAP={bulk:'daily',bulkMonthly:'daily',holiday:'daily',milkcard:'daily',ca
  animals:'farm',wastage:'farm',
  backup:'app',drive:'app',account:'app',settings:'app',perms:'app',ai:'app',datacheck:'app',support:'app',legal:'app',help:'app',
  insights:'report',monthclose:'money',cashbook:'money',routemap:'people',
- ahealth:'farm',aprod:'farm',avacc:'farm',feed:'farm',fat30:'farm',wastpie:'farm'};
+ ahealth:'farm',aprod:'farm',avacc:'farm',feed:'farm',fat30:'farm',wastpie:'farm',complaints:'people',occasions:'people'};
 const REL={
   invoices:['bills','bulkbill','statement','payments'],
   bills:['invoices','bulkbill','statement','ledger'],
@@ -3483,6 +3488,8 @@ const MODULES=[
   {id:'ai',         ic:'🤖', hi:'AI सहायक',           en:'AI assistant',      render:modAI},
   {id:'insights',   ic:'🔎', hi:'स्मार्ट इनसाइट्स',    en:'Smart insights',    render:modInsights, after:renderInsights},
   {id:'monthclose', ic:'📅', hi:'महीना बंद (हिसाब)',  en:'Month close',       render:modMonthClose,after:renderMonthClose},
+  {id:'complaints', ic:'📣', hi:'शिकायत बुक',         en:'Complaints',        render:modComplaints},
+  {id:'occasions',  ic:'🎂', hi:'त्योहार व जन्मदिन',  en:'Occasions',         render:modOccasions},
 ];
 function switchTab(tab){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -5890,6 +5897,41 @@ function addNote(){ const el=$('noteInput'); if(!el) return; const v=el.value.tr
   state.notes.unshift({id:uid(),text:v,done:false,at:Date.now()}); save(); rerenderModule(); }
 function toggleNote(id){ const n=state.notes.find(x=>x.id===id); if(!n) return; n.done=!n.done; save(); rerenderModule(); }
 function delNote(id){ state.notes=state.notes.filter(x=>x.id!==id); save(); rerenderModule(); toast(t('deleted')); }
+
+/* ---- 📣 शिकायत बुक (Complaints) ---- */
+function modComplaints(){
+  const list=(state.complaints||[]).slice().sort((a,b)=>(a.done?1:0)-(b.done?1:0)||(b.at||0)-(a.at||0));
+  const open=list.filter(c=>!c.done).length;
+  return `<div class="card"><h3>📣 ${t('complaints')}${open?' <span class="sub">'+open+' '+t('cmp_open')+'</span>':''}</h3>
+    <div style="display:flex;gap:8px;margin-bottom:12px"><input type="text" id="cmpInput" style="flex:1" placeholder="${t('cmp_ph')}" onkeydown="if(event.key==='Enter')addComplaint()" /><button class="btn ghost sm" onclick="addComplaint()">➕</button></div>
+    <div>${list.length?list.map(complaintRow).join(''):'<div class="empty">'+t('no_data_toast')+'</div>'}</div></div>`;
+}
+function complaintRow(c){
+  return `<div class="list-item"><div class="avatar" style="background:${c.done?'var(--green-l)':'var(--amber-l)'};color:${c.done?'var(--green-d)':'var(--amber)'}" onclick="toggleComplaint('${c.id}')">${c.done?'✔️':'📣'}</div>
+    <div class="li-main" onclick="toggleComplaint('${c.id}')"><div class="t" style="${c.done?'text-decoration:line-through;opacity:.6':''}">${esc(c.text)}</div><div class="s">${fmtDateTime(c.at||Date.now())}${c.done?' • '+t('cmp_done'):''}</div></div>
+    <button class="btn danger xs" onclick="delComplaint('${c.id}')">🗑</button></div>`;
+}
+function addComplaint(){ const el=$('cmpInput'); if(!el) return; const v=el.value.trim(); if(!v) return; (state.complaints=state.complaints||[]).unshift({id:uid(),text:v,done:false,at:Date.now()}); save(); rerenderModule(); }
+function toggleComplaint(id){ const c=(state.complaints||[]).find(x=>x.id===id); if(!c) return; c.done=!c.done; save(); rerenderModule(); }
+function delComplaint(id){ state.complaints=(state.complaints||[]).filter(x=>x.id!==id); save(); rerenderModule(); toast(t('deleted')); }
+
+/* ---- 🎂 त्योहार व जन्मदिन (Occasions) ---- */
+function daysToOcc(dateStr){ if(!dateStr) return null; const now=new Date(); const md=dateStr.slice(5); const y=now.getFullYear(); const today=new Date(y,now.getMonth(),now.getDate()); let d=new Date(y+'-'+md+'T00:00:00'); if(d<today) d=new Date((y+1)+'-'+md+'T00:00:00'); return Math.round((d-today)/86400000); }
+function modOccasions(){
+  const list=(state.occasions||[]).slice().sort((a,b)=>((daysToOcc(a.date)||0)-(daysToOcc(b.date)||0)));
+  return `<div class="card"><h3>🎂 ${t('occasions')}</h3>
+    <div class="hint" style="margin-bottom:10px">${t('occ_hint')}</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px"><input type="date" id="occDate" style="flex:1" /><input type="text" id="occName" style="flex:2" placeholder="${t('occ_name_ph')}" onkeydown="if(event.key==='Enter')addOccasion()" /><button class="btn ghost sm" onclick="addOccasion()">➕</button></div>
+    <div>${list.length?list.map(occasionRow).join(''):'<div class="empty">'+t('no_data_toast')+'</div>'}</div></div>`;
+}
+function occasionRow(o){
+  const d=daysToOcc(o.date); const soon=(d!=null&&d<=7);
+  return `<div class="list-item"><div class="avatar" style="background:${soon?'var(--amber-l)':'var(--green-l)'};color:${soon?'var(--amber)':'var(--green-d)'}">🎂</div>
+    <div class="li-main"><div class="t">${esc(o.name)}</div><div class="s">${fmtDate(o.date)}${d!=null?' • '+(d===0?t('occ_today'):d+' '+t('occ_days')+' '+t('occ_in')):''}</div></div>
+    <button class="btn danger xs" onclick="delOccasion('${o.id}')">🗑</button></div>`;
+}
+function addOccasion(){ const dn=$('occName'), dd=$('occDate'); if(!dn||!dd) return; const name=dn.value.trim(), date=dd.value; if(!name||!date){ toast(t('enter_name')); return; } (state.occasions=state.occasions||[]).push({id:uid(),name:name,date:date}); save(); rerenderModule(); }
+function delOccasion(id){ state.occasions=(state.occasions||[]).filter(x=>x.id!==id); save(); rerenderModule(); toast(t('deleted')); }
 /* ---- 🔍 Global search ---- */
 function modSearch(){
   return `<div class="card"><h3>${t('search_all')}</h3>
