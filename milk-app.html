@@ -2729,11 +2729,11 @@ const OLD_KEYS=['milk_manager_data_v4','milk_manager_data_v3','milk_manager_data
 
 const defaultState=()=>({
   parties:[], entries:[], payments:[], expenses:[], items:[], moves:[], holidays:[],
-  notes:[], wastage:[], animals:[],
+  notes:[], wastage:[], animals:[], loans:[], recurring:[],
   settings:{ lang:'hi', defaultRate:50, currency:'₹', defaultShift:'morning', roundOff:false,
     waCode:'91', theme:'green', dark:false, pin:'', target:0, upi:'', upiName:'',
     retention:12, autoBackup:true, autoBackupDays:7, lastBackup:0, customCats:[], driveLink:'',
-    driveAuto:false, driveFileId:'', lastDriveBackup:0, autoShift:true, onboarded:false,
+    driveAuto:false, driveFileId:'', lastDriveBackup:0, autoShift:true, onboarded:false, driveConnected:false,
     business:{ name:'दूध हिसाब', owner:'', phone:'', address:'' } },
   account:null
 });
@@ -2828,6 +2828,13 @@ const T={
   profile:'प्रोफ़ाइल', pf_signedin:'साइन इन', pf_guest:'अतिथि', pf_guest_x:'साइन इन करके अपनी पहचान जोड़ें', pf_local:'नाम और नंबर से शुरू करें', pf_name:'आपका नाम', pf_phone:'मोबाइल नंबर', pf_saved:'प्रोफ़ाइल सेव', pf_local_note:'यह सिर्फ़ इस डिवाइस पर सेव होगा — कोई OTP या सर्वर नहीं।',
   qa_bills:'बिल', qa_pay:'भुगतान', qa_rep:'रिपोर्ट', qa_drive:'बैकअप', qa_cal:'कैलेंडर', qa_help:'सहायता',
   bulkbill:'बल्क बिल भेजें', bb_start:'भेजना शुरू करें', bb_hint:'एक-एक ग्राहक का बिल WhatsApp पर भेजें — “भेजें” दबाएँ, फिर “अगला”। (बिना टैप ऑटो-सेंड के लिए WhatsApp Business API चाहिए।)', bb_pdf:'PDF / प्रिंट', bb_done:'सब बिल भेज दिए गए', shift_coll:'सुबह / शाम कलेक्शन',
+  compare:'महीना तुलना', c_sale:'बिक्री', c_purch:'खरीद', c_exp:'खर्च', c_prev:'पिछला महीना',
+  delivery:'डिलीवरी शीट', route_lbl:'रूट', show:'देखें',
+  loans:'उधार / कर्ज़', l_add:'उधार जोड़ें', l_lent:'दिया (लेना है)', l_borrowed:'लिया (देना है)', l_name:'नाम', l_kind:'प्रकार',
+  quality:'गुणवत्ता (FAT)', no_fat:'कोई फैट डेटा नहीं', q_avg:'औसत फैट', q_samples:'कितनी एंट्री',
+  inactive:'निष्क्रिय ग्राहक', in_days:'कितने दिन से नहीं', last_seen:'आख़िरी बार', never_seen:'कभी नहीं', all_active:'सभी ग्राहक सक्रिय हैं',
+  recurring:'आवर्ती खर्च', rec_hint:'हर महीने दोहराने वाले खर्च (किराया, सैलरी, बिजली…) — एक टैप में इस महीने जोड़ें।', rec_run:'इस महीने के खर्च जोड़ें', rec_already:'पहले ही जोड़े जा चुके हैं',
+  amount:'रकम', note:'नोट', category:'श्रेणी',
   hl1_t:'आज का हिसाब', hl1_x:'{q} लीटर · {a}', hl2_t:'बकाया', hl2_x:'ग्राहकों से {a} लेना है', hl3_t:'इस महीने का लक्ष्य', hl4_t:'ऑटो शिफ्ट चालू', hl4_x:'एंट्री खोलते ही सुबह/शाम अपने आप चुनी जाएगी', hl5_t:'Drive बैकअप चालू', hl5_x:'हर बदलाव अपने आप Drive में सेव होगा',
   support:'सहायता', support_x:'आम सवाल नीचे दिए हैं — खोलकर पढ़ें।',
   faq1_q:'ऑटो शिफ्ट कैसे बंद करें?', faq1_a:'सेटिंग → “ऑटो शिफ्ट” टॉगल बंद कर दें; फिर डिफ़ॉल्ट शिफ्ट इस्तेमाल होगी।',
@@ -2939,6 +2946,13 @@ const T={
   profile:'Profile', pf_signedin:'signed in', pf_guest:'Guest', pf_guest_x:'Sign in to add your identity', pf_local:'Continue with name & number', pf_name:'Your name', pf_phone:'Mobile number', pf_saved:'Profile saved', pf_local_note:'Saved on this device only — no OTP or server.',
   qa_bills:'Bills', qa_pay:'Payments', qa_rep:'Reports', qa_drive:'Backup', qa_cal:'Calendar', qa_help:'Help',
   bulkbill:'Send bills in bulk', bb_start:'Start sending', bb_hint:'Send each customer their bill on WhatsApp — tap Send, then Next. (True no-tap auto-send needs the WhatsApp Business API.)', bb_pdf:'PDF / Print', bb_done:'All bills sent', shift_coll:'Morning / evening collection',
+  compare:'Month comparison', c_sale:'Sales', c_purch:'Purchases', c_exp:'Expenses', c_prev:'Last month',
+  delivery:'Delivery sheet', route_lbl:'Route', show:'Show',
+  loans:'Loans / credit', l_add:'Add loan', l_lent:'Given (to get)', l_borrowed:'Taken (to give)', l_name:'Name', l_kind:'Type',
+  quality:'Quality (FAT)', no_fat:'No fat data', q_avg:'Average fat', q_samples:'Entries',
+  inactive:'Inactive customers', in_days:'No entry for (days)', last_seen:'Last seen', never_seen:'Never', all_active:'All customers are active',
+  recurring:'Recurring expenses', rec_hint:'Expenses that repeat monthly (rent, salary, electricity…) — add them for this month in one tap.', rec_run:'Add this month\u2019s expenses', rec_already:'Already added',
+  amount:'Amount', note:'Note', category:'Category',
   hl1_t:'Today\u2019s numbers', hl1_x:'{q} litres · {a}', hl2_t:'Dues', hl2_x:'{a} to collect from customers', hl3_t:'This month\u2019s target', hl4_t:'Auto shift is on', hl4_x:'Morning/evening will be picked automatically when you open an entry', hl5_t:'Drive backup is on', hl5_x:'Every change is saved to Drive automatically',
   support:'Help & support', support_x:'Common questions below — tap to open.',
   faq1_q:'How do I turn off auto shift?', faq1_a:'Settings → turn off the “Auto shift” toggle; the default shift will be used instead.',
@@ -2985,7 +2999,7 @@ function deepDefaults(d){
   s.settings.business=Object.assign(defaultState().settings.business,(d.settings&&d.settings.business)||{});
   if(d.settings&&d.settings.appName&&!s.settings.business.name) s.settings.business.name=d.settings.appName;
   s.account=d.account||null;
-  s.notes=d.notes||[]; s.wastage=d.wastage||[]; s.animals=d.animals||[];
+  s.notes=d.notes||[]; s.wastage=d.wastage||[]; s.animals=d.animals||[]; s.loans=d.loans||[]; s.recurring=d.recurring||[];
   s.parties.forEach(p=>{ if(!p.items) p.items=[]; });
   return s;
 }
@@ -3000,7 +3014,7 @@ function migrate(o){
   s.payments=(o.payments||[]).map(p=>({ id:p.id,date:p.date,partyId:p.partyId||p.customerId,amount:p.amount,mode:p.mode||'',note:p.note||'' }));
   s.expenses=o.expenses||[]; s.items=o.items||[]; s.moves=o.moves||[]; s.holidays=o.holidays||[];
   s.account=o.account||null;
-  s.notes=o.notes||[]; s.wastage=o.wastage||[]; s.animals=o.animals||[];
+  s.notes=o.notes||[]; s.wastage=o.wastage||[]; s.animals=o.animals||[]; s.loans=o.loans||[]; s.recurring=o.recurring||[];
   return s;
 }
 function save(){ rebuildIndex(); try{ localStorage.setItem(STORE_KEY,JSON.stringify(state)); }catch(e){ toast('⚠️ Storage full'); } try{ scheduleAutoDriveBackup(); }catch(e){} }
@@ -3174,6 +3188,12 @@ const MODULES=[
   {id:'notes',      ic:'📝', hi:'नोट्स',               en:'Notes',             render:modNotes},
   {id:'bills',      ic:'🧾', hi:'बिल बनाएँ',          en:'Create bills',      jump:'bills'},
   {id:'bulkbill',   ic:'📤', hi:'बल्क बिल भेजें',     en:'Bulk send bills',   render:modBulkBill, after:renderBulkBill},
+  {id:'compare',    ic:'📊', hi:'महीना तुलना',        en:'Month comparison',  render:modCompare,  after:renderCompare},
+  {id:'delivery',   ic:'🚚', hi:'डिलीवरी शीट',        en:'Delivery sheet',    render:modDelivery, after:renderDelivery},
+  {id:'quality',    ic:'🥛', hi:'गुणवत्ता (FAT)',     en:'Quality (FAT)',     render:modQuality,  after:function(){renderQuality('month');}},
+  {id:'inactive',   ic:'😴', hi:'निष्क्रिय ग्राहक',    en:'Inactive customers',render:modInactive, after:renderInactive},
+  {id:'loans',      ic:'💳', hi:'उधार / कर्ज़',        en:'Loans / credit',    render:modLoans},
+  {id:'recurring',  ic:'🔁', hi:'आवर्ती खर्च',         en:'Recurring expenses',render:modRecurring},
   {id:'support',    ic:'🆘', hi:'सहायता',             en:'Help & support',    render:modSupport},
   {id:'legal',      ic:'📜', hi:'नियम व प्राइवेसी',    en:'Legal & privacy',   render:modLegal},
   {id:'help',       ic:'❓', hi:'मदद',                en:'Help',              render:modHelp}
@@ -4792,7 +4812,7 @@ function initDriveAuth(){
 }
 function connectDrive(){ initDriveAuth(); if(!tokenClient){ toast(t('dr_needlogin')); return; } try{ tokenClient.requestAccessToken({prompt:''}); }catch(e){ toast(t('dr_authfail')); } }
 function driveReady(){ return !!driveToken && Date.now()<driveTokenExp; }
-function onDriveConnected(){ toast(t('dr_connected')); renderDriveBits(); if(curModule==='drive') rerenderModule(); if(state.settings.driveAuto) driveBackupNow(true); }
+function onDriveConnected(){ state.settings.driveConnected=true; try{ save(); }catch(e){} toast(t('dr_connected')); renderDriveBits(); if(curModule==='drive') rerenderModule(); if(state.settings.driveAuto) driveBackupNow(true); }
 function driveHeaders(extra){ return Object.assign({Authorization:'Bearer '+driveToken}, extra||{}); }
 async function findBackupFile(){
   const q=encodeURIComponent("name='milk-backup.json' and trashed=false");
@@ -5304,6 +5324,205 @@ function printBillR(id,r){
   w.document.close();
 }
 
+/* ================= AUTO BACKUP (Android-friendly) ================= */
+let driveSilentTried=false;
+function driveAutoSync(){
+  if(!state.settings.driveAuto) return;
+  if(driveReady()){ scheduleAutoDriveBackup(); return; }
+  if(driveSilentTried) return;
+  driveSilentTried=true;
+  try{ initDriveAuth(); if(tokenClient&&state.settings.driveConnected) tokenClient.requestAccessToken({prompt:''}); }catch(e){}
+}
+function registerPeriodicSync(){
+  try{
+    if(!('serviceWorker' in navigator) || !navigator.serviceWorker.ready) return;
+    navigator.serviceWorker.ready.then(function(r){
+      try{ if(r.periodicSync&&r.periodicSync.register){ r.periodicSync.register('milk-drive-sync',{minInterval:6*60*60*1000}).catch(function(){}); } }catch(e){}
+    }).catch(function(){});
+  }catch(e){}
+}
+/* ================= EXTRA MODULES ================= */
+/* ---- 📊 Month comparison ---- */
+function monthStats(pre){
+  const e=state.entries.filter(x=>x.date.startsWith(pre));
+  const sale=e.filter(x=>x.kind==='sale').reduce((s,x)=>s+x.amount,0);
+  const purch=e.filter(x=>x.kind==='purchase').reduce((s,x)=>s+x.amount,0);
+  const exp=state.expenses.filter(x=>x.date.startsWith(pre)).reduce((s,x)=>s+x.amount,0);
+  const wast=state.wastage.filter(x=>x.date.startsWith(pre)).reduce((s,x)=>s+(x.value||0),0);
+  return {sale,purch,exp,wast,net:sale-purch-exp-wast};
+}
+function modCompare(){ return `<div class="card"><h3>📊 ${t('compare')}</h3><div id="cmpBox"></div></div>`; }
+function renderCompare(){
+  const box=$('cmpBox'); if(!box) return;
+  const now=new Date(); const p2=n=>String(n).padStart(2,'0');
+  const cur=now.getFullYear()+'-'+p2(now.getMonth()+1);
+  const pd=new Date(now.getFullYear(),now.getMonth()-1,1); const prev=pd.getFullYear()+'-'+p2(pd.getMonth()+1);
+  const a=monthStats(cur), b=monthStats(prev);
+  const row=(lbl,x,y,goodUp)=>{ const d=x-y; const ar=d>0?'▲':d<0?'▼':'—'; const col=(Math.abs(d)<0.5)?'var(--muted)':((d>0)===!!goodUp?'var(--green)':'var(--red)');
+    return `<div class="bill-line"><span class="k">${lbl}</span><span class="v">${money(x)} <span style="font-size:11px;color:${col}">${ar}</span></span></div>`; };
+  box.innerHTML=`<div class="hint" style="margin-bottom:8px">${fmtMonth(prev)} → ${fmtMonth(cur)}</div>
+    ${row(t('c_sale'),a.sale,b.sale,true)}
+    ${row(t('c_purch'),a.purch,b.purch,false)}
+    ${row(t('c_exp'),a.exp,b.exp,false)}
+    ${row(t('wastage'),a.wast,b.wast,false)}
+    <div class="bill-line tot"><span class="k">${t('net_profit')}</span><span class="v">${money(a.net)}</span></div>
+    <div class="hint" style="margin-top:8px">${t('c_prev')}: ${t('net_profit')} ${money(b.net)}</div>`;
+}
+/* ---- 🚚 Delivery sheet ---- */
+function modDelivery(){
+  return `<div class="card"><h3>🚚 ${t('delivery')}</h3>
+    <div class="row2"><div class="field"><label>${t('date')}</label><input type="date" id="dlDate" value="${todayStr()}" /></div>
+    <div class="field"><label>${t('shift')}</label><select id="dlShift"><option value="morning">${t('morning')}</option><option value="evening">${t('evening')}</option><option value="both">${t('both')}</option></select></div></div>
+    <div class="btn-row"><button class="btn" onclick="renderDelivery()">${t('show')}</button><button class="btn grey" onclick="printDelivery()">🖨️ ${t('print')}</button></div>
+    <div id="dlBox" style="margin-top:12px"></div></div>`;
+}
+function deliveryRows(){
+  const date=($('dlDate')&&$('dlDate').value)||todayStr();
+  const sh=($('dlShift')&&$('dlShift').value)||'both';
+  const shifts=sh==='both'?['morning','evening']:[sh];
+  const rows=[];
+  state.parties.filter(p=>p.type==='customer'&&p.active!==false).forEach(p=>{
+    if(isHoliday(date,p.id)) return;
+    shifts.forEach(s=>{ const ex=state.entries.find(e=>e.partyId===p.id&&e.date===date&&e.shift===s);
+      const q=ex?ex.qty:(p.defaultQty||0); if(q>0) rows.push({p,shift:s,qty:q,done:!!ex,route:(p.route||'').trim()||t('no_route')}); });
+  });
+  rows.sort((a,b)=>a.route.localeCompare(b.route)||a.p.name.localeCompare(b.p.name));
+  return {date,rows};
+}
+function renderDelivery(){
+  const box=$('dlBox'); if(!box) return; const d=deliveryRows();
+  if(!d.rows.length){ box.innerHTML='<div class="empty">'+t('no_data')+'</div>'; return; }
+  const tot=d.rows.reduce((s,r)=>s+r.qty,0);
+  box.innerHTML=d.rows.map(r=>`<div class="list-item"><div class="avatar">${r.done?'✅':'⬜'}</div>
+    <div class="li-main"><div class="t">${esc(r.p.name)}</div><div class="s">${esc(r.route)} • ${r.shift==='evening'?t('evening'):t('morning')}</div></div>
+    <div class="li-amt"><div class="a">${num(r.qty)} L</div></div></div>`).join('')
+    +`<div class="bill-line tot" style="margin-top:10px"><span class="k">${t('total')}</span><span class="v">${num(tot)} L</span></div>`;
+}
+function printDelivery(){
+  const d=deliveryRows(); const w=window.open('','_blank'); if(!w) return;
+  w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+t('delivery')+'</title>'+billPageCss()+'</head><body>'
+    +'<div class="hd"><div><h1>'+esc(shopName())+'</h1><h2>'+t('delivery')+' — '+fmtDate(d.date)+'</h2></div></div>'
+    +'<table><thead><tr><th>'+t('party_lbl')+'</th><th>'+t('route_lbl')+'</th><th>'+t('shift')+'</th><th>L</th><th>✔</th></tr></thead><tbody>'
+    +d.rows.map(r=>'<tr><td>'+esc(r.p.name)+'</td><td>'+esc(r.route)+'</td><td>'+(r.shift==='evening'?t('evening'):t('morning'))+'</td><td>'+num(r.qty)+'</td><td></td></tr>').join('')
+    +'</tbody></table><div class="ft">'+t('total')+': '+num(d.rows.reduce((s,r)=>s+r.qty,0))+' L</div></body></html>');
+  w.document.close();
+}
+/* ---- 🥛 Quality (FAT) ---- */
+function modQuality(){
+  return `<div class="card"><h3>🥛 ${t('quality')}</h3>
+    <div class="seg"><button id="q-m" class="on" onclick="renderQuality('month')">${t('rep_month')}</button><button id="q-y" onclick="renderQuality('year')">${t('rep_yearwise')}</button></div>
+    <div id="qBox" style="margin-top:12px"></div></div>`;
+}
+function renderQuality(period){
+  window._q=period; if($('q-m')) $('q-m').classList.toggle('on',period==='month'); if($('q-y')) $('q-y').classList.toggle('on',period==='year');
+  const pre=period==='year'?(''+new Date().getFullYear()):monthStr();
+  const es=state.entries.filter(e=>e.date.startsWith(pre)&&e.kind==='sale'&&e.fat>0);
+  const box=$('qBox'); if(!box) return;
+  if(!es.length){ box.innerHTML='<div class="empty">'+t('no_fat')+'</div>'; return; }
+  const totQ=es.reduce((s,e)=>s+e.qty,0), wfat=es.reduce((s,e)=>s+e.qty*e.fat,0);
+  const b={'<4':0,'4-5':0,'5-6':0,'6-7':0,'7+':0};
+  es.forEach(e=>{ const f=e.fat; if(f<4)b['<4']+=e.qty; else if(f<5)b['4-5']+=e.qty; else if(f<6)b['5-6']+=e.qty; else if(f<7)b['6-7']+=e.qty; else b['7+']+=e.qty; });
+  box.innerHTML=`<div class="bill-line"><span class="k">${t('q_avg')}</span><span class="v">${num(Math.round((totQ?wfat/totQ:0)*100)/100)}</span></div>
+    <div class="bill-line"><span class="k">${t('q_samples')}</span><span class="v">${es.length}</span></div>
+    <div class="divider"></div>
+    ${Object.keys(b).map(k=>`<div class="bill-line"><span class="k">${t('fat_short')} ${k}</span><span class="v">${num(b[k])} L</span></div>`).join('')}`;
+}
+/* ---- 😴 Inactive customers ---- */
+function modInactive(){
+  return `<div class="card"><h3>😴 ${t('inactive')}</h3>
+    <div class="field" style="margin:0 0 10px"><label>${t('in_days')}</label><input type="number" id="inDays" value="7" min="1" oninput="renderInactive()" /></div>
+    <div id="inBox"></div></div>`;
+}
+function renderInactive(){
+  const box=$('inBox'); if(!box) return;
+  const days=parseInt(($('inDays')&&$('inDays').value)||'7',10)||7;
+  const cut=new Date(); cut.setDate(cut.getDate()-days); const cutStr=ymd(cut);
+  const last={}; state.entries.forEach(e=>{ if(!last[e.partyId]||e.date>last[e.partyId]) last[e.partyId]=e.date; });
+  const list=state.parties.filter(p=>p.type==='customer'&&p.active!==false).map(p=>({p,last:last[p.id]||''}))
+    .filter(x=>!x.last||x.last<cutStr).sort((a,b)=>(a.last||'').localeCompare(b.last||''));
+  box.innerHTML=list.length?list.map(({p,last})=>`<div class="list-item">${avatarHtml(p)}
+      <div class="li-main"><div class="t">${esc(p.name)}</div><div class="s">${last?(t('last_seen')+' '+fmtDate(last)):t('never_seen')}</div></div>
+      ${p.phone?`<button class="btn wa xs" onclick="waRemind('${p.id}')">🔔</button>`:''}</div>`).join('')
+    :'<div class="empty"><span class="big">✅</span>'+t('all_active')+'</div>';
+}
+/* ---- 💳 Loans / credit ---- */
+function modLoans(){
+  const lent=(state.loans||[]).filter(l=>l.kind==='lent'&&!l.settled).reduce((s,l)=>s+l.amount,0);
+  const bor=(state.loans||[]).filter(l=>l.kind==='borrowed'&&!l.settled).reduce((s,l)=>s+l.amount,0);
+  return `<div class="card"><h3>💳 ${t('loans')}</h3>
+    <button class="btn" style="width:100%;margin-bottom:12px" onclick="openLoan()">➕ ${t('l_add')}</button>
+    <div class="bill-line"><span class="k">${t('l_lent')}</span><span class="v" style="color:var(--green-d)">${money(lent)}</span></div>
+    <div class="bill-line"><span class="k">${t('l_borrowed')}</span><span class="v" style="color:var(--red)">${money(bor)}</span></div>
+    <div class="divider"></div>
+    <div>${(state.loans||[]).length?state.loans.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(loanRow).join(''):'<div class="empty">'+t('no_data')+'</div>'}</div></div>`;
+}
+function loanRow(l){
+  return `<div class="list-item"><div class="avatar" style="background:${l.kind==='lent'?'var(--green-l)':'var(--red-l)'};color:${l.kind==='lent'?'var(--green-d)':'var(--red)'}">${l.kind==='lent'?'📤':'📥'}</div>
+    <div class="li-main"><div class="t" style="${l.settled?'text-decoration:line-through;opacity:.6':''}">${esc(l.name)}</div><div class="s">${fmtDate(l.date)}${l.note?' • '+esc(l.note):''}</div></div>
+    <div class="li-amt"><div class="a">${money(l.amount)}</div></div>
+    <button class="btn grey xs" onclick="toggleLoan('${l.id}')">${l.settled?'↺':'✔'}</button>
+    <button class="btn danger xs" onclick="delLoan('${l.id}')">🗑</button></div>`;
+}
+function openLoan(){
+  openModal(`<div class="sheet-head"><h2>${t('loans')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>${t('l_name')}</label><input type="text" id="ln_name" /></div>
+    <div class="field"><label>${t('l_kind')}</label><select id="ln_kind"><option value="lent">${t('l_lent')}</option><option value="borrowed">${t('l_borrowed')}</option></select></div>
+    <div class="row2"><div class="field"><label>${t('amount')}</label><input type="number" inputmode="numeric" id="ln_amt" /></div>
+    <div class="field"><label>${t('date')}</label><input type="date" id="ln_date" value="${todayStr()}" /></div></div>
+    <div class="field"><label>${t('note')}</label><input type="text" id="ln_note" /></div>
+    <button class="btn" onclick="saveLoan()">${t('save')}</button>`);
+}
+function saveLoan(){
+  const n=$('ln_name').value.trim(), a=parseFloat($('ln_amt').value)||0;
+  if(!n){ toast(t('enter_name')); return; } if(a<=0){ toast(t('enter_amount')); return; }
+  state.loans=state.loans||[];
+  state.loans.push({id:uid(),date:$('ln_date').value||todayStr(),name:n,amount:a,kind:$('ln_kind').value,note:$('ln_note').value.trim(),settled:false});
+  save(); closeModal(); rerenderModule(); toast(t('saved'));
+}
+function toggleLoan(id){ const l=(state.loans||[]).find(x=>x.id===id); if(!l) return; l.settled=!l.settled; save(); rerenderModule(); }
+function delLoan(id){ state.loans=(state.loans||[]).filter(x=>x.id!==id); save(); rerenderModule(); toast(t('deleted')); }
+/* ---- 🔁 Recurring expenses ---- */
+function modRecurring(){
+  const list=state.recurring||[];
+  return `<div class="card"><h3>🔁 ${t('recurring')}</h3>
+    <div class="hint" style="margin-bottom:10px">${t('rec_hint')}</div>
+    <button class="btn" style="width:100%;margin-bottom:10px" onclick="openRecurring('')">➕ ${t('add')}</button>
+    <div>${list.length?list.map(recurringRow).join(''):'<div class="empty">'+t('no_data')+'</div>'}</div>
+    ${list.length?`<button class="btn grey" style="margin-top:12px" onclick="runRecurring()">${t('rec_run')}</button>`:''}</div>`;
+}
+function recurringRow(r){
+  return `<div class="list-item"><div class="avatar">🔁</div>
+    <div class="li-main"><div class="t">${esc(r.name)}</div><div class="s">${catLabel(r.cat)} • ${t('day')} ${r.day}</div></div>
+    <div class="li-amt"><div class="a">${money(r.amount)}</div></div>
+    <button class="btn grey xs" onclick="openRecurring('${r.id}')">✏️</button>
+    <button class="btn danger xs" onclick="delRecurring('${r.id}')">🗑</button></div>`;
+}
+function openRecurring(id){
+  const r=id?(state.recurring||[]).find(x=>x.id===id):null;
+  openModal(`<div class="sheet-head"><h2>${t('recurring')}</h2><button class="x" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>${t('enter_name')}</label><input type="text" id="rc_name" value="${r?esc(r.name):''}" /></div>
+    <div class="row2"><div class="field"><label>${t('amount')}</label><input type="number" id="rc_amt" value="${r?r.amount:''}" /></div>
+    <div class="field"><label>${t('day')}</label><input type="number" min="1" max="28" id="rc_day" value="${r?r.day:1}" /></div></div>
+    <div class="field"><label>${t('category')}</label><select id="rc_cat">${CATS.map(c=>`<option value="${c}" ${r&&r.cat===c?'selected':''}>${catLabel(c)}</option>`).join('')}</select></div>
+    <button class="btn" onclick="saveRecurring('${id||''}')">${t('save')}</button>`);
+}
+function saveRecurring(id){
+  const n=$('rc_name').value.trim(); if(!n){ toast(t('enter_name')); return; }
+  const obj={name:n,amount:parseFloat($('rc_amt').value)||0,day:Math.min(28,Math.max(1,parseInt($('rc_day').value,10)||1)),cat:$('rc_cat').value,active:true};
+  state.recurring=state.recurring||[];
+  if(id){ const r=state.recurring.find(x=>x.id===id); if(r) Object.assign(r,obj); } else state.recurring.push(Object.assign({id:uid()},obj));
+  save(); closeModal(); rerenderModule(); toast(t('saved'));
+}
+function delRecurring(id){ state.recurring=(state.recurring||[]).filter(x=>x.id!==id); save(); rerenderModule(); toast(t('deleted')); }
+function runRecurring(){
+  const m=monthStr(); const list=(state.recurring||[]).filter(r=>r.active!==false); if(!list.length){ toast(t('no_data')); return; }
+  let n=0;
+  list.forEach(r=>{ const date=m+'-'+String(r.day).padStart(2,'0');
+    if(state.expenses.some(x=>x.date===date&&x.cat===r.cat&&x.amount===r.amount&&(x.note||'')===r.name)) return;
+    state.expenses.push({id:uid(),date:date,amount:r.amount,cat:r.cat,note:r.name}); n++; });
+  save(); refreshAll(); rerenderModule(); toast(n?(n+' '+t('saved')):t('rec_already'));
+}
+
 /* ================= DATA CHECK ================= */
 function modDataCheck(){ return `<div class="card"><div class="hint" style="margin-bottom:10px">${t('dc_hint')}</div><div id="dcBox"></div></div>`; }
 function renderDataCheck(){
@@ -5361,6 +5580,11 @@ function init(){
   tickClock(); setInterval(tickClock,1000); renderNavBtns();
   if(!state.settings.onboarded) showOnboard();
   startHighlightTimer();
+  try{ driveAutoSync(); }catch(e){}
+  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='hidden'){ try{ if(state.settings.driveAuto&&driveReady()) driveBackupNow(true); }catch(e){} } else { try{ driveAutoSync(); }catch(e){} } });
+  window.addEventListener('focus',function(){ try{ driveAutoSync(); }catch(e){} });
+  if(navigator.serviceWorker){ try{ navigator.serviceWorker.addEventListener('message',function(e){ if(e.data&&e.data.type==='drive-sync'){ try{ driveAutoSync(); }catch(_){} } }); }catch(e){} }
+  registerPeriodicSync();
 }
 init();
 </script>
