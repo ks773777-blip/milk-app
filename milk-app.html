@@ -207,11 +207,15 @@
   .theme-dot.on{border-color:var(--ink)}
   .lock{position:fixed;inset:0;z-index:200;background:linear-gradient(160deg,var(--green),var(--green-d));display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff;gap:14px;padding:24px}
   .lock.on{display:flex}
+  #lock,#bioLock{z-index:240}
   .lock .big{font-size:52px}
   .lock h2{font-size:19px;font-weight:700}
   .lock .dots{display:flex;gap:12px;margin:6px 0}
   .lock .dots i{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.35)}
   .lock .dots i.f{background:#fff}
+  .lock .bioic{font-size:64px;line-height:1}
+  .lock .lbtn{background:#fff;color:var(--green-d);border-radius:14px;padding:13px 26px;font-weight:800;font-size:15px;width:230px}
+  .lock .lbtn.ghost{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.45)}
   .pad{display:grid;grid-template-columns:repeat(3,74px);gap:12px;margin-top:8px}
   .pad button{width:74px;height:74px;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;font-size:26px;font-weight:700}
   .pad button:active{background:rgba(255,255,255,.32)}
@@ -237,6 +241,14 @@
   <h2 id="lockTitle">PIN डालें</h2>
   <div class="dots" id="lockDots"></div>
   <div class="pad" id="lockPad"></div>
+</div>
+
+<div class="lock" id="bioLock">
+  <div class="bioic">🔒</div>
+  <h2 id="bioTitle">फिंगरप्रिंट से खोलें</h2>
+  <div class="hint" id="bioSub" style="text-align:center;max-width:280px;color:rgba(255,255,255,.85)"></div>
+  <button class="lbtn" onclick="bioUnlock()" id="bioBtn">🔒</button>
+  <button class="lbtn ghost" onclick="bioUsePin()" id="bioPinBtn"></button>
 </div>
 
 <header class="top">
@@ -2734,6 +2746,7 @@ const defaultState=()=>({
     waCode:'91', theme:'green', dark:false, pin:'', target:0, upi:'', upiName:'',
     retention:12, autoBackup:true, autoBackupDays:7, lastBackup:0, customCats:[], driveLink:'',
     driveAuto:false, driveFileId:'', lastDriveBackup:0, autoShift:true, onboarded:false, driveConnected:false,
+    biometricLock:false, bioCredId:'',
     business:{ name:'दूध हिसाब', owner:'', phone:'', address:'' } },
   account:null
 });
@@ -2835,6 +2848,7 @@ const T={
   inactive:'निष्क्रिय ग्राहक', in_days:'कितने दिन से नहीं', last_seen:'आख़िरी बार', never_seen:'कभी नहीं', all_active:'सभी ग्राहक सक्रिय हैं',
   recurring:'आवर्ती खर्च', rec_hint:'हर महीने दोहराने वाले खर्च (किराया, सैलरी, बिजली…) — एक टैप में इस महीने जोड़ें।', rec_run:'इस महीने के खर्च जोड़ें', rec_already:'पहले ही जोड़े जा चुके हैं',
   amount:'रकम', note:'नोट', category:'श्रेणी',
+  bio:'फिंगरप्रिंट लॉक (बायोमेट्रिक)', bio_hint:'चालू करने पर ऐप खोलते ही फिंगरप्रिंट माँगा जाएगा।', bio_on:'फिंगरप्रिंट लॉक चालू', bio_off:'फिंगरप्रिंट लॉक बंद', bio_na:'इस डिवाइस पर फिंगरप्रिंट उपलब्ध नहीं', bio_title:'फिंगरप्रिंट से खोलें', bio_sub:'ऐप खोलने के लिए अपनी उंगली सेंसर पर लगाएँ', bio_open:'फिंगरप्रिंट लगाएँ', bio_use_pin:'PIN से खोलें', bio_fail:'फिंगरप्रिंट मेल नहीं खाया',
   hl1_t:'आज का हिसाब', hl1_x:'{q} लीटर · {a}', hl2_t:'बकाया', hl2_x:'ग्राहकों से {a} लेना है', hl3_t:'इस महीने का लक्ष्य', hl4_t:'ऑटो शिफ्ट चालू', hl4_x:'एंट्री खोलते ही सुबह/शाम अपने आप चुनी जाएगी', hl5_t:'Drive बैकअप चालू', hl5_x:'हर बदलाव अपने आप Drive में सेव होगा',
   support:'सहायता', support_x:'आम सवाल नीचे दिए हैं — खोलकर पढ़ें।',
   faq1_q:'ऑटो शिफ्ट कैसे बंद करें?', faq1_a:'सेटिंग → “ऑटो शिफ्ट” टॉगल बंद कर दें; फिर डिफ़ॉल्ट शिफ्ट इस्तेमाल होगी।',
@@ -2953,6 +2967,7 @@ const T={
   inactive:'Inactive customers', in_days:'No entry for (days)', last_seen:'Last seen', never_seen:'Never', all_active:'All customers are active',
   recurring:'Recurring expenses', rec_hint:'Expenses that repeat monthly (rent, salary, electricity…) — add them for this month in one tap.', rec_run:'Add this month\u2019s expenses', rec_already:'Already added',
   amount:'Amount', note:'Note', category:'Category',
+  bio:'Fingerprint lock (biometric)', bio_hint:'When on, the app asks for your fingerprint as soon as it opens.', bio_on:'Fingerprint lock on', bio_off:'Fingerprint lock off', bio_na:'Fingerprint not available on this device', bio_title:'Unlock with fingerprint', bio_sub:'Touch the sensor to open the app', bio_open:'Touch fingerprint', bio_use_pin:'Use PIN', bio_fail:'Fingerprint did not match',
   hl1_t:'Today\u2019s numbers', hl1_x:'{q} litres · {a}', hl2_t:'Dues', hl2_x:'{a} to collect from customers', hl3_t:'This month\u2019s target', hl4_t:'Auto shift is on', hl4_x:'Morning/evening will be picked automatically when you open an entry', hl5_t:'Drive backup is on', hl5_x:'Every change is saved to Drive automatically',
   support:'Help & support', support_x:'Common questions below — tap to open.',
   faq1_q:'How do I turn off auto shift?', faq1_a:'Settings → turn off the “Auto shift” toggle; the default shift will be used instead.',
@@ -4551,6 +4566,8 @@ function modSettings(){
     <div class="hint" style="margin-top:-4px">${t('auto_shift_hint')}</div>
     <div class="sw"><span class="lb">${t('round')}</span><div class="tr" id="sw-round" onclick="toggleRound()"></div></div>
     <div class="sw"><span class="lb">${t('pin')}</span><div class="tr" id="sw-pin" onclick="togglePin()"></div></div>
+    <div class="sw"><span class="lb">${t('bio')}</span><div class="tr" id="sw-bio" onclick="toggleBio()"></div></div>
+    <div class="hint" style="margin-top:-4px">${t('bio_hint')}</div>
     <div class="sw"><span class="lb">${t('auto_backup')}</span><div class="tr" id="sw-ab" onclick="toggleAutoBackup()"></div></div>
     <div class="field" style="margin-top:12px"><label>${t('retention')}</label><select id="setRetention" onchange="saveSettings()"><option value="6" id="o-r6"></option><option value="12" id="o-r12"></option><option value="24" id="o-r24"></option><option value="36" id="o-r36"></option><option value="0" id="o-r0"></option></select><div class="hint">${t('retention_hint')}</div></div>
     <div class="field"><label>${t('backup_days')}</label><input type="number" id="setBackupDays" min="1" value="7" /></div>
@@ -4564,6 +4581,7 @@ function renderSettingsBits(){
   if($('sw-autoshift')) $('sw-autoshift').classList.toggle('on',state.settings.autoShift!==false);
   if($('sw-round')) $('sw-round').classList.toggle('on',!!state.settings.roundOff);
   if($('sw-pin')) $('sw-pin').classList.toggle('on',!!state.settings.pin);
+  if($('sw-bio')) $('sw-bio').classList.toggle('on',!!state.settings.biometricLock);
   if($('sw-ab')) $('sw-ab').classList.toggle('on',!!state.settings.autoBackup);
   if($('themeBox')){ const themes=[['green','theme_green','#0f7b53'],['blue','theme_blue','#1d6fb8'],['purple','theme_purple','#7b3fb0'],['teal','theme_teal','#0c7b7b']];
     $('themeBox').innerHTML=themes.map(([k,lbl,c])=>`<button class="theme-dot ${state.settings.theme===k?'on':''}" style="background:${c}" onclick="setTheme('${k}')"></button>`).join(''); }
@@ -5523,6 +5541,64 @@ function runRecurring(){
   save(); refreshAll(); rerenderModule(); toast(n?(n+' '+t('saved')):t('rec_already'));
 }
 
+/* ================= FINGERPRINT / BIOMETRIC LOCK ================= */
+function bioNative(){ try{ return (typeof window.MilkBio !== 'undefined' && window.MilkBio); }catch(e){ return false; } }
+function bioSupported(){
+  if(bioNative()) return true;
+  try{ return !!(window.PublicKeyCredential && navigator.credentials && navigator.credentials.create && window.isSecureContext); }catch(e){ return false; }
+}
+function b64(buf){ let s=''; const b=new Uint8Array(buf); for(let i=0;i<b.length;i++) s+=String.fromCharCode(b[i]); return btoa(s); }
+function b64d(s){ const bin=atob(s); const a=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) a[i]=bin.charCodeAt(i); return a; }
+function toggleBio(){
+  if(state.settings.biometricLock){ state.settings.biometricLock=false; state.settings.bioCredId=''; save(); renderSettingsBits(); toast(t('bio_off')); try{ if(bioNative()&&window.MilkBio.disable) window.MilkBio.disable(); }catch(e){} return; }
+  enableBiometric();
+}
+function enableBiometric(){
+  if(!bioSupported()){ toast(t('bio_na')); return; }
+  if(bioNative()){ try{ window.MilkBio.enable(); state.settings.biometricLock=true; save(); renderSettingsBits(); toast(t('bio_on')); }catch(e){ toast(t('bio_na')); } return; }
+  try{
+    const challenge=new Uint8Array(32); crypto.getRandomValues(challenge);
+    const uid=new Uint8Array(16); crypto.getRandomValues(uid);
+    navigator.credentials.create({ publicKey:{
+      challenge:challenge,
+      rp:{ name:'Milk Hisaab', id:location.hostname },
+      user:{ id:uid, name:'owner', displayName:'Owner' },
+      pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
+      authenticatorSelection:{ authenticatorAttachment:'platform', userVerification:'required' },
+      timeout:60000, attestation:'none'
+    }}).then(function(cred){
+      if(cred && cred.rawId){ state.settings.bioCredId=b64(cred.rawId); state.settings.biometricLock=true; save(); renderSettingsBits(); toast(t('bio_on')); }
+      else { toast(t('bio_na')); }
+    }).catch(function(){ toast(t('bio_na')); });
+  }catch(e){ toast(t('bio_na')); }
+}
+function showBioLock(){
+  const el=$('bioLock'); if(!el) return;
+  if($('bioTitle')) $('bioTitle').textContent=t('bio_title');
+  if($('bioSub')) $('bioSub').textContent=t('bio_sub');
+  if($('bioBtn')) $('bioBtn').textContent='🔒 '+t('bio_open');
+  if($('bioPinBtn')) $('bioPinBtn').textContent=t('bio_use_pin');
+  el.classList.add('on');
+  setTimeout(function(){ try{ bioUnlock(); }catch(e){} }, 350);
+}
+function hideBioLock(){ const el=$('bioLock'); if(el) el.classList.remove('on'); }
+function bioUsePin(){ hideBioLock(); if(state.settings.pin) showLock(); }
+function bioUnlock(){
+  if(bioNative()){ try{ window.MilkBio.authenticate(); return; }catch(e){} }
+  if(!state.settings.bioCredId){ toast(t('bio_na')); return; }
+  try{
+    const challenge=new Uint8Array(32); crypto.getRandomValues(challenge);
+    navigator.credentials.get({ publicKey:{
+      challenge:challenge,
+      allowCredentials:[{ id:b64d(state.settings.bioCredId), type:'public-key' }],
+      userVerification:'required', timeout:60000
+    }}).then(function(r){ if(r) hideBioLock(); else toast(t('bio_fail')); })
+     .catch(function(){ toast(t('bio_fail')); });
+  }catch(e){ toast(t('bio_fail')); }
+}
+function __bioOk(){ hideBioLock(); }
+function __bioFail(){ toast(t('bio_fail')); }
+
 /* ================= DATA CHECK ================= */
 function modDataCheck(){ return `<div class="card"><div class="hint" style="margin-bottom:10px">${t('dc_hint')}</div><div id="dcBox"></div></div>`; }
 function renderDataCheck(){
@@ -5575,7 +5651,9 @@ function init(){
   autoMaintenance();
   refreshAll(); switchTab('home');
   loadHandle();
-  if(state.settings.pin) showLock();
+  if(bioNative()){ if(state.settings.pin && !state.settings.biometricLock) showLock(); }
+  else if(state.settings.biometricLock && bioSupported()) showBioLock();
+  else if(state.settings.pin) showLock();
   renderHeaderAvatar(); waitGis(); initOnline(); registerSW();
   tickClock(); setInterval(tickClock,1000); renderNavBtns();
   if(!state.settings.onboarded) showOnboard();
