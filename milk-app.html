@@ -380,6 +380,10 @@
       <h3 id="l-bkRemind"></h3><div class="hint" id="bkRemindTxt" style="margin-bottom:10px"></div>
       <button class="btn" onclick="exportBackup()" id="b-bkNow">⬇️</button>
     </div>
+    <div class="card" id="missCard" style="display:none;border:1.5px solid var(--amber)">
+      <h3 id="l-missCard"></h3><div class="hint" id="missCardTxt" style="margin-bottom:10px"></div>
+      <button class="btn" onclick="openModule('missed')" id="b-missGo">📌</button>
+    </div>
     <div class="card">
       <h3><span id="l-chart"></span><span class="right"><button class="btn grey xs" onclick="shareChart()" id="b-shareChart">📤</button></span></h3>
       <div class="chart" id="chart7"></div>
@@ -2836,7 +2840,7 @@ const defaultState=()=>({
     waCode:'91', theme:'green', dark:false, pin:'', target:0, upi:'', upiName:'',
     retention:36, autoBackup:true, autoBackupDays:7, lastBackup:0, customCats:[], driveLink:'',
     driveAuto:false, driveFileId:'', lastDriveBackup:0, autoShift:true, onboarded:false, driveConnected:false, shiftRemind:true, lastRemind:'', billLang:'', billColor:'',
-    biometricLock:false, bioCredId:'', invNext:1, budget:{}, favs:[], recent:[], collapsed:[], bkSchedOn:false, bkSchedTime:'21:00', bkSchedEvery:1, bkSchedTarget:'file', bkSchedLast:0, bkHistory:[],
+    biometricLock:false, bioCredId:'', invNext:1, budget:{}, favs:[], recent:[], collapsed:[], bkSchedOn:false, bkSchedTime:'21:00', bkSchedEvery:1, bkSchedTarget:'file', bkSchedLast:0, bkHistory:[], missRemind:true, missTime:'21:00', missLastRemind:'',
     business:{ name:'दूध हिसाब', owner:'', phone:'', address:'' } },
   account:null
 });
@@ -3011,7 +3015,8 @@ const T={
   watemplates:'WhatsApp टेम्पलेट', wt_hint:'बार-बार भेजे जाने वाले मैसेज यहाँ सेव करें — एक टैप में WhatsApp पर भेजें।', wt_name:'नाम', wt_text:'मैसेज', wt_add:'नया टेम्पलेट', wt_send:'WhatsApp', wt_none:'कोई टेम्पलेट नहीं', wt_ph:'जैसे: बकाया रिमाइंडर, ऑफ़र',
   emi:'EMI / किस्त कैलकुलेटर', emi_hint:'कर्ज़ की मासिक किस्त, कुल ब्याज और कुल भुगतान तुरंत निकालें।', emi_amount:'कर्ज़ की रकम (₹)', emi_rate:'सालाना ब्याज दर (%)', emi_months:'कितने महीने', emi_val:'मासिक किस्त (EMI)', emi_interest:'कुल ब्याज', emi_total:'कुल भुगतान',
   creditlimit:'ग्राहक क्रेडिट लिमिट', cl_hint:'हर ग्राहक की उधार सीमा तय करें — बकाया सीमा से बढ़ते ही लाल दिखेगा।', cl_limit:'सीमा (₹)', cl_over:'सीमा पार',
-  checklist:'डेली टास्क चेकलिस्ट', ck_hint:'रोज़ के ज़रूरी काम — हर दिन अपने आप रीसेट हो जाते हैं।', ck_ph:'जैसे: सुबह दूध बाँटना', ck_none:'कोई काम नहीं', ck_done:'आज हो गया', ck_todo:'आज बाकी'
+  checklist:'डेली टास्क चेकलिस्ट', ck_hint:'रोज़ के ज़रूरी काम — हर दिन अपने आप रीसेट हो जाते हैं।', ck_ph:'जैसे: सुबह दूध बाँटना', ck_none:'कोई काम नहीं', ck_done:'आज हो गया', ck_todo:'आज बाकी',
+  missed:'छूटी हुई एंट्री', miss_hint:'जिन दिनों किसी ग्राहक की एंट्री नहीं बनी, वे दिन यहाँ दिखेंगे। नीचे “भरें” दबाकर उस दिन की एंट्री भर सकते हैं।', miss_none:'बढ़िया! पिछले दिनों की सारी एंट्री भरी हुई है ✓', miss_days:'कितने दिन देखें', miss_d7:'7 दिन', miss_d14:'14 दिन', miss_d30:'30 दिन', miss_missing:'ग्राहकों की एंट्री नहीं', miss_fill:'भरें', miss_all_ok:'सबकी एंट्री भर गई ✓', miss_today:'आज इनकी एंट्री बाकी', miss_remind:'छूटी एंट्री रिमाइंडर', miss_remind_hint:'तय समय पर, अगर आज किसी ग्राहक की एंट्री अधूरी हो तो नोटिफिकेशन और आवाज़ मिलेगी।', miss_notify:'आज {n} ग्राहकों की एंट्री नहीं भरी — भर दें।', miss_go:'उस दिन की एंट्री भरें', miss_card:'आज की एंट्री बाकी'
  },
  en:{
   tagline:'Milk Manager',
@@ -3181,7 +3186,8 @@ const T={
   watemplates:'WhatsApp templates', wt_hint:'Save messages you send often — send them on WhatsApp in one tap.', wt_name:'Name', wt_text:'Message', wt_add:'New template', wt_send:'WhatsApp', wt_none:'No templates yet', wt_ph:'e.g. Dues reminder, Offer',
   emi:'EMI / instalment calculator', emi_hint:'Work out the monthly instalment, total interest and total payment instantly.', emi_amount:'Loan amount (₹)', emi_rate:'Annual interest rate (%)', emi_months:'Number of months', emi_val:'Monthly instalment (EMI)', emi_interest:'Total interest', emi_total:'Total payment',
   creditlimit:'Customer credit limits', cl_hint:'Set a credit limit for each customer — the balance turns red as soon as it crosses the limit.', cl_limit:'Limit (₹)', cl_over:'over limit',
-  checklist:'Daily task checklist', ck_hint:'Your daily must-do tasks — they reset automatically every day.', ck_ph:'e.g. Deliver morning milk', ck_none:'No tasks yet', ck_done:'done today', ck_todo:'pending today'
+  checklist:'Daily task checklist', ck_hint:'Your daily must-do tasks — they reset automatically every day.', ck_ph:'e.g. Deliver morning milk', ck_none:'No tasks yet', ck_done:'done today', ck_todo:'pending today',
+  missed:'Missed entries', miss_hint:'Days on which a customer had no entry show up here. Tap “Fill” to enter that day.', miss_none:'Great! Every recent day is fully entered ✓', miss_days:'How many days to check', miss_d7:'7 days', miss_d14:'14 days', miss_d30:'30 days', miss_missing:'customers without an entry', miss_fill:'Fill', miss_all_ok:'Everyone is entered ✓', miss_today:'Still pending today', miss_remind:'Missed-entry reminder', miss_remind_hint:'At the set time, if any customer is still missing an entry today, you get a notification and a sound.', miss_notify:'{n} customers have no entry today — please fill them.', miss_go:'Enter that day', miss_card:'Today\u2019s entries pending'
  }
 };
 let LANG='hi';
@@ -3332,7 +3338,10 @@ function rangeFor(type,anchor){
 }
 function inRange(date,start,end){ return date>=start&&date<=end; }
 function isHoliday(date,partyId){
-  return state.holidays.some(h=>h.date===date&&(h.partyId===''||h.partyId===partyId));
+  return state.holidays.some(function(h){
+    const same=h.date===date || (h.weekly && h.date && date && h.date.slice(5)===date.slice(5));
+    return same && (h.partyId===''||h.partyId===partyId);
+  });
 }
 
 /* ---------------- theme / lang ---------------- */
@@ -3402,7 +3411,7 @@ const GMAP={bulk:'daily',bulkMonthly:'daily',holiday:'daily',milkcard:'daily',ca
  animals:'farm',wastage:'farm',
  backup:'app',drive:'app',account:'app',settings:'app',perms:'app',ai:'app',datacheck:'app',support:'app',legal:'app',help:'app',
  insights:'report',monthclose:'money',cashbook:'money',routemap:'people',
- ahealth:'farm',aprod:'farm',avacc:'farm',feed:'farm',fat30:'farm',wastpie:'farm',complaints:'people',occasions:'people',supplierorder:'money',vehicle:'money',loyalty:'people',insurance:'app',breeding:'farm',watemplates:'app',emi:'money',creditlimit:'people',checklist:'daily'};
+ ahealth:'farm',aprod:'farm',avacc:'farm',feed:'farm',fat30:'farm',wastpie:'farm',complaints:'people',occasions:'people',supplierorder:'money',vehicle:'money',loyalty:'people',insurance:'app',breeding:'farm',watemplates:'app',emi:'money',creditlimit:'people',checklist:'daily',missed:'daily'};
 const REL={
   invoices:['bills','bulkbill','statement','payments'],
   bills:['invoices','bulkbill','statement','ledger'],
@@ -3475,7 +3484,8 @@ const REL={
   emi:['loans','recurring','budget','expenses'],
   creditlimit:['dues','parties','reminders','loyalty'],
   checklist:['dayend','delivery','register','notes'],
-  backup:['drive','settings','datacheck','account']
+  backup:['drive','settings','datacheck','account'],
+  missed:['register','delivery','bulkMonthly','calendar','holiday','dayend']
 };
 function relatedRow(id){
   const rel=REL[id]; if(!rel||!rel.length) return '';
@@ -3565,6 +3575,7 @@ const MODULES=[
   {id:'emi',        ic:'🏦', hi:'EMI / किस्त कैलकुलेटर',en:'EMI calculator',    render:modEmi, after:calcEmi},
   {id:'creditlimit',ic:'🚦', hi:'ग्राहक क्रेडिट लिमिट', en:'Credit limits',     render:modCreditLimit},
   {id:'checklist',  ic:'✅', hi:'डेली टास्क चेकलिस्ट',  en:'Daily checklist',   render:modChecklist},
+  {id:'missed',     ic:'📌', hi:'छूटी हुई एंट्री',      en:'Missed entries',    render:modMissed},
 ];
 function switchTab(tab){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -6280,6 +6291,90 @@ function taskRow(x){ const done=x.doneOn===todayStr();
 function addTask(){ const el=$('ckInput'); if(!el) return; const v=el.value.trim(); if(!v) return; (state.tasks=state.tasks||[]).push({id:uid(),text:v,doneOn:''}); save(); rerenderModule(); }
 function toggleTask(id){ const x=(state.tasks||[]).find(y=>y.id===id); if(!x) return; x.doneOn=(x.doneOn===todayStr())?'':todayStr(); save(); rerenderModule(); }
 function delTask(id){ state.tasks=(state.tasks||[]).filter(x=>x.id!==id); save(); rerenderModule(); toast(t('deleted')); }
+/* ---- 📌 छूटी हुई एंट्री (Missed entries) ---- */
+function missIndex(){
+  const have={}, first={}, recent={};
+  const cut=new Date(); cut.setDate(cut.getDate()-30); const cutStr=ymd(cut);
+  state.entries.forEach(function(e){
+    (have[e.date]||(have[e.date]={}))[e.partyId]=1;
+    if(!first[e.partyId]||e.date<first[e.partyId]) first[e.partyId]=e.date;
+    if(e.date>=cutStr) recent[e.partyId]=1;
+  });
+  return {have:have, first:first, recent:recent, cut:cutStr};
+}
+function missExpected(idx){
+  idx=idx||missIndex();
+  return state.parties.filter(function(p){
+    if(p.type!=='customer'||p.active===false) return false;
+    return (p.defaultQty||0)>0 || !!idx.recent[p.id];
+  });
+}
+function missForDate(date,idx){
+  idx=idx||missIndex();
+  const have=idx.have[date]||{};
+  const today=todayStr();
+  return missExpected(idx).filter(function(p){
+    if(have[p.id]) return false;
+    if(isHoliday(date,p.id)) return false;
+    const f=idx.first[p.id];
+    if(f){ if(date<f) return false; } else { if(date<today) return false; }
+    return true;
+  });
+}
+function missTodayCount(){ try{ return missForDate(todayStr()).length; }catch(e){ return 0; } }
+function missDates(days){
+  const idx=missIndex(); const out=[];
+  for(let i=1;i<=days;i++){ const d=new Date(); d.setDate(d.getDate()-i); const ds=ymd(d); const m=missForDate(ds,idx); if(m.length) out.push({date:ds,missing:m}); }
+  return out;
+}
+function modMissed(){
+  const days=window._missDays||14;
+  const tmiss=missForDate(todayStr());
+  const past=missDates(days);
+  return `<div class="card"><h3>📌 ${t('missed')}${tmiss.length?' <span class="sub" style="color:var(--red)">'+tmiss.length+'</span>':''}</h3>
+    <div class="hint" style="margin-bottom:10px">${t('miss_hint')}</div>
+    <div class="bill-line tot" style="border-top:none"><span class="k">${t('miss_today')}</span><span class="v">${tmiss.length?num(tmiss.length):t('miss_all_ok')}</span></div>
+    ${tmiss.length?`<div class="chips" style="margin:8px 0 4px">${tmiss.slice(0,40).map(function(p){return '<button class="chip">'+esc(p.name)+'</button>';}).join('')}</div>
+      <button class="btn ghost sm" style="width:100%;margin-bottom:6px" onclick="openMissDate('${todayStr()}')">${t('miss_go')}</button>`:''}
+    <div class="field" style="margin:12px 0 10px"><label>${t('miss_days')}</label>
+      <div class="seg"><button class="${days===7?'on':''}" onclick="setMissDays(7)">${t('miss_d7')}</button><button class="${days===14?'on':''}" onclick="setMissDays(14)">${t('miss_d14')}</button><button class="${days===30?'on':''}" onclick="setMissDays(30)">${t('miss_d30')}</button></div></div>
+    <div>${past.length?past.map(function(row){return `<div class="list-item"><div class="avatar" style="background:var(--red-l);color:var(--red)">📌</div>
+      <div class="li-main"><div class="t">${fmtDate(row.date)}</div><div class="s">${row.missing.length} ${t('miss_missing')} — ${row.missing.slice(0,3).map(function(p){return esc(p.name);}).join(', ')}${row.missing.length>3?' …':''}</div></div>
+      <button class="btn ghost sm" onclick="openMissDate('${row.date}')">${t('miss_fill')}</button></div>`;}).join(''):`<div class="empty"><span class="big">✅</span>${t('miss_none')}</div>`}</div>
+    <div class="divider"></div><h3 style="font-size:14px">${t('miss_remind')}</h3>
+    <div class="sw"><span class="lb">${t('miss_remind')}</span><div class="tr ${state.settings.missRemind!==false?'on':''}" id="sw-missrem" onclick="toggleMissRemind()"></div></div>
+    <div class="field" style="margin-top:8px"><label>${t('bk_time')}</label><input type="time" id="missTime" value="${state.settings.missTime||'21:00'}" onchange="saveMissTime()" /></div>
+    <div class="hint">${t('miss_remind_hint')}</div>
+    <div class="btn-row" style="margin-top:8px"><button class="btn ghost sm" style="flex:1" onclick="askNotifPerm()">${t('notif_on')}</button><button class="btn grey sm" style="flex:1" onclick="checkMissedReminder(true)">${t('notif_test')}</button></div>
+  </div>`;
+}
+function setMissDays(n){ window._missDays=n; rerenderModule(); }
+function openMissDate(ds){ try{ closeModule(); }catch(e){} const el=$('entryDate'); if(el) el.value=ds; switchTab('entries'); try{ renderEntries(); }catch(e){} }
+function toggleMissRemind(){ state.settings.missRemind=(state.settings.missRemind===false); save(); rerenderModule(); toast(t('miss_remind')+': '+(state.settings.missRemind?t('on'):t('off'))); if(state.settings.missRemind) askNotifPerm(); }
+function saveMissTime(){ if($('missTime')) state.settings.missTime=$('missTime').value||'21:00'; save(); }
+function checkMissedReminder(force){
+  if(state.settings.missRemind===false) return;
+  const parts=(state.settings.missTime||'21:00').split(':'); const h=parseInt(parts[0])||0, mi=parseInt(parts[1])||0;
+  const now=new Date(); const due=new Date(now.getFullYear(),now.getMonth(),now.getDate(),h,mi,0,0);
+  const key=todayStr();
+  if(force!==true){ if(now<due) return; if(state.settings.missLastRemind===key) return; }
+  const n=missTodayCount(); if(!n) return;
+  state.settings.missLastRemind=key; save();
+  const msg=t('miss_notify').replace('{n}',String(n));
+  try{ if(window.Notification && Notification.permission==='granted') new Notification('दूध हिसाब — '+t('missed'),{body:msg, tag:'milk-miss'}); }catch(e){}
+  try{ alarmBeep(); }catch(e){}
+  toast('📌 '+msg);
+}
+function renderMissCard(){
+  const c=$('missCard'); if(!c) return;
+  const n=missTodayCount();
+  if(!n){ c.style.display='none'; return; }
+  c.style.display='block';
+  if($('l-missCard')) $('l-missCard').textContent='📌 '+t('miss_card');
+  if($('missCardTxt')) $('missCardTxt').textContent=n+' '+t('miss_missing');
+  if($('b-missGo')) $('b-missGo').textContent=t('miss_fill');
+}
+
 
 /* ---- 🗓️ backup schedule ---- */
 let bkRunning=false;
@@ -6471,6 +6566,7 @@ function buildNotifications(){
   if(tgt){ const m=monthStr(); const sale=state.entries.filter(e=>e.date.startsWith(m)&&e.kind==='sale').reduce((s,e)=>s+e.amount,0);
     out.push({ic:'🎯',t:t('n_target'),x:Math.round(sale/tgt*100)+'% — '+money(sale)+' / '+money(tgt),go:function(){closeModal();switchTab('home');}}); }
   if(state.settings.driveAuto && !driveReady()) out.push({ic:'🔌',t:t('n_drive'),x:t('dr_reconnect'),go:function(){closeModal();openModule('drive');}});
+  try{ const mc=missTodayCount(); if(mc) out.push({ic:'📌',t:t('missed'),x:mc+' '+t('miss_missing'),go:function(){closeModal();openModule('missed');}}); }catch(e){}
   return out;
 }
 function updateBell(){ const b=$('bellBadge'); if(!b) return; const n=buildNotifications().length; if(n){ b.textContent=n; b.style.display='grid'; } else b.style.display='none'; }
@@ -7541,7 +7637,7 @@ function applyStatic(){
   if($('srchInput')) $('srchInput').placeholder=t('srch_ph');
   renderSettingsBits(); cloudStatus(); renderHub(); renderShiftSeg(); renderHeaderAvatar(); renderProfileCard(); renderQuick(); renderHighlights(); updateBell();
 }
-function refreshAll(){ renderHome(); renderEntries(); renderParties(); renderBilling(); if(curModule) rerenderModule(); }
+function refreshAll(){ renderHome(); renderEntries(); renderParties(); renderBilling(); try{renderMissCard();}catch(e){} if(curModule) rerenderModule(); }
 function init(){
   LANG=state.settings.lang||'hi';
   rebuildIndex();
@@ -7564,6 +7660,7 @@ function init(){
   registerPeriodicSync();
   try{ shiftRemindCheck(); setInterval(shiftRemindCheck, 60000); scheduleShiftAlarm(); }catch(e){}
   try{ checkBackupSchedule(); setInterval(checkBackupSchedule, 60000); }catch(e){}
+  try{ checkMissedReminder(); setInterval(checkMissedReminder, 60000); }catch(e){}
   try{ initSwipe(); }catch(e){}
 }
 init();
