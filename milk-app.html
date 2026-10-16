@@ -293,6 +293,15 @@
   .fatstrip{display:flex;gap:2px;height:110px;align-items:flex-end}
   .fatstrip i{flex:1;background:var(--green);border-radius:3px 3px 0 0;min-height:3px;opacity:.85}
   .pie{width:118px;height:118px;border-radius:50%;flex:none}
+  /* ---- v16 sync card ---- */
+  .sync-card{padding:12px}
+  .sync-row{display:flex;align-items:center;gap:10px}
+  .sync-ic{width:40px;height:40px;border-radius:12px;background:var(--green-l);color:var(--green-d);display:grid;place-items:center;font-size:20px;flex:none}
+  .sync-off .sync-ic{background:var(--amber-l);color:var(--amber)}
+  .sync-main{flex:1;min-width:0}
+  .sync-t{font-size:14px;font-weight:800}
+  .sync-s{font-size:11.5px;color:var(--muted);margin-top:1px}
+  .sync-pend{font-size:11px;font-weight:700;color:var(--amber);background:var(--amber-l);border-radius:20px;padding:2px 8px;display:inline-block;margin-top:4px}
 
 </style>
 </head>
@@ -336,6 +345,7 @@
 <main>
   <!-- HOME -->
   <section class="view active" id="view-home">
+    <div class="card sync-card" id="syncCard"></div>
     <div class="hero" id="heroCard">
       <div class="h-top">
         <div>
@@ -2944,6 +2954,9 @@ const T={
   pay_due_now:'अभी बकाया', pay_total_milk:'कुल दूध का बिल', pay_total_paid:'कुल जमा', pay_after:'भुगतान के बाद बाकी', pay_full:'पूरा बकाया', pay_edit:'भुगतान बदलें',
   bill_view:'बिल देखें', bill_dl:'डाउनलोड', bill_wa:'WhatsApp पर भेजें', bill_month:'महीने का बिल', edit:'बदलें',
   shift_remind:'शिफ्ट रिमाइंडर (सुबह 6, शाम 5)', notif_on:'नोटिफिकेशन चालू करें', notif_test:'अभी टेस्ट करें',
+  sync_on:'Google Drive जुड़ा है', sync_off:'Drive जुड़ा नहीं है', sync_last:'पिछला बैकअप:', sync_never:'अभी तक बैकअप नहीं लिया', sync_now:'सिंक', sync_connect:'जोड़ें',
+  sync_auto:'ऑटो बैकअप', sync_file:'फ़ोन में सेव', sync_more:'सेटिंग', sync_doing:'बैकअप हो रहा है…', sync_done:'सिंक हो गया ✓',
+  sync_auto_on:'ऑटो बैकअप चालू', sync_auto_off:'ऑटो बैकअप बंद', sync_file_done:'बैकअप फ़ाइल सेव हो गई', sync_connect_first:'पहले Drive जोड़ें — अनुमति दें', sync_restore:'बैकअप वापस लाएँ',
   cashbook:'दैनिक कैश बुक', cb_hint:'सुबह की नकद + शाम की नकद = क्लोज़िंग कैश।', cb_m:'सुबह की नकद', cb_e:'शाम की नकद', cb_total:'कुल नकद', cb_saved:'नकद सेव', cb_mismatch:'ध्यान दें: नकद और बकाया वसूली में फ़र्क़ है',
   repeat_last:'पिछली एंट्री दोहराएँ', repeat_done:'पिछली एंट्री कॉपी हो गई ✓', repeat_none:'पिछली कोई एंट्री नहीं', sync_pending:'सिंक बाकी',
   holiday_weekly:'हर रविवार (दोहराने वाली)', weekly:'हर रविवार',
@@ -3090,6 +3103,9 @@ const T={
   pay_due_now:'Currently due', pay_total_milk:'Total milk bill', pay_total_paid:'Total received', pay_after:'Balance after payment', pay_full:'Full due', pay_edit:'Edit payment',
   bill_view:'View bill', bill_dl:'Download', bill_wa:'Send on WhatsApp', bill_month:'Monthly bill', edit:'Edit',
   shift_remind:'Shift reminder (6am, 5pm)', notif_on:'Turn on notifications', notif_test:'Test now',
+  sync_on:'Google Drive connected', sync_off:'Drive not connected', sync_last:'Last backup:', sync_never:'No backup taken yet', sync_now:'Sync', sync_connect:'Connect',
+  sync_auto:'Auto backup', sync_file:'Save to phone', sync_more:'Settings', sync_doing:'Backing up…', sync_done:'Synced ✓',
+  sync_auto_on:'Auto backup on', sync_auto_off:'Auto backup off', sync_file_done:'Backup file saved', sync_connect_first:'Connect Drive first — please allow', sync_restore:'Restore backup',
   cashbook:'Daily cash book', cb_hint:'Morning cash + evening cash = closing cash.', cb_m:'Morning cash', cb_e:'Evening cash', cb_total:'Total cash', cb_saved:'Cash saved', cb_mismatch:'Note: cash and collections do not match',
   repeat_last:'Repeat last entry', repeat_done:'Last entry copied ✓', repeat_none:'No previous entry', sync_pending:'sync pending',
   holiday_weekly:'Every Sunday (repeats)', weekly:'Every Sunday',
@@ -3607,6 +3623,7 @@ function renderHome(){
     if($('heroEve')) $('heroEve').textContent=num(hE.reduce((s,e)=>s+e.qty,0))+' L · '+money(hE.reduce((s,e)=>s+e.amount,0));
     if($('heroDue')) $('heroDue').textContent=money(state.parties.filter(p=>!isSup(p)).reduce((s,p)=>s+Math.max(0,partyBalance(p.id)),0));
   }catch(e){}
+  try{ renderSyncCard(); }catch(e){}
   renderChart(); renderLowStock(); renderTarget();
   const recent=tE.slice().sort((a,b)=>b.id.localeCompare(a.id));
   $('homeRecent').innerHTML=recent.length?recent.map(entryRow).join(''):'<div class="empty"><span class="big">🥛</span>'+t('no_entries_today')+'</div>';
@@ -4246,6 +4263,52 @@ function shareBillPdf(id){
   }catch(err){ toast(t('no_pdf')); }
 }
 
+/* ---------- sync / backup card (home) ---------- */
+function syncPendingCount(){ try{ return state.settings.driveAuto ? state.entries.filter(e=>!e.syncAt).length : 0; }catch(e){ return 0; } }
+function renderSyncCard(){
+  const el=$('syncCard'); if(!el) return;
+  const conn=driveReady()||state.settings.driveConnected;
+  const last=state.settings.lastDriveBackup||0;
+  const pend=syncPendingCount();
+  el.className='card sync-card'+(conn?'':' sync-off');
+  el.innerHTML='<div class="sync-row">'
+    +'<div class="sync-ic">'+(conn?'☁️':'📴')+'</div>'
+    +'<div class="sync-main"><div class="sync-t">'+(conn?t('sync_on'):t('sync_off'))+'</div>'
+    +'<div class="sync-s">'+(last?(t('sync_last')+' '+fmtDateTime(last)):t('sync_never'))+'</div>'
+    +(pend>0?('<div class="sync-pend">⏳ '+pend+' '+t('sync_pending')+'</div>'):'')+'</div>'
+    +'<button class="btn sm'+(conn?'':' ghost')+'" onclick="syncNow()">'+(conn?('🔄 '+t('sync_now')):t('sync_connect'))+'</button></div>'
+    +'<div class="sync-row" style="margin-top:10px"><span style="flex:1;font-size:13px;font-weight:700">🔁 '+t('sync_auto')+'</span>'
+    +'<div class="tr '+(state.settings.driveAuto?'on':'')+'" onclick="toggleAutoBackup()"></div></div>'
+    +'<div class="btn-row" style="margin-top:8px">'
+    +'<button class="btn grey sm" style="flex:1" onclick="quickBackupFile()">💾 '+t('sync_file')+'</button>'
+    +'<button class="btn grey sm" style="flex:1" onclick="openModule(\'drive\')">⚙️ '+t('sync_more')+'</button></div>';
+}
+async function syncNow(){
+  if(!driveReady()){ connectDrive(); toast(t('sync_connect_first')); return; }
+  toast('⏳ '+t('sync_doing'));
+  let ok=false;
+  try{ ok=await driveBackupNow(false); }catch(e){}
+  if(ok){ try{ markSynced(); state.settings.lastDriveBackup=Date.now(); save(); }catch(e){} }
+  try{ renderSyncCard(); }catch(e){}
+  toast(ok?('✅ '+t('sync_done')):t('dr_fail'));
+}
+function toggleAutoBackup(){
+  state.settings.driveAuto=!state.settings.driveAuto; save();
+  try{ renderSyncCard(); }catch(e){}
+  toast(state.settings.driveAuto?('🔁 '+t('sync_auto_on')):('⏸ '+t('sync_auto_off')));
+  if(state.settings.driveAuto){ try{ scheduleAutoDriveBackup(); }catch(e){} }
+}
+function quickBackupFile(){
+  try{
+    const blob=new Blob([JSON.stringify(state,null,1)],{type:'application/json'});
+    const fname='milk-backup-'+todayStr()+'.json';
+    const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=fname;
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ try{ URL.revokeObjectURL(url); a.remove(); }catch(e){} },1500);
+    state.settings.lastBackup=Date.now(); save();
+    toast('💾 '+t('sync_file_done'));
+  }catch(e){ toast(t('dr_fail')); }
+}
 /* ---------- bill: view / download / WhatsApp ---------- */
 function billRange(){ try{ return rangeFor(billPeriod,$('billAnchor').value||todayStr()); }catch(e){ return rangeFor('month',todayStr()); } }
 function billPdfBytes(id,r){ try{ const c=billCanvas(id,r); return buildPdfMulti([{bytes:dataUrlToBytes(c.toDataURL('image/jpeg',0.92)),iw:c.width,ih:c.height,w:c.width,h:c.height}]); }catch(e){ return null; } }
@@ -5292,7 +5355,7 @@ function initDriveAuth(){
 }
 function connectDrive(){ initDriveAuth(); if(!tokenClient){ toast(t('dr_needlogin')); return; } try{ tokenClient.requestAccessToken({prompt:''}); }catch(e){ toast(t('dr_authfail')); } }
 function driveReady(){ return !!driveToken && Date.now()<driveTokenExp; }
-function onDriveConnected(){ state.settings.driveConnected=true; try{ save(); }catch(e){} toast(t('dr_connected')); renderDriveBits(); if(curModule==='drive') rerenderModule(); if(state.settings.driveAuto) driveBackupNow(true); try{ markSynced(); }catch(e){} }
+function onDriveConnected(){ state.settings.driveConnected=true; try{ save(); }catch(e){} toast(t('dr_connected')); renderDriveBits(); if(curModule==='drive') rerenderModule(); if(state.settings.driveAuto) driveBackupNow(true); try{ markSynced(); state.settings.lastDriveBackup=Date.now(); save(); renderSyncCard(); }catch(e){} }
 function driveHeaders(extra){ return Object.assign({Authorization:'Bearer '+driveToken}, extra||{}); }
 async function findBackupFile(){
   const q=encodeURIComponent("name='milk-backup.json' and trashed=false");
