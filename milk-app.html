@@ -303,6 +303,36 @@
   .sync-s{font-size:11.5px;color:var(--muted);margin-top:1px}
   .sync-pend{font-size:11px;font-weight:700;color:var(--amber);background:var(--amber-l);border-radius:20px;padding:2px 8px;display:inline-block;margin-top:4px}
 
+/* ================= 3D depth & smooth feel ================= */
+.card{transition:transform .24s cubic-bezier(.2,.8,.2,1),box-shadow .24s,border-color .18s;will-change:transform;backface-visibility:hidden}
+.card:active{transform:translateY(1px) scale(.996)}
+.btn{transition:transform .14s cubic-bezier(.2,.8,.2,1),box-shadow .14s,filter .14s,background .18s;backface-visibility:hidden}
+.btn:active{transform:translateY(2px) scale(.965);filter:brightness(.97)}
+.btn.sm:active,.btn.xs:active{transform:translateY(1px) scale(.94)}
+.tile{transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s,border-color .2s;backface-visibility:hidden}
+.tile:active{transform:perspective(760px) translateZ(-18px) scale(.95)}
+.tile .ti{transition:transform .22s cubic-bezier(.2,.8,.2,1)}
+.tile:active .ti{transform:scale(1.14)}
+.list-item{transition:transform .16s cubic-bezier(.2,.8,.2,1),background .16s;backface-visibility:hidden}
+.list-item:active{transform:scale(.986)}
+.qbtn{transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .18s;backface-visibility:hidden}
+.qbtn:active{transform:perspective(620px) translateZ(-14px) scale(.94)}
+.stat{transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s;backface-visibility:hidden}
+.stat:active{transform:perspective(700px) translateZ(-12px) scale(.97)}
+.chip,.hchip{transition:transform .14s cubic-bezier(.2,.8,.2,1),background .16s}
+.chip:active,.hchip:active{transform:scale(.94)}
+.sw .tr{transition:background .24s cubic-bezier(.2,.8,.2,1),transform .14s}
+.sw .tr:active{transform:scale(.95)}
+nav.tabs button{transition:color .2s,transform .2s}
+nav.tabs button:active{transform:translateY(1px)}
+nav.tabs button:active .ic{transform:scale(.84)}
+.sheet{animation:sheetUp .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes sheetUp{from{transform:translateY(30px);opacity:.55}to{transform:none;opacity:1}}
+.view.active{animation:viewIn .3s cubic-bezier(.2,.8,.2,1)}
+@keyframes viewIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.hub-group{animation:viewIn .24s cubic-bezier(.2,.8,.2,1) both}
+.fab{transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .18s}
+@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
 </style>
 </head>
 <body>
@@ -345,7 +375,6 @@
 <main>
   <!-- HOME -->
   <section class="view active" id="view-home">
-    <div class="card sync-card" id="syncCard"></div>
     <div class="hero" id="heroCard">
       <div class="h-top">
         <div>
@@ -3019,7 +3048,7 @@ const T={
   missed:'छूटी हुई एंट्री', miss_hint:'जिन दिनों किसी ग्राहक की एंट्री नहीं बनी, वे दिन यहाँ दिखेंगे। नीचे “भरें” दबाकर उस दिन की एंट्री भर सकते हैं।', miss_none:'बढ़िया! पिछले दिनों की सारी एंट्री भरी हुई है ✓', miss_days:'कितने दिन देखें', miss_d7:'7 दिन', miss_d14:'14 दिन', miss_d30:'30 दिन', miss_missing:'ग्राहकों की एंट्री नहीं', miss_fill:'भरें', miss_all_ok:'सबकी एंट्री भर गई ✓', miss_today:'आज इनकी एंट्री बाकी', miss_remind:'छूटी एंट्री रिमाइंडर', miss_remind_hint:'तय समय पर, अगर आज किसी ग्राहक की एंट्री अधूरी हो तो नोटिफिकेशन और आवाज़ मिलेगी।', miss_notify:'आज {n} ग्राहकों की एंट्री नहीं भरी — भर दें।', miss_go:'उस दिन की एंट्री भरें', miss_card:'आज की एंट्री बाकी',
   mod_mgr:'मॉड्यूल प्रबंधन', mod_mgr_hint:'जो मॉड्यूल नहीं चाहिए उसे बंद कर दें — वह सूची से हट जाएगा। कभी भी दोबारा चालू कर सकते हैं।', mod_off:'बंद', mod_on:'चालू',
   bulkupdate:'बल्क अपडेट', bu_hint:'एक साथ सभी ग्राहकों का रेट या डिफ़ॉल्ट मात्रा बदलें — हर ग्राहक को अलग-अलग बदलने की ज़रूरत नहीं।', bu_scope:'किन पर लागू करें', bu_all:'सभी ग्राहक', bu_liter:'सिर्फ़ लीटर-रेट वाले', bu_fat:'सिर्फ़ फैट-रेट वाले', bu_route:'रूट', bu_route_all:'सभी रूट', bu_count:'चुने गए ग्राहक', bu_rate:'रेट बदलें', bu_newrate:'नया रेट', bu_apply_rate:'रेट लागू करें', bu_qty:'डिफ़ॉल्ट मात्रा बदलें', bu_qty_am:'सुबह की मात्रा (L)', bu_qty_pm:'शाम की मात्रा (L)', bu_apply_qty:'मात्रा लागू करें', bu_none:'इस चुनाव पर कोई ग्राहक नहीं मिला', bu_rate_done:'{n} ग्राहकों का रेट बदल गया', bu_qty_done:'{n} ग्राहकों की मात्रा बदल गई', bu_confirm_rate:'{n} ग्राहकों का रेट ₹{r} करना है?', bu_confirm_qty:'{n} ग्राहकों की डिफ़ॉल्ट मात्रा बदलनी है?', bu_highdue:'बड़े बकाया की सीमा (₹)', bu_highdue_hint:'इससे ज़्यादा बकाया वाले ग्राहक लाल दिखेंगे। 0 = बंद।', due_high:'बड़ा बकाया', am_qty:'सुबह (L)', pm_qty:'शाम (L)', qty_am_pm_hint:'अलग-अलग भरें तो सुबह/शाम की एंट्री अपने आप भरेगी; खाली छोड़ें तो ऊपर की डिफ़ॉल्ट मात्रा लगेगी।', remind_list:'📋 सूची भेजें', remind_list_title:'बकाया सूची', remind_list_msg:'नमस्ते 🙏\n\nबकाया सूची:\n{list}\n\nकुल: {total}\n— {shop}',
-  firebase:'Firebase क्लाउड सिंक', fb_hint:'Firebase से अपना डेटा ऑनलाइन भी सुरक्षित रखें। ऐप ऑफ़लाइन पूरा चलता रहेगा और नेट आते ही डेटा अपने आप सिंक हो जाएगा।', fb_status:'स्थिति', fb_connected:'जुड़ा हुआ', fb_notconn:'जुड़ा नहीं', fb_last:'पिछला सिंक', fb_config:'Firebase कॉन्फ़िग यहाँ चिपकाएँ', fb_config_ph:'apiKey और projectId चिपकाएँ — पूरा firebaseConfig भी चलेगा', fb_code:'सिंक कोड', fb_code_hint:'यही कोड दूसरे फ़ोन में डालें तो वही डेटा मिलेगा। इसे लंबा और गुप्त रखें।', fb_gen:'नया कोड बनाएँ', fb_connect:'जोड़ें', fb_project:'प्रोजेक्ट', fb_backup:'अभी क्लाउड पर भेजें', fb_restore:'क्लाउड से वापस लाएँ', fb_auto:'ऑटो सिंक', fb_saved:'क्लाउड पर सेव हो गया', fb_fail:'सिंक नहीं हो सका — कॉन्फ़िग या नेट जाँचें', fb_none:'क्लाउड पर कोई डेटा नहीं मिला', fb_bad:'कॉन्फ़िग ठीक नहीं — apiKey और projectId दोनों ज़रूरी हैं', fb_offline:'ऑफ़लाइन हैं — नेट आने पर सिंक हो जाएगा', fb_needcode:'पहले सिंक कोड डालें', fb_setup:'सेटअप कैसे करें', fb_setup_steps:'आपका Firebase पहले से जुड़ा हुआ है — बस एक बार Rules चालू करने हैं:\n1) console.firebase.google.com पर प्रोजेक्ट “dudh-hisab-70c11” खोलें।\n2) Build → Realtime Database → Rules चुनें।\n3) यह JSON डालें और Publish दबाएँ:\n{\n  "rules": {\n    "milkSync": { "$code": { ".read": true, ".write": true } }\n  }\n}\n4) बस — ऐप अपने आप सिंक करने लगेगा। (Firestore भी चाहें तो चालू कर सकते हैं, ऐप उसे भी सपोर्ट करता है।)', fb_warn:'ध्यान दें: जो इस सिंक कोड को जानता है वह डेटा देख/बदल सकता है — कोड लंबा और गुप्त रखें।', fb_your_code:'आपका सिंक कोड', fb_copy:'कोड कॉपी करें', fb_copied:'कोड कॉपी हो गया', fb_code_note:'यही कोड दूसरे फ़ोन में डालें — तभी वही डेटा मिलेगा। किसी को न बताएँ।', auto_all_btn:'सब ऑटोमैटिक करें', auto_all_done:'सब ऑटोमैटिक चालू ✓', auto_all_hint:'एक टैप में बैकअप, क्लाउड सिंक, रिमाइंडर और शिफ्ट — सब अपने आप चलने लगेंगे।', safe_ok:'आपका डेटा सुरक्षित है ✓', safe_ok_s:'बैकअप और क्लाउड सिंक अपने आप चल रहे हैं', sync_cloud:'क्लाउड', sync_drive:'ड्राइव', auto_entry:'ऑटो एंट्री', auto_entry_hint:'शिफ्ट के समय हर ग्राहक की डिफ़ॉल्ट मात्रा से एंट्री अपने आप बन जाएगी (बाद में बदल या हटा सकते हैं)।', auto_entry_done:'{n} एंट्री अपने आप बन गईं'
+  firebase:'Firebase क्लाउड सिंक', fb_hint:'Firebase से अपना डेटा ऑनलाइन भी सुरक्षित रखें। ऐप ऑफ़लाइन पूरा चलता रहेगा और नेट आते ही डेटा अपने आप सिंक हो जाएगा।', fb_status:'स्थिति', fb_connected:'जुड़ा हुआ', fb_notconn:'जुड़ा नहीं', fb_last:'पिछला सिंक', fb_config:'Firebase कॉन्फ़िग यहाँ चिपकाएँ', fb_config_ph:'apiKey और projectId चिपकाएँ — पूरा firebaseConfig भी चलेगा', fb_code:'सिंक कोड', fb_code_hint:'यही कोड दूसरे फ़ोन में डालें तो वही डेटा मिलेगा। इसे लंबा और गुप्त रखें।', fb_gen:'नया कोड बनाएँ', fb_connect:'जोड़ें', fb_project:'प्रोजेक्ट', fb_backup:'अभी क्लाउड पर भेजें', fb_restore:'क्लाउड से वापस लाएँ', fb_auto:'ऑटो सिंक', fb_saved:'क्लाउड पर सेव हो गया', fb_fail:'सिंक नहीं हो सका — कॉन्फ़िग या नेट जाँचें', fb_none:'क्लाउड पर कोई डेटा नहीं मिला', fb_bad:'कॉन्फ़िग ठीक नहीं — apiKey और projectId दोनों ज़रूरी हैं', fb_offline:'ऑफ़लाइन हैं — नेट आने पर सिंक हो जाएगा', fb_needcode:'पहले सिंक कोड डालें', fb_setup:'सेटअप कैसे करें', fb_setup_steps:'आपका Firebase पहले से जुड़ा हुआ है — बस एक बार Rules चालू करने हैं:\n1) console.firebase.google.com पर प्रोजेक्ट “dudh-hisab-70c11” खोलें।\n2) Build → Realtime Database → Rules चुनें।\n3) यह JSON डालें और Publish दबाएँ:\n{\n  "rules": {\n    "milkSync": { "$code": { ".read": true, ".write": true } }\n  }\n}\n4) बस — ऐप अपने आप सिंक करने लगेगा। (Firestore भी चाहें तो चालू कर सकते हैं, ऐप उसे भी सपोर्ट करता है।)', fb_warn:'ध्यान दें: जो इस सिंक कोड को जानता है वह डेटा देख/बदल सकता है — कोड लंबा और गुप्त रखें।', fb_your_code:'आपका सिंक कोड', fb_copy:'कोड कॉपी करें', fb_copied:'कोड कॉपी हो गया', fb_code_note:'यही कोड दूसरे फ़ोन में डालें — तभी वही डेटा मिलेगा। किसी को न बताएँ।', auto_mode:'ऑटोमैटिक (बैकग्राउंड)', auto_all_btn:'सब ऑटोमैटिक करें', auto_all_done:'सब ऑटोमैटिक चालू ✓', auto_all_hint:'एक टैप में बैकअप, क्लाउड सिंक, रिमाइंडर और शिफ्ट — सब अपने आप चलने लगेंगे।', safe_ok:'आपका डेटा सुरक्षित है ✓', safe_ok_s:'बैकअप और क्लाउड सिंक अपने आप चल रहे हैं', sync_cloud:'क्लाउड', sync_drive:'ड्राइव', auto_entry:'ऑटो एंट्री', auto_entry_hint:'शिफ्ट के समय हर ग्राहक की डिफ़ॉल्ट मात्रा से एंट्री अपने आप बन जाएगी (बाद में बदल या हटा सकते हैं)।', auto_entry_done:'{n} एंट्री अपने आप बन गईं'
  },
  en:{
   tagline:'Milk Manager',
@@ -3193,7 +3222,7 @@ const T={
   missed:'Missed entries', miss_hint:'Days on which a customer had no entry show up here. Tap “Fill” to enter that day.', miss_none:'Great! Every recent day is fully entered ✓', miss_days:'How many days to check', miss_d7:'7 days', miss_d14:'14 days', miss_d30:'30 days', miss_missing:'customers without an entry', miss_fill:'Fill', miss_all_ok:'Everyone is entered ✓', miss_today:'Still pending today', miss_remind:'Missed-entry reminder', miss_remind_hint:'At the set time, if any customer is still missing an entry today, you get a notification and a sound.', miss_notify:'{n} customers have no entry today — please fill them.', miss_go:'Enter that day', miss_card:'Today\u2019s entries pending',
   mod_mgr:'Manage modules', mod_mgr_hint:'Switch off any module you do not need — it disappears from the list. You can switch it back on anytime.', mod_off:'off', mod_on:'on',
   bulkupdate:'Bulk update', bu_hint:'Change every customer\u2019s rate or default quantity in one go — no need to edit each one.', bu_scope:'Apply to', bu_all:'All customers', bu_liter:'Only litre-rate', bu_fat:'Only fat-rate', bu_route:'Route', bu_route_all:'All routes', bu_count:'Customers selected', bu_rate:'Change rate', bu_newrate:'New rate', bu_apply_rate:'Apply rate', bu_qty:'Change default quantity', bu_qty_am:'Morning qty (L)', bu_qty_pm:'Evening qty (L)', bu_apply_qty:'Apply quantity', bu_none:'No customer matches this selection', bu_rate_done:'Rate changed for {n} customers', bu_qty_done:'Quantity changed for {n} customers', bu_confirm_rate:'Set the rate to ₹{r} for {n} customers?', bu_confirm_qty:'Change the default quantity for {n} customers?', bu_highdue:'High-dues threshold (₹)', bu_highdue_hint:'Customers owing more than this will show in red. 0 = off.', due_high:'high dues', am_qty:'Morning (L)', pm_qty:'Evening (L)', qty_am_pm_hint:'Fill different amounts to auto-enter morning/evening; leave blank to use the default quantity above.', remind_list:'📋 Send list', remind_list_title:'Dues list', remind_list_msg:'Hello 🙏\n\nDues list:\n{list}\n\nTotal: {total}\n— {shop}',
-  firebase:'Firebase cloud sync', fb_hint:'Keep your data safe online with Firebase too. The app keeps working fully offline and syncs automatically as soon as the internet is back.', fb_status:'Status', fb_connected:'Connected', fb_notconn:'Not connected', fb_last:'Last sync', fb_config:'Paste your Firebase config here', fb_config_ph:'Paste apiKey and projectId — the full firebaseConfig works too', fb_code:'Sync code', fb_code_hint:'Enter the same code on another phone to get the same data. Keep it long and secret.', fb_gen:'Generate a code', fb_connect:'Connect', fb_project:'Project', fb_backup:'Send to cloud now', fb_restore:'Restore from cloud', fb_auto:'Auto sync', fb_saved:'Saved to cloud', fb_fail:'Could not sync — check the config or network', fb_none:'No data found on the cloud', fb_bad:'Config looks wrong — both apiKey and projectId are needed', fb_offline:'You are offline — it will sync when the internet is back', fb_needcode:'Enter a sync code first', fb_setup:'How to set it up', fb_setup_steps:'Your Firebase is already linked — you only need to switch the Rules on once:\n1) Open the project “dudh-hisab-70c11” at console.firebase.google.com.\n2) Build → Realtime Database → Rules.\n3) Paste this JSON and press Publish:\n{\n  "rules": {\n    "milkSync": { "$code": { ".read": true, ".write": true } }\n  }\n}\n4) Done — the app will start syncing by itself. (You can enable Firestore too if you like; the app supports it as well.)', fb_warn:'Note: anyone who knows this sync code can read or change the data — keep the code long and secret.', fb_your_code:'Your sync code', fb_copy:'Copy code', fb_copied:'Code copied', fb_code_note:'Enter this same code on another phone to get the same data. Do not share it.', auto_all_btn:'Make everything automatic', auto_all_done:'All automatic ✓', auto_all_hint:'One tap turns on backup, cloud sync, reminders and shifts — all by themselves.', safe_ok:'Your data is safe ✓', safe_ok_s:'Backup and cloud sync are running by themselves', sync_cloud:'Cloud', sync_drive:'Drive', auto_entry:'Auto entry', auto_entry_hint:'At each shift, entries are created automatically from every customer\u2019s default quantity (you can edit or delete them later).', auto_entry_done:'{n} entries created automatically'
+  firebase:'Firebase cloud sync', fb_hint:'Keep your data safe online with Firebase too. The app keeps working fully offline and syncs automatically as soon as the internet is back.', fb_status:'Status', fb_connected:'Connected', fb_notconn:'Not connected', fb_last:'Last sync', fb_config:'Paste your Firebase config here', fb_config_ph:'Paste apiKey and projectId — the full firebaseConfig works too', fb_code:'Sync code', fb_code_hint:'Enter the same code on another phone to get the same data. Keep it long and secret.', fb_gen:'Generate a code', fb_connect:'Connect', fb_project:'Project', fb_backup:'Send to cloud now', fb_restore:'Restore from cloud', fb_auto:'Auto sync', fb_saved:'Saved to cloud', fb_fail:'Could not sync — check the config or network', fb_none:'No data found on the cloud', fb_bad:'Config looks wrong — both apiKey and projectId are needed', fb_offline:'You are offline — it will sync when the internet is back', fb_needcode:'Enter a sync code first', fb_setup:'How to set it up', fb_setup_steps:'Your Firebase is already linked — you only need to switch the Rules on once:\n1) Open the project “dudh-hisab-70c11” at console.firebase.google.com.\n2) Build → Realtime Database → Rules.\n3) Paste this JSON and press Publish:\n{\n  "rules": {\n    "milkSync": { "$code": { ".read": true, ".write": true } }\n  }\n}\n4) Done — the app will start syncing by itself. (You can enable Firestore too if you like; the app supports it as well.)', fb_warn:'Note: anyone who knows this sync code can read or change the data — keep the code long and secret.', fb_your_code:'Your sync code', fb_copy:'Copy code', fb_copied:'Code copied', fb_code_note:'Enter this same code on another phone to get the same data. Do not share it.', auto_mode:'Automatic (background)', auto_all_btn:'Make everything automatic', auto_all_done:'All automatic ✓', auto_all_hint:'One tap turns on backup, cloud sync, reminders and shifts — all by themselves.', safe_ok:'Your data is safe ✓', safe_ok_s:'Backup and cloud sync are running by themselves', sync_cloud:'Cloud', sync_drive:'Drive', auto_entry:'Auto entry', auto_entry_hint:'At each shift, entries are created automatically from every customer\u2019s default quantity (you can edit or delete them later).', auto_entry_done:'{n} entries created automatically'
  }
 };
 let LANG='hi';
@@ -3417,7 +3446,7 @@ const GMAP={bulk:'daily',bulkMonthly:'daily',holiday:'daily',milkcard:'daily',ca
  animals:'farm',wastage:'farm',
  backup:'app',drive:'app',account:'app',settings:'app',perms:'app',ai:'app',datacheck:'app',support:'app',legal:'app',help:'app',
  insights:'report',monthclose:'money',cashbook:'money',routemap:'people',
- ahealth:'farm',aprod:'farm',avacc:'farm',feed:'farm',fat30:'farm',wastpie:'farm',complaints:'people',occasions:'people',supplierorder:'money',vehicle:'money',loyalty:'people',insurance:'app',breeding:'farm',watemplates:'app',emi:'money',creditlimit:'people',checklist:'daily',missed:'daily',bulkupdate:'people',firebase:'app'};
+ ahealth:'farm',aprod:'farm',avacc:'farm',feed:'farm',fat30:'farm',wastpie:'farm',complaints:'people',occasions:'people',supplierorder:'money',vehicle:'money',loyalty:'people',insurance:'app',breeding:'farm',watemplates:'app',emi:'money',creditlimit:'people',checklist:'daily',missed:'daily',bulkupdate:'people',firebase:'app',partylist:'people'};
 const REL={
   invoices:['bills','bulkbill','statement','payments'],
   bills:['invoices','bulkbill','statement','ledger'],
@@ -3427,7 +3456,7 @@ const REL={
   payments:['dues','ledger','statement'],
   dues:['reminders','payments','bulkbill'],
   reminders:['dues','bulkbill','inactive'],
-  staff:['payments','expenses','budget','attendance'],
+  staff:['payments','expenses','budget','cashbook'],
   trend:['reports','compare','pnl','dayend'],
   compare:['trend','pnl','reports','budget'],
   dayend:['register','delivery','wastage','trend'],
@@ -3439,9 +3468,9 @@ const REL={
   wastage:['quality','dayend','reports','pnl'],
   animals:['quality','stock','wastage'],
   delivery:['routes','register','dayend'],
-  routes:['delivery','parties','topcust'],
-  topcust:['reports','parties','dues'],
-  inactive:['parties','reminders','topcust'],
+  routes:['delivery','partylist','topcust'],
+  topcust:['reports','partylist','dues'],
+  inactive:['partylist','reminders','topcust'],
   calendar:['register','holiday','dayend'],
   register:['calendar','dayend','delivery'],
   stock:['expenses','animals','dayend'],
@@ -3463,37 +3492,38 @@ const REL={
   feed:['ahealth','animals','expenses'],
   fat30:['quality','aprod','reports'],
   wastpie:['wastage','quality','reports'],
-  routemap:['delivery','routes','parties'],
+  routemap:['delivery','routes','partylist'],
   reports:['trend','compare','pnl','topcust','insights'],
   settings:['backup','drive','perms','ai','legal'],
   account:['settings','perms','drive'],
   bulk:['bulkMonthly','register','delivery','holiday'],
   bulkMonthly:['bulk','register','holiday','dayend'],
   holiday:['calendar','bulkMonthly','register'],
-  milkcard:['register','ledger','parties','statement'],
+  milkcard:['register','ledger','partylist','statement'],
   register:['calendar','delivery','dayend','bulk'],
   calc:['convert','reports','rate'],
   notes:['reminders','dayend','calendar'],
-  rate:['quality','parties','fat30','reports'],
+  rate:['quality','partylist','fat30','reports'],
   explog:['expenses','budget','pnl','recurring'],
   datacheck:['backup','drive','settings'],
   help:['support','legal','settings'],
-  complaints:['occasions','reminders','parties','topcust'],
-  occasions:['complaints','reminders','parties','topcust'],
+  complaints:['occasions','reminders','partylist','topcust'],
+  occasions:['complaints','reminders','partylist','topcust'],
   supplierorder:['stock','feed','expenses','loans'],
   vehicle:['expenses','explog','delivery','budget'],
-  loyalty:['parties','topcust','reports','dues'],
+  loyalty:['partylist','topcust','reports','dues'],
   insurance:['recurring','expenses','animals','settings'],
   breeding:['animals','ahealth','aprod','feed'],
   convert:['calc','rate','quality','settings'],
   watemplates:['reminders','bulkbill','dues','settings'],
   emi:['loans','recurring','budget','expenses'],
-  creditlimit:['dues','parties','reminders','loyalty'],
+  creditlimit:['dues','partylist','reminders','loyalty'],
   checklist:['dayend','delivery','register','notes'],
   backup:['drive','settings','datacheck','account'],
   missed:['register','delivery','bulkMonthly','calendar','holiday','dayend'],
-  bulkupdate:['parties','routes','rate','expenses','dues'],
-  firebase:['backup','drive','settings','datacheck']
+  bulkupdate:['partylist','routes','rate','expenses','dues'],
+  firebase:['backup','drive','settings','datacheck'],
+  partylist:['rate','routes','inactive','milkcard','bulkupdate','dues']
 };
 function isHiddenMod(id){ try{ return (state.settings.hiddenMods||[]).indexOf(id)>=0; }catch(e){ return false; } }
 function visibleMods(){ return MODULES.filter(function(m){ return !isHiddenMod(m.id); }); }
@@ -3605,6 +3635,7 @@ const MODULES=[
   {id:'missed',     ic:'📌', hi:'छूटी हुई एंट्री',      en:'Missed entries',    render:modMissed},
   {id:'bulkupdate', ic:'🔁', hi:'बल्क अपडेट',          en:'Bulk update',       render:modBulkUpdate},
   {id:'firebase',   ic:'🔥', hi:'Firebase क्लाउड सिंक', en:'Firebase cloud sync',render:modFirebase},
+  {id:'partylist',   ic:'👥', hi:'ग्राहक सूची',        en:'Customer list',     jump:'parties'},
 ];
 function switchTab(tab){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -6512,6 +6543,12 @@ function modFirebase(){
     <div class="bill-line"><span class="k">${t('fb_status')}</span><span class="v">${fbReady()?t('fb_connected'):t('fb_notconn')}</span></div>
     <div class="bill-line"><span class="k">${t('fb_project')}</span><span class="v">${esc(c.p||'—')}</span></div>
     <div class="bill-line"><span class="k">${t('fb_last')}</span><span class="v">${state.settings.fbLast?fmtDateTime(state.settings.fbLast):t('never')}</span></div>
+    <div class="divider"></div><h3 style="font-size:14px">⚡ ${t('auto_mode')}</h3>
+    <div class="sw"><span class="lb">🔁 ${t('sync_auto')}</span><div class="tr ${state.settings.driveAuto?'on':''}" onclick="toggleAutoBackup()"></div></div>
+    <div class="sw"><span class="lb">🔥 ${t('fb_auto')}</span><div class="tr ${state.settings.fbAuto!==false?'on':''}" onclick="toggleFbAuto()"></div></div>
+    <div class="sw"><span class="lb">⚡ ${t('auto_entry')}</span><div class="tr ${state.settings.autoEntry?'on':''}" onclick="toggleAutoEntry()"></div></div>
+    <div class="hint" style="margin-top:6px">${t('auto_entry_hint')}</div>
+    <div class="btn-row" style="margin-top:8px"><button class="btn sm" style="flex:1" onclick="enableAutoAll(false)">⚡ ${t('auto_all_btn')}</button><button class="btn grey sm" style="flex:1" onclick="quickBackupFile()">💾 ${t('sync_file')}</button></div>
     <div class="divider"></div>
     <div class="field"><label>${t('fb_your_code')}</label><input type="text" id="fb_code" value="${esc(c.c||'')}" style="font-weight:700;letter-spacing:.5px" /></div>
     <div class="btn-row" style="margin-top:8px"><button class="btn grey sm" style="flex:1" onclick="fbCopyCode()">📋 ${t('fb_copy')}</button><button class="btn grey sm" style="flex:1" onclick="if($('fb_code'))$('fb_code').value=fbGenCode()">${t('fb_gen')}</button></div>
