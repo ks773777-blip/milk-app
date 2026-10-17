@@ -2840,7 +2840,7 @@ const defaultState=()=>({
     waCode:'91', theme:'green', dark:false, pin:'', target:0, upi:'', upiName:'',
     retention:36, autoBackup:true, autoBackupDays:7, lastBackup:0, customCats:[], driveLink:'',
     driveAuto:false, driveFileId:'', lastDriveBackup:0, autoShift:true, onboarded:false, driveConnected:false, shiftRemind:true, lastRemind:'', billLang:'', billColor:'',
-    biometricLock:false, bioCredId:'', invNext:1, budget:{}, favs:[], recent:[], collapsed:[], bkSchedOn:false, bkSchedTime:'21:00', bkSchedEvery:1, bkSchedTarget:'file', bkSchedLast:0, bkHistory:[], missRemind:true, missTime:'21:00', missLastRemind:'', hiddenMods:['creditlimit','calc','calendar','checklist','loans','emi','complaints','occasions','loyalty','quality','ai','insurance','convert'], fbProject:'', fbKey:'', fbCode:'', fbAuto:false, fbLast:0,
+    biometricLock:false, bioCredId:'', invNext:1, budget:{}, favs:[], recent:[], collapsed:[], bkSchedOn:false, bkSchedTime:'21:00', bkSchedEvery:1, bkSchedTarget:'file', bkSchedLast:0, bkHistory:[], missRemind:true, missTime:'21:00', missLastRemind:'', hiddenMods:['creditlimit','calc','calendar','checklist','loans','emi','complaints','occasions','loyalty','quality','ai','insurance','convert'], fbKey:'AIzaSyAhmmSOkVwp65wYkUxFgI-g34PF5viaaQg', fbProject:'dudh-hisab-70c11', fbDb:'https://dudh-hisab-70c11-default-rtdb.firebaseio.com', fbCode:'', fbAuto:true, fbLast:0,
     business:{ name:'दूध हिसाब', owner:'', phone:'', address:'' } },
   account:null
 });
@@ -3019,7 +3019,7 @@ const T={
   missed:'छूटी हुई एंट्री', miss_hint:'जिन दिनों किसी ग्राहक की एंट्री नहीं बनी, वे दिन यहाँ दिखेंगे। नीचे “भरें” दबाकर उस दिन की एंट्री भर सकते हैं।', miss_none:'बढ़िया! पिछले दिनों की सारी एंट्री भरी हुई है ✓', miss_days:'कितने दिन देखें', miss_d7:'7 दिन', miss_d14:'14 दिन', miss_d30:'30 दिन', miss_missing:'ग्राहकों की एंट्री नहीं', miss_fill:'भरें', miss_all_ok:'सबकी एंट्री भर गई ✓', miss_today:'आज इनकी एंट्री बाकी', miss_remind:'छूटी एंट्री रिमाइंडर', miss_remind_hint:'तय समय पर, अगर आज किसी ग्राहक की एंट्री अधूरी हो तो नोटिफिकेशन और आवाज़ मिलेगी।', miss_notify:'आज {n} ग्राहकों की एंट्री नहीं भरी — भर दें।', miss_go:'उस दिन की एंट्री भरें', miss_card:'आज की एंट्री बाकी',
   mod_mgr:'मॉड्यूल प्रबंधन', mod_mgr_hint:'जो मॉड्यूल नहीं चाहिए उसे बंद कर दें — वह सूची से हट जाएगा। कभी भी दोबारा चालू कर सकते हैं।', mod_off:'बंद', mod_on:'चालू',
   bulkupdate:'बल्क अपडेट', bu_hint:'एक साथ सभी ग्राहकों का रेट या डिफ़ॉल्ट मात्रा बदलें — हर ग्राहक को अलग-अलग बदलने की ज़रूरत नहीं।', bu_scope:'किन पर लागू करें', bu_all:'सभी ग्राहक', bu_liter:'सिर्फ़ लीटर-रेट वाले', bu_fat:'सिर्फ़ फैट-रेट वाले', bu_route:'रूट', bu_route_all:'सभी रूट', bu_count:'चुने गए ग्राहक', bu_rate:'रेट बदलें', bu_newrate:'नया रेट', bu_apply_rate:'रेट लागू करें', bu_qty:'डिफ़ॉल्ट मात्रा बदलें', bu_qty_am:'सुबह की मात्रा (L)', bu_qty_pm:'शाम की मात्रा (L)', bu_apply_qty:'मात्रा लागू करें', bu_none:'इस चुनाव पर कोई ग्राहक नहीं मिला', bu_rate_done:'{n} ग्राहकों का रेट बदल गया', bu_qty_done:'{n} ग्राहकों की मात्रा बदल गई', bu_confirm_rate:'{n} ग्राहकों का रेट ₹{r} करना है?', bu_confirm_qty:'{n} ग्राहकों की डिफ़ॉल्ट मात्रा बदलनी है?', bu_highdue:'बड़े बकाया की सीमा (₹)', bu_highdue_hint:'इससे ज़्यादा बकाया वाले ग्राहक लाल दिखेंगे। 0 = बंद।', due_high:'बड़ा बकाया', am_qty:'सुबह (L)', pm_qty:'शाम (L)', qty_am_pm_hint:'अलग-अलग भरें तो सुबह/शाम की एंट्री अपने आप भरेगी; खाली छोड़ें तो ऊपर की डिफ़ॉल्ट मात्रा लगेगी।', remind_list:'📋 सूची भेजें', remind_list_title:'बकाया सूची', remind_list_msg:'नमस्ते 🙏\n\nबकाया सूची:\n{list}\n\nकुल: {total}\n— {shop}',
-  firebase:'Firebase क्लाउड सिंक', fb_hint:'Firebase से अपना डेटा ऑनलाइन भी सुरक्षित रखें। ऐप ऑफ़लाइन पूरा चलता रहेगा और नेट आते ही डेटा अपने आप सिंक हो जाएगा।', fb_status:'स्थिति', fb_connected:'जुड़ा हुआ', fb_notconn:'जुड़ा नहीं', fb_last:'पिछला सिंक', fb_config:'Firebase कॉन्फ़िग यहाँ चिपकाएँ', fb_config_ph:'apiKey और projectId चिपकाएँ — पूरा firebaseConfig भी चलेगा', fb_code:'सिंक कोड', fb_code_hint:'यही कोड दूसरे फ़ोन में डालें तो वही डेटा मिलेगा। इसे लंबा और गुप्त रखें।', fb_gen:'नया कोड बनाएँ', fb_connect:'जोड़ें', fb_project:'प्रोजेक्ट', fb_backup:'अभी क्लाउड पर भेजें', fb_restore:'क्लाउड से वापस लाएँ', fb_auto:'ऑटो सिंक', fb_saved:'क्लाउड पर सेव हो गया', fb_fail:'सिंक नहीं हो सका — कॉन्फ़िग या नेट जाँचें', fb_none:'क्लाउड पर कोई डेटा नहीं मिला', fb_bad:'कॉन्फ़िग ठीक नहीं — apiKey और projectId दोनों ज़रूरी हैं', fb_offline:'ऑफ़लाइन हैं — नेट आने पर सिंक हो जाएगा', fb_needcode:'पहले सिंक कोड डालें', fb_setup:'सेटअप कैसे करें', fb_setup_steps:'1) console.firebase.google.com पर नया प्रोजेक्ट बनाएँ।\n2) Build → Firestore Database → Create database चुनें।\n3) Rules में लगाएँ:  allow read, write: if true;\n4) Project settings → Your apps → Web (</>) जोड़ें, वहाँ से apiKey और projectId कॉपी करें।\n5) ऊपर चिपकाकर “जोड़ें” दबाएँ, फिर “अभी क्लाउड पर भेजें”।', fb_warn:'ध्यान दें: जो इस सिंक कोड को जानता है वह डेटा देख/बदल सकता है — कोड लंबा और गुप्त रखें।'
+  firebase:'Firebase क्लाउड सिंक', fb_hint:'Firebase से अपना डेटा ऑनलाइन भी सुरक्षित रखें। ऐप ऑफ़लाइन पूरा चलता रहेगा और नेट आते ही डेटा अपने आप सिंक हो जाएगा।', fb_status:'स्थिति', fb_connected:'जुड़ा हुआ', fb_notconn:'जुड़ा नहीं', fb_last:'पिछला सिंक', fb_config:'Firebase कॉन्फ़िग यहाँ चिपकाएँ', fb_config_ph:'apiKey और projectId चिपकाएँ — पूरा firebaseConfig भी चलेगा', fb_code:'सिंक कोड', fb_code_hint:'यही कोड दूसरे फ़ोन में डालें तो वही डेटा मिलेगा। इसे लंबा और गुप्त रखें।', fb_gen:'नया कोड बनाएँ', fb_connect:'जोड़ें', fb_project:'प्रोजेक्ट', fb_backup:'अभी क्लाउड पर भेजें', fb_restore:'क्लाउड से वापस लाएँ', fb_auto:'ऑटो सिंक', fb_saved:'क्लाउड पर सेव हो गया', fb_fail:'सिंक नहीं हो सका — कॉन्फ़िग या नेट जाँचें', fb_none:'क्लाउड पर कोई डेटा नहीं मिला', fb_bad:'कॉन्फ़िग ठीक नहीं — apiKey और projectId दोनों ज़रूरी हैं', fb_offline:'ऑफ़लाइन हैं — नेट आने पर सिंक हो जाएगा', fb_needcode:'पहले सिंक कोड डालें', fb_setup:'सेटअप कैसे करें', fb_setup_steps:'1) console.firebase.google.com पर नया प्रोजेक्ट बनाएँ।\n2) Build → Firestore Database → Create database चुनें।\n3) Rules में लगाएँ:  allow read, write: if true;\n4) Project settings → Your apps → Web (</>) जोड़ें, वहाँ से apiKey और projectId कॉपी करें।\n5) ऊपर चिपकाकर “जोड़ें” दबाएँ, फिर “अभी क्लाउड पर भेजें”।', fb_warn:'ध्यान दें: जो इस सिंक कोड को जानता है वह डेटा देख/बदल सकता है — कोड लंबा और गुप्त रखें।', fb_your_code:'आपका सिंक कोड', fb_copy:'कोड कॉपी करें', fb_copied:'कोड कॉपी हो गया', fb_code_note:'यही कोड दूसरे फ़ोन में डालें — तभी वही डेटा मिलेगा। किसी को न बताएँ।'
  },
  en:{
   tagline:'Milk Manager',
@@ -3193,7 +3193,7 @@ const T={
   missed:'Missed entries', miss_hint:'Days on which a customer had no entry show up here. Tap “Fill” to enter that day.', miss_none:'Great! Every recent day is fully entered ✓', miss_days:'How many days to check', miss_d7:'7 days', miss_d14:'14 days', miss_d30:'30 days', miss_missing:'customers without an entry', miss_fill:'Fill', miss_all_ok:'Everyone is entered ✓', miss_today:'Still pending today', miss_remind:'Missed-entry reminder', miss_remind_hint:'At the set time, if any customer is still missing an entry today, you get a notification and a sound.', miss_notify:'{n} customers have no entry today — please fill them.', miss_go:'Enter that day', miss_card:'Today\u2019s entries pending',
   mod_mgr:'Manage modules', mod_mgr_hint:'Switch off any module you do not need — it disappears from the list. You can switch it back on anytime.', mod_off:'off', mod_on:'on',
   bulkupdate:'Bulk update', bu_hint:'Change every customer\u2019s rate or default quantity in one go — no need to edit each one.', bu_scope:'Apply to', bu_all:'All customers', bu_liter:'Only litre-rate', bu_fat:'Only fat-rate', bu_route:'Route', bu_route_all:'All routes', bu_count:'Customers selected', bu_rate:'Change rate', bu_newrate:'New rate', bu_apply_rate:'Apply rate', bu_qty:'Change default quantity', bu_qty_am:'Morning qty (L)', bu_qty_pm:'Evening qty (L)', bu_apply_qty:'Apply quantity', bu_none:'No customer matches this selection', bu_rate_done:'Rate changed for {n} customers', bu_qty_done:'Quantity changed for {n} customers', bu_confirm_rate:'Set the rate to ₹{r} for {n} customers?', bu_confirm_qty:'Change the default quantity for {n} customers?', bu_highdue:'High-dues threshold (₹)', bu_highdue_hint:'Customers owing more than this will show in red. 0 = off.', due_high:'high dues', am_qty:'Morning (L)', pm_qty:'Evening (L)', qty_am_pm_hint:'Fill different amounts to auto-enter morning/evening; leave blank to use the default quantity above.', remind_list:'📋 Send list', remind_list_title:'Dues list', remind_list_msg:'Hello 🙏\n\nDues list:\n{list}\n\nTotal: {total}\n— {shop}',
-  firebase:'Firebase cloud sync', fb_hint:'Keep your data safe online with Firebase too. The app keeps working fully offline and syncs automatically as soon as the internet is back.', fb_status:'Status', fb_connected:'Connected', fb_notconn:'Not connected', fb_last:'Last sync', fb_config:'Paste your Firebase config here', fb_config_ph:'Paste apiKey and projectId — the full firebaseConfig works too', fb_code:'Sync code', fb_code_hint:'Enter the same code on another phone to get the same data. Keep it long and secret.', fb_gen:'Generate a code', fb_connect:'Connect', fb_project:'Project', fb_backup:'Send to cloud now', fb_restore:'Restore from cloud', fb_auto:'Auto sync', fb_saved:'Saved to cloud', fb_fail:'Could not sync — check the config or network', fb_none:'No data found on the cloud', fb_bad:'Config looks wrong — both apiKey and projectId are needed', fb_offline:'You are offline — it will sync when the internet is back', fb_needcode:'Enter a sync code first', fb_setup:'How to set it up', fb_setup_steps:'1) Create a new project at console.firebase.google.com.\n2) Build → Firestore Database → Create database.\n3) In Rules put:  allow read, write: if true;\n4) Project settings → Your apps → add a Web (</>) app and copy its apiKey and projectId.\n5) Paste above, tap Connect, then tap Send to cloud now.', fb_warn:'Note: anyone who knows this sync code can read or change the data — keep the code long and secret.'
+  firebase:'Firebase cloud sync', fb_hint:'Keep your data safe online with Firebase too. The app keeps working fully offline and syncs automatically as soon as the internet is back.', fb_status:'Status', fb_connected:'Connected', fb_notconn:'Not connected', fb_last:'Last sync', fb_config:'Paste your Firebase config here', fb_config_ph:'Paste apiKey and projectId — the full firebaseConfig works too', fb_code:'Sync code', fb_code_hint:'Enter the same code on another phone to get the same data. Keep it long and secret.', fb_gen:'Generate a code', fb_connect:'Connect', fb_project:'Project', fb_backup:'Send to cloud now', fb_restore:'Restore from cloud', fb_auto:'Auto sync', fb_saved:'Saved to cloud', fb_fail:'Could not sync — check the config or network', fb_none:'No data found on the cloud', fb_bad:'Config looks wrong — both apiKey and projectId are needed', fb_offline:'You are offline — it will sync when the internet is back', fb_needcode:'Enter a sync code first', fb_setup:'How to set it up', fb_setup_steps:'1) Create a new project at console.firebase.google.com.\n2) Build → Firestore Database → Create database.\n3) In Rules put:  allow read, write: if true;\n4) Project settings → Your apps → add a Web (</>) app and copy its apiKey and projectId.\n5) Paste above, tap Connect, then tap Send to cloud now.', fb_warn:'Note: anyone who knows this sync code can read or change the data — keep the code long and secret.', fb_your_code:'Your sync code', fb_copy:'Copy code', fb_copied:'Code copied', fb_code_note:'Enter this same code on another phone to get the same data. Do not share it.'
  }
 };
 let LANG='hi';
@@ -6414,7 +6414,8 @@ function buFilter(scope,route){
 }
 function buSet(){ window._buScope=$('bu_scope')?$('bu_scope').value:'all'; window._buRoute=$('bu_route')?$('bu_route').value:''; rerenderModule(); }
 /* ---- 🔥 Firebase cloud sync (Firestore REST) ---- */
-function fbCfg(){ return {p:(state.settings.fbProject||'').trim(), k:(state.settings.fbKey||'').trim(), c:(state.settings.fbCode||'').trim()}; }
+function fbCfg(){ return {p:(state.settings.fbProject||'').trim(), k:(state.settings.fbKey||'').trim(), d:(state.settings.fbDb||'').trim(), c:(state.settings.fbCode||'').trim()}; }
+function fbCfgText(){ const c=fbCfg(); return 'apiKey: "'+c.k+'", projectId: "'+c.p+'"'+(c.d?', databaseURL: "'+c.d+'"':''); }
 function fbReady(){ const c=fbCfg(); return !!(c.p&&c.k&&c.c); }
 function fbDocUrl(){ const c=fbCfg(); return 'https://firestore.googleapis.com/v1/projects/'+encodeURIComponent(c.p)+'/databases/(default)/documents/milkSync/'+encodeURIComponent(c.c)+'?key='+encodeURIComponent(c.k); }
 function fbParseConfig(txt){
@@ -6423,7 +6424,8 @@ function fbParseConfig(txt){
   let p=(txt.match(/projectId\s*[:=]\s*["']([^"']+)["']/)||[])[1]||'';
   if(!k){ const m=txt.match(/"apiKey"\s*:\s*"([^"]+)"/); if(m) k=m[1]; }
   if(!p){ const m=txt.match(/"projectId"\s*:\s*"([^"]+)"/); if(m) p=m[1]; }
-  return {k:k.trim(), p:p.trim()};
+  let d=(txt.match(/databaseURL\s*[:=]\s*["']([^"']+)["']/)||[])[1]||'';
+  return {k:k.trim(), p:p.trim(), d:d.trim()};
 }
 function fbGenCode(){ const s='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let o=''; for(let i=0;i<16;i++) o+=s[Math.floor(Math.random()*s.length)]; return 'milk-'+o; }
 function fbSaveCfg(){
@@ -6435,31 +6437,36 @@ function fbSaveCfg(){
   state.settings.fbKey=r.k; state.settings.fbProject=r.p; state.settings.fbCode=code;
   save(); rerenderModule(); toast(t('fb_connected'));
 }
+function fbRtdbUrl(){ const c=fbCfg(); if(!c.d) return ''; return c.d.replace(/\/+$/,'')+'/milkSync/'+encodeURIComponent(c.c)+'.json'; }
+async function fbRtdbPut(){ const u=fbRtdbUrl(); if(!u) throw new Error('nodb');
+  const r=await fetch(u,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({at:Date.now(),data:state})});
+  if(!r.ok) throw new Error('http '+r.status); return true; }
+async function fbRtdbGet(){ const u=fbRtdbUrl(); if(!u) throw new Error('nodb');
+  const r=await fetch(u); if(!r.ok) throw new Error('http '+r.status);
+  const j=await r.json(); if(!j) return null; return j.data||j; }
+async function fbFsPut(){ const r=await fetch(fbDocUrl(),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:{data:{stringValue:JSON.stringify(state)},at:{integerValue:String(Date.now())}}})});
+  if(!r.ok) throw new Error('http '+r.status); return true; }
+async function fbFsGet(){ const r=await fetch(fbDocUrl()); if(r.status===404) return null; if(!r.ok) throw new Error('http '+r.status);
+  const j=await r.json(); return (j&&j.fields&&j.fields.data&&j.fields.data.stringValue)||null; }
 async function fbUpload(silent){
   if(!fbReady()){ if(!silent) toast(t('fb_bad')); return false; }
   if(!navigator.onLine){ if(!silent) toast(t('fb_offline')); return false; }
-  try{
-    const body={fields:{data:{stringValue:JSON.stringify(state)}, at:{integerValue:String(Date.now())}}};
-    const r=await fetch(fbDocUrl(),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(!r.ok) throw new Error('http '+r.status);
-    state.settings.fbLast=Date.now(); try{ localStorage.setItem(STORE_KEY,JSON.stringify(state)); }catch(e){}
-    if(!silent) toast(t('fb_saved'));
-    if(curModule==='firebase') rerenderModule();
-    return true;
-  }catch(e){ if(!silent) toast(t('fb_fail')); return false; }
+  let ok=false;
+  try{ await fbRtdbPut(); ok=true; }catch(e){}
+  if(!ok){ try{ await fbFsPut(); ok=true; }catch(e){} }
+  if(ok){ state.settings.fbLast=Date.now(); try{ localStorage.setItem(STORE_KEY,JSON.stringify(state)); }catch(e){}
+    if(!silent) toast(t('fb_saved')); if(curModule==='firebase') rerenderModule(); return true; }
+  if(!silent) toast(t('fb_fail')); return false;
 }
 async function fbDownload(){
   if(!fbReady()){ toast(t('fb_bad')); return; }
   if(!navigator.onLine){ toast(t('fb_offline')); return; }
-  try{
-    const r=await fetch(fbDocUrl());
-    if(r.status===404){ toast(t('fb_none')); return; }
-    if(!r.ok) throw new Error('http '+r.status);
-    const j=await r.json();
-    const str=j&&j.fields&&j.fields.data&&j.fields.data.stringValue;
-    if(!str){ toast(t('fb_none')); return; }
-    previewImport(str);
-  }catch(e){ toast(t('fb_fail')); }
+  let str=null;
+  try{ str=await fbRtdbGet(); }catch(e){}
+  if(!str){ try{ str=await fbFsGet(); }catch(e){} }
+  if(!str){ toast(t('fb_none')); return; }
+  if(typeof str!=='string') str=JSON.stringify(str);
+  previewImport(str);
 }
 let fbTimer=null;
 function scheduleFbBackup(){ if(!state.settings.fbAuto||!fbReady()) return; clearTimeout(fbTimer); fbTimer=setTimeout(function(){ fbUpload(true); },6000); }
@@ -6472,18 +6479,22 @@ function modFirebase(){
     <div class="bill-line"><span class="k">${t('fb_project')}</span><span class="v">${esc(c.p||'—')}</span></div>
     <div class="bill-line"><span class="k">${t('fb_last')}</span><span class="v">${state.settings.fbLast?fmtDateTime(state.settings.fbLast):t('never')}</span></div>
     <div class="divider"></div>
-    <div class="field"><label>${t('fb_config')}</label><textarea id="fb_cfg" rows="3" style="width:100%" placeholder="${t('fb_config_ph')}"></textarea></div>
-    <div class="field"><label>${t('fb_code')}</label><input type="text" id="fb_code" value="${esc(c.c||'')}" /></div>
-    <div class="hint" style="margin-top:-4px">${t('fb_code_hint')}</div>
-    <div class="btn-row" style="margin-top:8px"><button class="btn grey sm" style="flex:1" onclick="if($('fb_code'))$('fb_code').value=fbGenCode()">${t('fb_gen')}</button><button class="btn sm" style="flex:1" onclick="fbSaveCfg()">${t('fb_connect')}</button></div>
+    <div class="field"><label>${t('fb_your_code')}</label><input type="text" id="fb_code" value="${esc(c.c||'')}" style="font-weight:700;letter-spacing:.5px" /></div>
+    <div class="btn-row" style="margin-top:8px"><button class="btn grey sm" style="flex:1" onclick="fbCopyCode()">📋 ${t('fb_copy')}</button><button class="btn grey sm" style="flex:1" onclick="if($('fb_code'))$('fb_code').value=fbGenCode()">${t('fb_gen')}</button></div>
+    <div class="hint" style="margin-top:6px">${t('fb_code_note')}</div>
     <div class="divider"></div>
     <div class="btn-row"><button class="btn sm" style="flex:1" onclick="fbUpload(false)">☁️ ${t('fb_backup')}</button><button class="btn grey sm" style="flex:1" onclick="fbDownload()">♻️ ${t('fb_restore')}</button></div>
     <div class="sw" style="margin-top:10px"><span class="lb">${t('fb_auto')}</span><div class="tr ${state.settings.fbAuto?'on':''}" id="sw-fbauto" onclick="toggleFbAuto()"></div></div>
+    <div class="divider"></div>
+    <div class="field"><label>${t('fb_config')}</label><textarea id="fb_cfg" rows="3" style="width:100%" placeholder="${t('fb_config_ph')}">${esc(fbCfgText())}</textarea></div>
+    <button class="btn grey sm" style="width:100%" onclick="fbSaveCfg()">${t('fb_connect')}</button>
     <div class="divider"></div><h3 style="font-size:14px">${t('fb_setup')}</h3>
     <div class="hint" style="white-space:pre-wrap">${t('fb_setup_steps')}</div>
     <div class="hint" style="color:var(--amber);margin-top:8px">${t('fb_warn')}</div>
   </div>`;
 }
+function fbCopyCode(){ const el=$('fb_code'); if(!el||!el.value){ toast(t('fb_needcode')); return; }
+  try{ navigator.clipboard.writeText(el.value); toast(t('fb_copied')); }catch(e){} }
 function modBulkUpdate(){
   const routes=buRoutes(), sc=window._buScope||'all', rt=window._buRoute||'';
   const n=buFilter(sc,rt).length;
@@ -7835,6 +7846,7 @@ function init(){
   try{ shiftRemindCheck(); setInterval(shiftRemindCheck, 60000); scheduleShiftAlarm(); }catch(e){}
   try{ checkBackupSchedule(); setInterval(checkBackupSchedule, 60000); }catch(e){}
   try{ checkMissedReminder(); setInterval(checkMissedReminder, 60000); }catch(e){}
+  try{ if(!state.settings.fbCode && state.settings.fbKey){ state.settings.fbCode=fbGenCode(); save(); } }catch(e){}
   try{ initSwipe(); }catch(e){}
 }
 init();
