@@ -1,5 +1,5 @@
 /* Milk Manager service worker — offline-first, but always fresh when online */
-const CACHE = 'milk-app-v17';
+const CACHE = 'milk-app-v18';
 const ASSETS = ['./', './index.html', './milk-app.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {
